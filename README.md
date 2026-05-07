@@ -1,0 +1,47 @@
+# Leokoo Site Toolkit
+
+A lightweight, builder-agnostic utility suite for WordPress sites. Designed to replace bloated ecosystem plugins, this toolkit delivers highly-optimized frontend components like a Wirecutter-style Table of Contents, Author Boxes, and an intelligent Content CTA engine.
+
+Originally developed for Bricks Builder, it has been fully refactored into a builder-agnostic architecture, meaning it works flawlessly with Bricks, EtchWP, Gutenberg, or Elementor.
+
+## 🚀 Key Features
+
+### 1. Wirecutter-Style Table of Contents
+A smart, zero-dependency TOC that automatically parses post content and generates anchored headings.
+- **Desktop:** Renders as a full-width sticky bar.
+- **Mobile:** Transforms into a sleek, bottom-sheet dropdown menu.
+- **Dynamic Scroll-Spy:** The header text updates dynamically as the user scrolls past sections.
+- **Seamless Marquee:** If a heading is too long for a mobile screen, it elegantly fades and triggers an infinite horizontal CSS scroll.
+
+### 2. Intelligent Content CTAs
+A unified injection engine for Power CTAs, Middle CTAs, and Sidebar CTAs.
+- **Smart Injection:** Automatically injects newsletter forms and calls-to-action into the content stream based on paragraph counts and percentage thresholds.
+- **Deepest Match Overrides:** Granular category targeting allows specific CTAs to override default rules based on the post's deepest taxonomy level.
+- **Flexible Layouts:** Supports text-only, image-left, image-right, and full-width image layouts.
+
+### 3. Essential Editorial Utilities
+- **Author Box (`[lkst_author_box]`):** A beautiful author profile card supporting custom taglines, credential chips, and integrated social links.
+- **Reading Time (`[lkst_read_time]`):** Dynamic word-count analysis for "X min read" estimates.
+- **Category Pills (`[lkst_top_category_pills]`):** Dynamic term queries to display the most popular categories/tags for custom archive layouts.
+- **News Ticker (`[lkst_ticker_posts]`):** A fully self-contained, scrolling marquee of recent posts.
+
+## 🛠 Architecture & Performance
+
+- **Builder Agnostic:** Outputs raw, semantic HTML. All modules are invoked via standard WordPress shortcodes or auto-injected.
+- **Zero Dependencies:** No jQuery, no third-party libraries. All Javascript is vanilla and uses modern browser APIs (`IntersectionObserver`, `requestAnimationFrame`).
+- **Strict OOP Design:** PSR-4 compliant autoloading. Every module is isolated within the `LK\SiteToolkit` namespace.
+- **Clean Uninstallation:** Adheres to WordPress VIP standards. Removing the plugin safely wipes all custom options, user meta, and post meta without leaving orphaned database rows.
+
+## 📦 Installation
+
+1. Download the latest release from the repository.
+2. Upload the `leokoo-site-toolkit` folder to your `/wp-content/plugins/` directory.
+3. Activate the plugin through the 'Plugins' menu in WordPress.
+4. Navigate to **Site Toolkit > Modules** to selectively enable the features you need.
+
+## 🎨 Visual Configuration
+
+The plugin does not force structural spacing or typography, ensuring it inherits your site's core framework (like ACSS). However, brand colors can be mapped to the toolkit's CSS variables by navigating to **Site Toolkit > Visual Styles**.
+
+---
+*Developed for leokoo.com*

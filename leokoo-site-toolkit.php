@@ -13,7 +13,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'LKST_VERSION', '1.0.3' );
+define( 'LKST_VERSION', '1.10.0' );
 define( 'LKST_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LKST_URL', plugin_dir_url( __FILE__ ) );
 
@@ -37,4 +37,10 @@ add_action( 'plugins_loaded', function() {
 
 register_activation_hook( __FILE__, function() {
     \LK\SiteToolkit\Core\Plugin::activate();
+} );
+// Add Settings link on the plugin page
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), function( $links ) {
+    $settings_link = '<a href="admin.php?page=lkst-dashboard">' . __( 'Settings', 'leokoo-site-toolkit' ) . '</a>';
+    array_unshift( $links, $settings_link );
+    return $links;
 } );
