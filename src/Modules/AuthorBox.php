@@ -1,24 +1,31 @@
 <?php
 namespace LK\SiteToolkit\Modules;
 
+use LK\SiteToolkit\Core\ModuleInterface;
+
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Author Box Module
  *
- * Enhances user profiles with social links, taglines, and credential chips.
- * Renders a fully styled author card or standalone social links.
+ * Renders a styled author card with biography, social icons, and CTA buttons.
+ * Resolves author_id safely whether inside or outside the WP loop —
+ * Bricks/Etch text elements render shortcodes outside the_loop, so
+ * get_the_author_meta(\'ID\') returns 0; we fall back to get_queried_object_id().
  * Usage: [lkst_author_box author_id=""] or [lkst_author_socials author_id=""]
+ *
+ * @package LK\SiteToolkit\Modules
  */
-class AuthorBox {
-    public function init() {
+class AuthorBox implements ModuleInterface {
+
+    public function init(): void {
         add_filter( 'user_contactmethods', [ $this, 'add_contact_methods' ] );
-        add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_dashicons' ] );
-        add_shortcode( 'lkst_author_box', [ $this, 'render_box' ] );
+        add_action( 'wp_enqueue_scripts',  [ $this, 'enqueue_dashicons' ] );
+        add_shortcode( 'lkst_author_box',    [ $this, 'render_box' ] );
         add_shortcode( 'lkst_author_socials', [ $this, 'render_socials' ] );
     }
 
-    public function add_contact_methods( $methods ) {
+    public function add_contact_methods( array $methods ): array {
         $methods['lkst_social_facebook'] = 'Facebook URL';
         $methods['lkst_social_linkedin'] = 'LinkedIn URL';
         $methods['lkst_social_x']        = 'X (Twitter) URL';
@@ -30,17 +37,41 @@ class AuthorBox {
         return $methods;
     }
 
-    public function enqueue_dashicons() {
+    public function enqueue_dashicons(): void {
         wp_enqueue_style( 'dashicons' );
     }
 
-    public function render_box( $atts ) {
-        $atts = shortcode_atts( [ 'author_id' => null ], $atts );
-        $author_id = $atts['author_id'] ? $atts['author_id'] : get_the_author_meta( 'ID' );
+    /**
+     * Resolve author ID from shortcode attr, WP loop, or queried object.
+     * Returns 0 if the author cannot be determined.
+     */
+    private function resolve_author_id( $atts_author_id ): int {
+        // 1. Explicit shortcode attribute wins.
+        if ( ! empty( $atts_author_id ) ) {
+            return (int) $atts_author_id;
+        }
+        // 2. Inside the WP loop, get_the_author_meta(\'ID\') is reliable.
+        $id = (int) get_the_author_meta( 'ID' );
+        if ( $id ) {
+            return $id;
+        }
+        // 3. Outside the loop (e.g. Bricks sidebar element): fall back to
+        //    the post\'s post_author field via the queried object.
+        $queried = get_queried_object_id();
+        if ( $queried ) {
+            $author = (int) get_post_field( 'post_author', $queried );
+            if ( $author ) return $author;
+        }
+        return 0;
+    }
+
+    public function render_box( $atts ): string {
+        $atts      = shortcode_atts( [ 'author_id' => null ], $atts );
+        $author_id = $this->resolve_author_id( $atts['author_id'] );
         if ( ! $author_id ) return '';
 
         $name    = get_the_author_meta( 'display_name', $author_id );
-        $bio     = get_the_author_meta( 'description', $author_id );
+        $bio     = get_the_author_meta( 'description',  $author_id );
         $avatar  = get_avatar_url( $author_id, [ 'size' => 96 ] );
         $tagline = get_user_meta( $author_id, 'lkst_author_tagline', true );
         $chips   = array_filter( [
@@ -78,7 +109,7 @@ class AuthorBox {
         $html  = '<div class="lkst-author-box">';
         $html .= '<div class="lkst-ab-header">';
         if ( $avatar ) {
-            $html .= '<img src="' . esc_url( $avatar ) . '" alt="' . esc_attr( $name ) . '" class="lkst-ab-avatar" width="80" height="80" loading="lazy" />';
+            $html .= '<img src="' . esc_url( $avatar ) . '" alt="' . esc_attr( $name ) . '" class="lkst-ab-avatar" width="80" height="80" loading="lazy">';
         }
         $html .= '<div class="lkst-ab-identity">';
         $html .= '<strong class="lkst-ab-name">' . esc_html( $name ) . '</strong>';
@@ -116,9 +147,9 @@ class AuthorBox {
         return $html;
     }
 
-    public function render_socials( $atts ) {
-        $atts = shortcode_atts( [ 'author_id' => null ], $atts );
-        $author_id = $atts['author_id'] ? $atts['author_id'] : get_the_author_meta( 'ID' );
+    public function render_socials( $atts ): string {
+        $atts      = shortcode_atts( [ 'author_id' => null ], $atts );
+        $author_id = $this->resolve_author_id( $atts['author_id'] );
         if ( ! $author_id ) return '';
 
         $networks = [

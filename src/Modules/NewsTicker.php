@@ -1,21 +1,27 @@
 <?php
 namespace LK\SiteToolkit\Modules;
 
+use LK\SiteToolkit\Core\ModuleInterface;
+
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * News Ticker Module
  *
  * Outputs a continuously scrolling marquee of recent post titles.
- * Self-contained HTML wrappers ensure compatibility with any page builder.
+ * Separator and link colors use CSS classes (.lkst-ticker__sep, .lkst-ticker__link)
+ * so they pick up CSS custom properties and can be overridden per-site.
  * Usage: [lkst_ticker_posts]
+ *
+ * @package LK\SiteToolkit\Modules
  */
-class NewsTicker {
-    public function init() {
+class NewsTicker implements ModuleInterface {
+
+    public function init(): void {
         add_shortcode( 'lkst_ticker_posts', [ $this, 'render' ] );
     }
 
-    public function render() {
+    public function render(): string {
         $post_types = apply_filters( 'lkst/ticker/post_types', [ 'post' ] );
         $posts = get_posts( [
             'post_type'      => $post_types,
@@ -25,12 +31,15 @@ class NewsTicker {
             'order'          => 'DESC',
         ] );
         if ( empty( $posts ) ) return '';
-        $sep   = '<span style="color:#E8A020;padding:0 14px;flex-shrink:0;">&#9670;</span>';
+
+        // Use CSS classes so the separator color inherits --lkst-primary-color
+        // and theme overrides apply without touching this file.
+        $sep   = '<span class="lkst-ticker__sep">&#9670;</span>';
         $items = '';
         foreach ( $posts as $p ) {
-            $items .= '<a href="' . esc_url( get_permalink( $p->ID ) ) . '" style="color:#F5F0E8;white-space:nowrap;text-decoration:none;flex-shrink:0;">' . esc_html( $p->post_title ) . '</a>' . $sep;
+            $items .= '<a href="' . esc_url( get_permalink( $p->ID ) ) . '" class="lkst-ticker__link">' . esc_html( $p->post_title ) . '</a>' . $sep;
         }
-                $track_content = $items . $items;
+        $track_content = $items . $items; // duplicate for seamless looping
         return '<div class="lkst-ticker"><div class="lkst-ticker__wrap"><div class="lkst-ticker__track">' . $track_content . '</div></div></div>';
     }
 }

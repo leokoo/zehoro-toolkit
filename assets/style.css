@@ -1,16 +1,14 @@
 /* =============================================================================
    Leokoo Site Toolkit — frontend styles
-   Variables use default fallbacks for compatibility without settings.
+   CSS custom properties are injected dynamically via wp_add_inline_style()
+   in Plugin::enqueue_assets(), so they always appear after this stylesheet
+   and win the cascade. Edit colors in WP Admin → Site Toolkit → Visual Styles.
    ============================================================================= */
 
+/* Static non-configurable tokens */
 :root {
-    --lkst-primary-color: #E8A020;
-    --lkst-primary-contrast: #0F1A2E;
-    --lkst-secondary-color: #1ECFC4;
-    --lkst-bg-dark: #0F1A2E;
-    --lkst-bg-light: #F5F0E8;
-    --lkst-text-main: #3D3730;
-    --lkst-text-muted: #8A8478;
+    --lkst-text-main:    #3D3730;
+    --lkst-text-muted:   #8A8478;
     --lkst-border-light: rgba(15, 26, 46, 0.1);
 }
 
@@ -98,6 +96,25 @@
 
 .lkst-ticker__wrap:hover .lkst-ticker__track {
 	animation-play-state: paused;
+}
+
+/* Ticker separator diamond — uses primary brand color via CSS var */
+.lkst-ticker__sep {
+	color: var(--lkst-primary-color, #E8A020);
+	padding: 0 14px;
+	flex-shrink: 0;
+}
+
+/* Ticker post links — light color on the dark ticker strip */
+.lkst-ticker__link {
+	color: #F5F0E8;
+	white-space: nowrap;
+	text-decoration: none;
+	flex-shrink: 0;
+}
+
+.lkst-ticker__link:hover {
+	color: var(--lkst-primary-color, #E8A020);
 }
 
 

@@ -52,3 +52,5 @@ $wpdb->query( $wpdb->prepare(
     "DELETE FROM {$wpdb->usermeta} WHERE meta_key IN ($placeholders)", 
     ...$user_meta_keys 
 ) );
+// 4. Clean up plugin transients (CategoryPills cache, etc.)
+$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_lkst_%' OR option_name LIKE '_transient_timeout_lkst_%'" );

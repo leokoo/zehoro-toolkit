@@ -1,23 +1,37 @@
 <?php
 namespace LK\SiteToolkit\Modules;
 
+use LK\SiteToolkit\Core\ModuleInterface;
+
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Category Pills Module
  *
- * Automatically detects the current archive context and renders a horizontal list
- * of dynamic category/taxonomy pills representing the most popular terms.
+ * Renders a horizontal list of dynamic category/taxonomy pills.
+ * Results are cached in transients (12 h) and invalidated on term changes.
  * Usage: [lkst_top_category_pills limit="8"]
+ *
+ * @package LK\SiteToolkit\Modules
  */
-class CategoryPills {
-    public function init() {
+class CategoryPills implements ModuleInterface {
+
+    public function init(): void {
         add_shortcode( 'lkst_top_category_pills', [ $this, 'render' ] );
+        // Invalidate cache when taxonomy terms change
+        add_action( 'created_term',         [ $this, 'clear_cache' ] );
+        add_action( 'edited_term_taxonomy',  [ $this, 'clear_cache' ] );
+        add_action( 'delete_term',           [ $this, 'clear_cache' ] );
     }
 
-    public function render( $atts ) {
+    public function clear_cache(): void {
         global $wpdb;
-        $atts = shortcode_atts( [ 'limit' => 8 ], $atts );
+        $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_lkst_pills_%' OR option_name LIKE '_transient_timeout_lkst_pills_%'" );
+    }
+
+    public function render( $atts ): string {
+        global $wpdb;
+        $atts  = shortcode_atts( [ 'limit' => 8 ], $atts );
         $limit = max( 1, (int) $atts['limit'] );
 
         $post_type = apply_filters( 'lkst/category_pills/post_type', null );
@@ -27,14 +41,21 @@ class CategoryPills {
             $obj      = get_queried_object();
             $taxonomy = $taxonomy ?: ( $obj->taxonomy ?? 'category' );
             $excl_id  = (int) ( $obj->term_id ?? 0 );
-            $rows = $wpdb->get_results( $wpdb->prepare(
-                "SELECT t.term_id, t.name, t.slug, tt.count AS n
-                 FROM {$wpdb->terms} t
-                 JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
-                 WHERE tt.taxonomy = %s AND t.term_id != %d AND tt.count > 0
-                 ORDER BY n DESC LIMIT %d",
-                $taxonomy, $excl_id, $limit
-            ) );
+
+            $cache_key = 'lkst_pills_' . md5( $taxonomy . $excl_id . $limit );
+            $rows = get_transient( $cache_key );
+            if ( false === $rows ) {
+                $rows = $wpdb->get_results( $wpdb->prepare(
+                    "SELECT t.term_id, t.name, t.slug, tt.count AS n
+                     FROM {$wpdb->terms} t
+                     JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+                     WHERE tt.taxonomy = %s AND t.term_id != %d AND tt.count > 0
+                     ORDER BY n DESC LIMIT %d",
+                    $taxonomy, $excl_id, $limit
+                ) );
+                set_transient( $cache_key, $rows, 12 * HOUR_IN_SECONDS );
+            }
+
             if ( empty( $rows ) ) return '';
             return $this->render_pills( $rows, $taxonomy );
         }
@@ -52,22 +73,27 @@ class CategoryPills {
             return '';
         }
 
-        $rows = $wpdb->get_results( $wpdb->prepare(
-            "SELECT t.term_id, t.name, t.slug, COUNT(tr.object_id) AS n
-             FROM {$wpdb->terms} t
-             JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
-             JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
-             JOIN {$wpdb->posts} p ON tr.object_id = p.ID
-             WHERE tt.taxonomy = %s AND p.post_type = %s AND p.post_status = 'publish'
-             GROUP BY t.term_id ORDER BY n DESC LIMIT %d",
-            $taxonomy, $post_type, $limit
-        ) );
+        $cache_key = 'lkst_pills_' . md5( $taxonomy . $post_type . $limit );
+        $rows = get_transient( $cache_key );
+        if ( false === $rows ) {
+            $rows = $wpdb->get_results( $wpdb->prepare(
+                "SELECT t.term_id, t.name, t.slug, COUNT(tr.object_id) AS n
+                 FROM {$wpdb->terms} t
+                 JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+                 JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
+                 JOIN {$wpdb->posts} p ON tr.object_id = p.ID
+                 WHERE tt.taxonomy = %s AND p.post_type = %s AND p.post_status = 'publish'
+                 GROUP BY t.term_id ORDER BY n DESC LIMIT %d",
+                $taxonomy, $post_type, $limit
+            ) );
+            set_transient( $cache_key, $rows, 12 * HOUR_IN_SECONDS );
+        }
 
         if ( empty( $rows ) ) return '';
         return $this->render_pills( $rows, $taxonomy );
     }
 
-    private function render_pills( $rows, $taxonomy ) {
+    private function render_pills( array $rows, string $taxonomy ): string {
         $html = '<div class="lkst-cat-pills">';
         foreach ( $rows as $row ) {
             $url = get_term_link( (int) $row->term_id, $taxonomy );

@@ -1,40 +1,50 @@
 <?php
 namespace LK\SiteToolkit\Modules;
 
+use LK\SiteToolkit\Core\ModuleInterface;
+
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Table of Contents Module
+ *
+ * Parses H2/H3 headings, injects anchor IDs, and renders a collapsible TOC.
+ * The preparse step reads raw post_content (no do_shortcode) so:
+ *   - shortcodes are not expanded unnecessarily early
+ *   - expensive form/gallery shortcodes don\'t fire outside their normal context
+ *   - Gutenberg block HTML already contains headings as plain HTML tags
  * Usage: [lkst_toc]
+ *
+ * @package LK\SiteToolkit\Modules
  */
-class TableOfContents {
-    public function init() {
+class TableOfContents implements ModuleInterface {
+
+    public function init(): void {
         if ( is_admin() ) {
             add_action( 'admin_init', [ $this, 'register_settings' ] );
         }
-        add_action( 'wp', [ $this, 'preparse_toc_headings' ], 10 );
+        add_action( 'wp',          [ $this, 'preparse_toc_headings' ], 10 );
         add_filter( 'the_content', [ $this, 'process_content' ], 15 );
         add_shortcode( 'lkst_toc', [ $this, 'render_shortcode' ] );
     }
 
-    public static function get_defaults() {
+    public static function get_defaults(): array {
         return [
             'post_types' => [ 'post', 'reviews', 'buying-guides' ],
             'insertion'  => 'auto',
         ];
     }
 
-    public function register_settings() {
+    public function register_settings(): void {
         register_setting( 'lkst_toc_group', 'lkst_toc_settings', [
             'sanitize_callback' => [ $this, 'sanitize_settings' ],
             'default'           => static::get_defaults(),
         ] );
     }
 
-    public function sanitize_settings( $input ) {
+    public function sanitize_settings( $input ): array {
         if ( ! is_array( $input ) ) return static::get_defaults();
-        $out = [];
-        $out['post_types'] = [];
+        $out = [ 'post_types' => [] ];
         if ( ! empty( $input['post_types'] ) && is_array( $input['post_types'] ) ) {
             $valid_pts = array_keys( get_post_types( [ 'public' => true ] ) );
             foreach ( $input['post_types'] as $pt ) {
@@ -50,10 +60,15 @@ class TableOfContents {
 
     /**
      * Runs on the `wp` hook — before Bricks renders any elements.
-     * Pre-parses post headings so the [lkst_toc] shortcode in a sidebar
-     * element can render immediately, without waiting for the_content.
+     * Pre-parses post headings so a [lkst_toc] shortcode in a sidebar
+     * element can render immediately, before the_content processes.
+     *
+     * Uses raw post_content (no do_shortcode) because:
+     *   1. Gutenberg block HTML already contains <h2>/<h3> as plain HTML.
+     *   2. Calling do_shortcode() here expands all shortcodes twice, which
+     *      causes side effects in forms, galleries, and other stateful shortcodes.
      */
-    public function preparse_toc_headings() {
+    public function preparse_toc_headings(): void {
         if ( ! is_singular() ) return;
         $settings = get_option( 'lkst_toc_settings', static::get_defaults() );
         if ( ! in_array( get_post_type(), $settings['post_types'], true ) ) return;
@@ -64,15 +79,17 @@ class TableOfContents {
         $post = get_post();
         if ( ! $post ) return;
 
-        $content        = do_shortcode( $post->post_content );
+        // Raw content — no shortcode expansion, no wpautop.
+        // Headings in Gutenberg posts are already plain HTML here.
+        $content        = $post->post_content;
         $pattern        = '/<h([2-3])([^>]*)>(.*?)<\/h\1>/is';
         $lkst_toc_items = [];
 
-        preg_replace_callback( $pattern, function( $matches ) use ( &$lkst_toc_items ) {
+        preg_replace_callback( $pattern, function ( $matches ) use ( &$lkst_toc_items ) {
             $level = $matches[1];
             $attrs = $matches[2];
             $text  = strip_tags( $matches[3] );
-            if ( preg_match( '/id=[\'"]([^\'"]+)[\'"]/i', $attrs, $id_m ) ) {
+            if ( preg_match( '/id=[\'"]([\'"]+)[\'"]/i', $attrs, $id_m ) ) {
                 $id = $id_m[1];
             } else {
                 $id = sanitize_title( $text );
@@ -83,7 +100,7 @@ class TableOfContents {
         }, $content );
     }
 
-    public function process_content( $content ) {
+    public function process_content( string $content ): string {
         if ( ! is_singular() ) return $content;
         if ( isset( $_GET['bricks'] ) || isset( $_GET['etchwp'] ) || isset( $_GET['elementor-preview'] ) ) return $content;
 
@@ -97,11 +114,11 @@ class TableOfContents {
         $pattern   = '/<h([2-3])([^>]*)>(.*?)<\/h\1>/is';
         $new_items = [];
 
-        $content = preg_replace_callback( $pattern, function( $matches ) use ( &$new_items ) {
+        $content = preg_replace_callback( $pattern, function ( $matches ) use ( &$new_items ) {
             $level      = $matches[1];
             $attributes = $matches[2];
             $text       = strip_tags( $matches[3] );
-            if ( preg_match( '/id=[\'"]([^\'"]+)[\'"]/i', $attributes, $id_matches ) ) {
+            if ( preg_match( '/id=[\'"]([\'"]+)[\'"]/i', $attributes, $id_matches ) ) {
                 $id = $id_matches[1];
             } else {
                 $id          = sanitize_title( $text );
@@ -115,8 +132,8 @@ class TableOfContents {
         $items = ! empty( $lkst_toc_items ) ? $lkst_toc_items : $new_items;
 
         if ( empty( $items ) || count( $items ) < 2 ) {
-            $content = str_replace( '[lkst_toc]', '', $content );
-            return $content;
+            // Remove any [lkst_toc] placeholder — not enough headings to render.
+            return str_replace( '[lkst_toc]', '', $content );
         }
 
         $toc_html = $this->build_toc_html( $items );
@@ -130,19 +147,28 @@ class TableOfContents {
         return $content;
     }
 
-    public function render_shortcode() {
+    /**
+     * Shortcode handler — used when the TOC is placed via a builder shortcode element
+     * (e.g., a Bricks shortcode widget in the sidebar) rather than inside post content.
+     *
+     * Returns the built TOC HTML when enough headings exist, or an empty string.
+     * Never returns the literal "[lkst_toc]" string — that would render as visible
+     * text inside the shortcode element (Bug 4).
+     */
+    public function render_shortcode(): string {
         global $lkst_toc_items;
         if ( ! empty( $lkst_toc_items ) && count( $lkst_toc_items ) >= 2 ) {
             return $this->build_toc_html( $lkst_toc_items );
         }
-        return '[lkst_toc]';
+        // Not enough headings — output nothing.
+        return '';
     }
 
-    private function build_toc_html( $items ) {
-        $html  = '<div class="lkst-toc-wrapper" data-lkst-toc>';
+    private function build_toc_html( array $items ): string {
+        $html  = '<div class="lkst-toc-wrapper is-open" data-lkst-toc>';
         $html .= '<div class="lkst-toc-header">';
         $html .= '<div class="lkst-toc-title"><strong>BROWSE</strong> <span class="lkst-toc-sep">|</span> <div class="lkst-toc-active-text-wrapper"><span class="lkst-toc-active-text">Sections in this article</span></div></div>';
-        $html .= '<button class="lkst-toc-toggle" aria-expanded="false" aria-label="Toggle table of contents">';
+        $html .= '<button class="lkst-toc-toggle" aria-expanded="true" aria-label="Toggle table of contents">';
         $html .= '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
         $html .= '</button>';
         $html .= '</div>';
@@ -156,31 +182,33 @@ class TableOfContents {
         return $html;
     }
 
-    public function render_page() {
+    public function render_page(): void {
         $s          = get_option( 'lkst_toc_settings', static::get_defaults() );
         $post_types = get_post_types( [ 'public' => true ], 'objects' );
         $pt_exclude = [ 'attachment', 'bricks_template', 'etch_template', 'elementor_library', 'ifso_triggers' ];
         ?>
         <div class="wrap">
-            <h1>Table of Contents Settings</h1>
+            <h1><?php esc_html_e( 'Table of Contents Settings', 'leokoo-site-toolkit' ); ?></h1>
             <form method="post" action="options.php">
                 <?php settings_fields( 'lkst_toc_group' ); ?>
                 <table class="form-table">
                     <tr>
-                        <th>Insertion Method</th>
+                        <th><?php esc_html_e( 'Insertion Method', 'leokoo-site-toolkit' ); ?></th>
                         <td>
                             <label>
                                 <input type="radio" name="lkst_toc_settings[insertion]" value="auto" <?php checked( $s['insertion'], 'auto' ); ?>>
-                                <strong>Auto-inject</strong> (Automatically adds the TOC to the very top of the post content)
+                                <strong><?php esc_html_e( 'Auto-inject', 'leokoo-site-toolkit' ); ?></strong>
+                                <?php esc_html_e( '(Automatically adds the TOC to the very top of the post content)', 'leokoo-site-toolkit' ); ?>
                             </label><br><br>
                             <label>
                                 <input type="radio" name="lkst_toc_settings[insertion]" value="shortcode" <?php checked( $s['insertion'], 'shortcode' ); ?>>
-                                <strong>Shortcode Only</strong> (Only renders where you place the <code>[lkst_toc]</code> shortcode in your builder or content)
+                                <strong><?php esc_html_e( 'Shortcode Only', 'leokoo-site-toolkit' ); ?></strong>
+                                <?php esc_html_e( '(Only renders where you place the [lkst_toc] shortcode)', 'leokoo-site-toolkit' ); ?>
                             </label>
                         </td>
                     </tr>
                     <tr>
-                        <th>Active Post Types</th>
+                        <th><?php esc_html_e( 'Active Post Types', 'leokoo-site-toolkit' ); ?></th>
                         <td>
                             <?php foreach ( $post_types as $slug => $pt ) :
                                 if ( in_array( $slug, $pt_exclude, true ) ) continue; ?>
@@ -193,11 +221,11 @@ class TableOfContents {
                                     <code style="margin-left:4px;"><?php echo esc_html( $slug ); ?></code>
                                 </label>
                             <?php endforeach; ?>
-                            <p class="description">Select which post types the TOC should be generated for.</p>
+                            <p class="description"><?php esc_html_e( 'Select which post types the TOC should be generated for.', 'leokoo-site-toolkit' ); ?></p>
                         </td>
                     </tr>
                 </table>
-                <?php submit_button( 'Save Settings' ); ?>
+                <?php submit_button( __( 'Save Settings', 'leokoo-site-toolkit' ) ); ?>
             </form>
         </div>
         <?php
