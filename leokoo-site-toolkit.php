@@ -28,6 +28,17 @@ spl_autoload_register( function( $class ) {
     if ( file_exists( $file ) ) require $file;
 } );
 
+// --- Auto-updater (GitHub) ---
+require_once __DIR__ . '/vendor/yahnis-elsts/plugin-update-checker/plugin-update-checker.php';
+
+$lkst_updater = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+    'https://github.com/leokoo/leokoo-site-toolkit/',
+    __FILE__,
+    'leokoo-site-toolkit'
+);
+$lkst_updater->setBranch( 'main' );
+$lkst_updater->getVcsApi()->enableReleaseAssets();
+
 // Initialize the core plugin
 add_action( 'plugins_loaded', function() {
     load_plugin_textdomain( 'leokoo-site-toolkit', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
