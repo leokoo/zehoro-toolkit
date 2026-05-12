@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "lkst/callout",
   "title": "Callout",
-  "category": "text",
+  "category": "leokoo-site-toolkit",
   "icon": "info",
   "description": "Visual breaks for long-form content.",
   "attributes": {

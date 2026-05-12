@@ -56,6 +56,9 @@ class Plugin {
 		// Frontend assets
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 
+		// Register custom block category
+		add_filter( 'block_categories_all', [ $this, 'register_block_category' ], 10, 2 );
+
 		// 3. Initialise active modules
 		foreach ( self::$registry as $slug => $data ) {
 			if ( in_array( $slug, $active, true ) ) {
@@ -67,6 +70,19 @@ class Plugin {
 				}
 			}
 		}
+	}
+
+	public function register_block_category( $categories, $post ) {
+		return array_merge(
+			[
+				[
+					'slug'  => 'leokoo-site-toolkit',
+					'title' => __( 'Leokoo Site Toolkit', 'leokoo-site-toolkit' ),
+					'icon'  => 'admin-tools',
+				],
+			],
+			$categories
+		);
 	}
 
 	/**

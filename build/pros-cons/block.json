@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "lkst/pros-cons",
   "title": "Pros & Cons",
-  "category": "text",
+  "category": "leokoo-site-toolkit",
   "icon": "columns",
   "description": "Wirecutter-style pros and cons boxes.",
   "editorScript": "file:./index.js",

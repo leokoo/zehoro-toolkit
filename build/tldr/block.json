@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "lkst/tldr",
   "title": "TL;DR / Key Takeaways",
-  "category": "text",
+  "category": "leokoo-site-toolkit",
   "icon": "list-view",
   "description": "A styled summary box for the top of your articles.",
   "attributes": {
