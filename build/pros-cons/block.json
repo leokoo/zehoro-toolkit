@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "lkst/pros-cons",
+  "title": "Pros & Cons",
+  "category": "text",
+  "icon": "columns",
+  "description": "Wirecutter-style pros and cons boxes.",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "textdomain": "leokoo-site-toolkit"
+}

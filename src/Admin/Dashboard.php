@@ -16,7 +16,9 @@ class Dashboard {
 	private array $active;
 
 	public function __construct( array $active = [] ) {
-		$this->active = $active ?: get_option( 'lkst_active_modules', Plugin::DEFAULT_MODULES );
+		$registered = Plugin::get_registered_modules();
+		$default_active = array_keys( array_filter( $registered, function($m) { return ! empty( $m['default'] ); } ) );
+		$this->active = $active ?: get_option( 'lkst_active_modules', $default_active );
 	}
 
 	public function init(): void {
@@ -71,13 +73,6 @@ class Dashboard {
 			add_submenu_page( 'lkst-dashboard', __( 'Author Box Settings', 'leokoo-site-toolkit' ), __( 'Author Box', 'leokoo-site-toolkit' ), 'manage_options', 'lkst-author-box', [ $this, 'render_author_box_settings_page' ] );
 		}
 
-		if ( in_array( 'content_cta', $this->active, true ) ) {
-			// CTAAdmin is already initialised in Plugin::init(); reuse a fresh instance for the render callback.
-			add_submenu_page( 'lkst-dashboard', __( 'Content CTAs', 'leokoo-site-toolkit' ), __( 'Content CTAs', 'leokoo-site-toolkit' ), 'manage_options', 'lkst-content-ctas',
-				[ new CTAAdmin( new \LK\SiteToolkit\Modules\ContentCTA() ), 'render_page' ]
-			);
-		}
-
 		if ( in_array( 'table_of_contents', $this->active, true ) ) {
 			add_submenu_page( 'lkst-dashboard', __( 'Table of Contents', 'leokoo-site-toolkit' ), __( 'Table of Contents', 'leokoo-site-toolkit' ), 'manage_options', 'lkst-toc-settings',
 				[ new \LK\SiteToolkit\Modules\TableOfContents(), 'render_page' ]
@@ -115,24 +110,22 @@ class Dashboard {
 			exit;
 		}
 
-		$active = get_option( 'lkst_active_modules', Plugin::DEFAULT_MODULES );
+		$registered = Plugin::get_registered_modules();
+		$default_active = array_keys( array_filter( $registered, function($m) { return ! empty( $m['default'] ); } ) );
+		$active = get_option( 'lkst_active_modules', $default_active );
 
 		if ( isset( $_GET['updated'] ) ) {
 			echo '<div class="updated notice is-dismissible"><p>' . esc_html__( 'Modules updated successfully.', 'leokoo-site-toolkit' ) . '</p></div>';
 		}
 
-		$modules = [
-			'reading_time'      => [ 'title' => __( 'Reading Time',          'leokoo-site-toolkit' ), 'desc' => __( 'Calculates and displays estimated reading time. Use [lkst_read_time].', 'leokoo-site-toolkit' ), 'settings_link' => '' ],
-			'post_nav'          => [ 'title' => __( 'Post Navigation',       'leokoo-site-toolkit' ), 'desc' => __( 'Renders Previous/Next post navigation links. Use [lkst_post_nav].', 'leokoo-site-toolkit' ), 'settings_link' => '' ],
-			'author_box'        => [ 'title' => __( 'Author Box',            'leokoo-site-toolkit' ), 'desc' => __( 'Full author card with biography, social icons, and CTA buttons. Use [lkst_author_box].', 'leokoo-site-toolkit' ), 'settings_link' => admin_url( 'admin.php?page=lkst-author-box' ) ],
-			'category_pills'    => [ 'title' => __( 'Category Pills',        'leokoo-site-toolkit' ), 'desc' => __( 'Dynamic category/tag pills for archives. Use [lkst_top_category_pills].', 'leokoo-site-toolkit' ), 'settings_link' => '' ],
-			'news_ticker'       => [ 'title' => __( 'News Ticker',           'leokoo-site-toolkit' ), 'desc' => __( 'Horizontal scrolling marquee for recent posts. Use [lkst_ticker_posts].', 'leokoo-site-toolkit' ), 'settings_link' => '' ],
-			'table_of_contents' => [ 'title' => __( 'Table of Contents',    'leokoo-site-toolkit' ), 'desc' => __( 'Wirecutter-style TOC. Auto-injects at the top of posts, or use [lkst_toc].', 'leokoo-site-toolkit' ), 'settings_link' => '' ],
-			'content_cta'       => [ 'title' => __( 'Content CTAs',          'leokoo-site-toolkit' ), 'desc' => __( 'Unified Power, Middle, and Sidebar CTA engine with category overrides.', 'leokoo-site-toolkit' ), 'settings_link' => admin_url( 'admin.php?page=lkst-content-ctas' ) ],
-			'rss_support'       => [ 'title' => __( 'RSS CPT Support',       'leokoo-site-toolkit' ), 'desc' => __( 'Include custom post types in your main site RSS feed.', 'leokoo-site-toolkit' ), 'settings_link' => admin_url( 'admin.php?page=lkst-rss-feed' ) ],
-			'archive_cleanup'   => [ 'title' => __( 'Archive Title Cleanup', 'leokoo-site-toolkit' ), 'desc' => __( 'Removes "Category:", "Tag:", etc. prefixes from archive titles.', 'leokoo-site-toolkit' ), 'settings_link' => '' ],
-			'styles'            => [ 'title' => __( 'Visual Styles',         'leokoo-site-toolkit' ), 'desc' => __( 'Customize brand colors for Author Box, CTAs, and Category Pills.', 'leokoo-site-toolkit' ), 'settings_link' => admin_url( 'admin.php?page=lkst-styles' ) ],
-		];
+		$modules = [];
+		foreach ( $registered as $slug => $data ) {
+			$modules[ $slug ] = [
+				'title' => $data['title'] ?? $slug,
+				'desc'  => $data['desc'] ?? '',
+				'settings_link' => ! empty( $data['settings_page'] ) ? admin_url( 'admin.php?page=' . $data['settings_page'] ) : '',
+			];
+		}
 		?>
 		<div class="wrap lkst-dashboard">
 			<h1><?php esc_html_e( 'Leokoo Site Toolkit — Modules', 'leokoo-site-toolkit' ); ?></h1>

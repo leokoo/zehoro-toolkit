@@ -6,79 +6,66 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * Core plugin bootstrap.
  *
- * Owns the canonical DEFAULT_MODULES list (single source of truth),
- * stores live module instances so the admin Dashboard can reuse them,
- * and always injects CSS custom properties via wp_add_inline_style so
- * they override the stylesheet regardless of the styles module toggle.
+ * Implements a Module Registry Pattern. Modules self-register their meta
+ * and the plugin uses this registry to power the dashboard and frontend.
  *
  * @package LK\SiteToolkit\Core
  */
 class Plugin {
 
-	/**
-	 * Single source of truth for the default-active module list.
-	 * Dashboard and activate() both reference this constant.
-	 */
-	const DEFAULT_MODULES = [
-		'reading_time', 'post_nav', 'author_box', 'category_pills',
-		'news_ticker', 'content_cta', 'table_of_contents', 'styles',
-		'rss_support', 'archive_cleanup',
-	];
+	/** @var array Registered modules meta. Keyed by slug. */
+	private static array $registry = [];
 
-	/** @var ModuleInterface[] Keyed by module slug. */
+	/** @var ModuleInterface[] Live instances of active modules. */
 	private array $modules = [];
 
-	public function init(): void {
-		$active = get_option( 'lkst_active_modules', self::DEFAULT_MODULES );
+	/**
+	 * Register a module into the toolkit registry.
+	 */
+	public static function register_module( string $slug, string $class, array $meta ): void {
+		self::$registry[ $slug ] = array_merge( $meta, [ 'class' => $class ] );
+	}
 
-		// Admin: init dashboard + CTA admin layer
+	/**
+	 * Retrieve all registered modules for the dashboard.
+	 */
+	public static function get_registered_modules(): array {
+		return self::$registry;
+	}
+
+	public function init(): void {
+		// 1. Auto-discover and register all modules
+		$dir = __DIR__ . '/../Modules/';
+		foreach ( glob( $dir . '*.php' ) as $file ) {
+			$class = '\\LK\\SiteToolkit\\Modules\\' . basename( $file, '.php' );
+			if ( method_exists( $class, 'register' ) ) {
+				$class::register();
+			}
+		}
+
+		// 2. Fetch active settings
+		$default_active = array_keys( array_filter( self::$registry, function( $m ) { return ! empty( $m['default'] ); } ) );
+		$active = get_option( 'lkst_active_modules', $default_active );
+
+		// Admin: init dashboard
 		if ( is_admin() ) {
 			$admin = new \LK\SiteToolkit\Admin\Dashboard( $active );
 			$admin->init();
-
-			// CTA admin hooks (settings registration, meta box) live in CTAAdmin, not ContentCTA.
-			// Initialise it regardless of whether content_cta is in $active so meta boxes
-			// still appear after a toggle — the frontend injection is what needs the module active.
-			$cta_admin = new \LK\SiteToolkit\Admin\CTAAdmin( new \LK\SiteToolkit\Modules\ContentCTA() );
-			$cta_admin->init();
 		}
 
 		// Frontend assets
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 
-		// Initialise modules
-		$map = [
-			'reading_time'      => \LK\SiteToolkit\Modules\ReadingTime::class,
-			'post_nav'          => \LK\SiteToolkit\Modules\PostNav::class,
-			'author_box'        => \LK\SiteToolkit\Modules\AuthorBox::class,
-			'category_pills'    => \LK\SiteToolkit\Modules\CategoryPills::class,
-			'news_ticker'       => \LK\SiteToolkit\Modules\NewsTicker::class,
-			'table_of_contents' => \LK\SiteToolkit\Modules\TableOfContents::class,
-			'content_cta'       => \LK\SiteToolkit\Modules\ContentCTA::class,
-		];
-
-		foreach ( $map as $slug => $class ) {
-			if ( in_array( $slug, $active, true ) && class_exists( $class ) ) {
-				/** @var ModuleInterface $module */
-				$module = new $class();
-				$module->init();
-				$this->modules[ $slug ] = $module;
+		// 3. Initialise active modules
+		foreach ( self::$registry as $slug => $data ) {
+			if ( in_array( $slug, $active, true ) ) {
+				$class = $data['class'];
+				if ( class_exists( $class ) && is_subclass_of( $class, ModuleInterface::class ) ) {
+					$module = new $class();
+					$module->init();
+					$this->modules[ $slug ] = $module;
+				}
 			}
-		}
-
-		// Inline modules (no dedicated class needed)
-		if ( in_array( 'archive_cleanup', $active, true ) ) {
-			add_filter( 'get_the_archive_title_prefix', '__return_false' );
-		}
-
-		if ( in_array( 'rss_support', $active, true ) ) {
-			add_filter( 'request', static function ( $qv ) {
-				if ( ! isset( $qv['feed'] ) || isset( $qv['post_type'] ) ) return $qv;
-				$selected      = get_option( 'lkst_rss_post_types', [ 'post' ] );
-				if ( empty( $selected ) ) $selected = [ 'post' ];
-				$qv['post_type'] = $selected;
-				return $qv;
-			} );
 		}
 	}
 
@@ -96,8 +83,6 @@ class Plugin {
 		wp_enqueue_style( 'leokoo-site-toolkit', LKST_URL . 'assets/style.css', [], LKST_VERSION );
 
 		// Always inject CSS custom properties via wp_add_inline_style.
-		// This outputs AFTER the <link> tag, so it wins the cascade over any
-		// :root block that may remain in the stylesheet.
 		$primary   = get_option( 'lkst_color_primary',          '#E8A020' );
 		$contrast  = get_option( 'lkst_color_primary_contrast', '#0F1A2E' );
 		$secondary = get_option( 'lkst_color_secondary',        '#1ECFC4' );
@@ -109,26 +94,27 @@ class Plugin {
 			esc_attr( $bg_dark ), esc_attr( $bg_light )
 		) );
 
-		$active = get_option( 'lkst_active_modules', self::DEFAULT_MODULES );
-		if ( in_array( 'table_of_contents', $active, true ) ) {
+		if ( isset( $this->modules['table_of_contents'] ) ) {
 			wp_enqueue_script( 'lkst-toc', LKST_URL . 'assets/toc.js', [], LKST_VERSION, true );
 		}
 	}
 
 	public static function activate(): void {
-		add_option( 'lkst_active_modules', self::DEFAULT_MODULES );
-		if ( ! get_option( 'lkst_content_cta_settings' ) ) {
-			add_option( 'lkst_content_cta_settings', \LK\SiteToolkit\Modules\ContentCTA::get_defaults() );
+		// Initialize to scan default modules on activation
+		$dir = __DIR__ . '/../Modules/';
+		foreach ( glob( $dir . '*.php' ) as $file ) {
+			$class = '\\LK\\SiteToolkit\\Modules\\' . basename( $file, '.php' );
+			if ( method_exists( $class, 'register' ) ) {
+				$class::register();
+			}
 		}
+		$default_active = array_keys( array_filter( self::$registry, function( $m ) { return ! empty( $m['default'] ); } ) );
+		
+		add_option( 'lkst_active_modules', $default_active );
 	}
 
-	/**
-	 * Deactivation hook — flush transient caches.
-	 * Does NOT delete persistent options (those only go on uninstall).
-	 */
 	public static function deactivate(): void {
 		global $wpdb;
-		// Remove all plugin transients (CategoryPills cache, etc.)
 		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_lkst_%' OR option_name LIKE '_transient_timeout_lkst_%'" );
 		flush_rewrite_rules();
 	}

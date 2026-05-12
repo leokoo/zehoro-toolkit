@@ -103,6 +103,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // On mobile, start collapsed (PHP outputs is-open, mobile shows dropdown)
         if (window.innerWidth <= 768) {
             wrapper.classList.remove('is-open');
+        } else {
+            wrapper.classList.remove('is-open'); // Force close on desktop too if cached
         }
 
         // Init state

@@ -1,0 +1,148 @@
+<?php
+namespace LK\SiteToolkit\Modules;
+use LK\SiteToolkit\Core\Plugin;
+use LK\SiteToolkit\Core\ModuleInterface;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+/**
+ * FAQ Module (Free Version)
+ *
+ * Provides a manually placed shortcode [lkst_faq] for styled accordions.
+ * Automatically aggregates all FAQs on the page and outputs FAQPage JSON-LD schema.
+ * Features a "Polite Pre-flight Check" to disable schema if an SEO plugin is detected.
+ *
+ * @package LK\SiteToolkit\Modules
+ */
+class FAQ implements ModuleInterface {
+    
+    private array $faqs = [];
+
+    public static function register(): void {
+        Plugin::register_module( 'faq', self::class, [
+            'title'         => 'FAQ Accordions',
+            'desc'          => 'Beautiful FAQ accordions that automatically generate FAQPage JSON-LD schema. Use [lkst_faq question="..."]Answer[/lkst_faq].',
+            'default'       => true,
+            'settings_page' => 'lkst-faq'
+        ] );
+    }
+
+    public function init(): void {
+        add_shortcode( 'lkst_faq', [ $this, 'render_shortcode' ] );
+        add_action( 'wp_footer', [ $this, 'output_schema' ], 20 );
+
+        if ( is_admin() ) {
+            $this->register_admin_hooks();
+        }
+    }
+
+    private function register_admin_hooks(): void {
+        add_action( 'admin_init', [ $this, 'register_settings' ] );
+        add_action( 'admin_menu', [ $this, 'register_settings_page' ] );
+    }
+
+    public function register_settings(): void {
+        register_setting( 'lkst_faq_group', 'lkst_faq_schema_mode', [ 'default' => 'auto', 'sanitize_callback' => 'sanitize_text_field' ] );
+    }
+
+    public function register_settings_page(): void {
+        add_submenu_page(
+            null,
+            __( 'FAQ Settings', 'leokoo-site-toolkit' ),
+            __( 'FAQ Settings', 'leokoo-site-toolkit' ),
+            'manage_options',
+            'lkst-faq',
+            [ $this, 'render_page' ]
+        );
+    }
+
+    public function render_page(): void {
+        if ( ! current_user_can( 'manage_options' ) ) return;
+        $mode = get_option( 'lkst_faq_schema_mode', 'auto' );
+        ?>
+        <div class="wrap">
+            <h1><?php esc_html_e( 'FAQ Accordion Settings', 'leokoo-site-toolkit' ); ?></h1>
+            <p><?php esc_html_e( 'Use the shortcode to output styled FAQs in your content:', 'leokoo-site-toolkit' ); ?><br>
+            <code>[lkst_faq question="Your question?"]Your answer.[/lkst_faq]</code></p>
+            
+            <form method="post" action="options.php">
+                <?php settings_fields( 'lkst_faq_group' ); ?>
+                <table class="form-table">
+                    <tr>
+                        <th><label for="lkst_faq_schema_mode"><?php esc_html_e( 'FAQPage Schema (JSON-LD)', 'leokoo-site-toolkit' ); ?></label></th>
+                        <td>
+                            <select name="lkst_faq_schema_mode" id="lkst_faq_schema_mode">
+                                <option value="auto" <?php selected($mode, 'auto'); ?>><?php esc_html_e('Auto (Disable if SEO plugin detected)', 'leokoo-site-toolkit'); ?></option>
+                                <option value="force" <?php selected($mode, 'force'); ?>><?php esc_html_e('Always Output Schema', 'leokoo-site-toolkit'); ?></option>
+                                <option value="off" <?php selected($mode, 'off'); ?>><?php esc_html_e('Never Output Schema', 'leokoo-site-toolkit'); ?></option>
+                            </select>
+                            <p class="description"><?php esc_html_e('To prevent Google Search Console errors, we recommend Auto. We will safely step aside and let your SEO plugin handle schema if we detect Yoast, RankMath, or SureRank are active.', 'leokoo-site-toolkit'); ?></p>
+                        </td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+        </div>
+        <?php
+    }
+
+    public function render_shortcode( $atts, $content = null ): string {
+        $atts = shortcode_atts( [
+            'question' => 'Question?',
+        ], $atts, 'lkst_faq' );
+
+        $question = sanitize_text_field( $atts['question'] );
+        $answer = do_shortcode( wpautop( wp_kses_post( $content ) ) );
+
+        // Store for schema output later
+        $this->faqs[] = [
+            'question' => $question,
+            'answer'   => wp_strip_all_tags( $answer )
+        ];
+
+        // Return HTML accordion
+        return sprintf(
+            '<details class="lkst-faq-accordion" style="margin-bottom:1.5em; border:1px solid var(--lkst-bg-light, #E2E8F0); border-radius:6px; background-color:#fff;">
+                <summary style="font-weight:600; font-size:18px; cursor:pointer; padding:16px 20px; list-style-position:inside; color:var(--lkst-primary-contrast, #2C3E50);">%s</summary>
+                <div class="lkst-faq-answer" style="padding:0 20px 20px 20px; line-height:1.6; color:#4A5568;">%s</div>
+            </details>',
+            esc_html( $question ),
+            $answer
+        );
+    }
+
+    public function output_schema(): void {
+        if ( empty( $this->faqs ) ) return;
+
+        $mode = get_option( 'lkst_faq_schema_mode', 'auto' );
+        
+        if ( $mode === 'off' ) return;
+        
+        if ( $mode === 'auto' ) {
+            $has_seo = defined('WPSEO_VERSION') || defined('RANK_MATH_VERSION') || class_exists('SureRank\\SureRank');
+            if ( $has_seo ) {
+                echo '<!-- LKST: FAQPage Schema bypassed. Polite mode detected active SEO plugin. -->';
+                return;
+            }
+        }
+
+        $schema = [
+            '@context'   => 'https://schema.org',
+            '@type'      => 'FAQPage',
+            'mainEntity' => []
+        ];
+
+        foreach ( $this->faqs as $faq ) {
+            $schema['mainEntity'][] = [
+                '@type'          => 'Question',
+                'name'           => $faq['question'],
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => $faq['answer']
+                ]
+            ];
+        }
+
+        echo '<script type="application/ld+json" class="lkst-faq-schema">' . wp_json_encode( $schema ) . '</script>' . "\n";
+    }
+}

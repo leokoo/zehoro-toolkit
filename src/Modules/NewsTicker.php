@@ -1,5 +1,6 @@
 <?php
 namespace LK\SiteToolkit\Modules;
+use LK\SiteToolkit\Core\Plugin;
 
 use LK\SiteToolkit\Core\ModuleInterface;
 
@@ -15,7 +16,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @package LK\SiteToolkit\Modules
  */
-class NewsTicker implements ModuleInterface {
+class NewsTicker implements \LK\SiteToolkit\Core\ModuleInterface {
+
+    public static function register(): void {
+        Plugin::register_module( 'news_ticker', self::class, [
+            'title'   => 'News Ticker',
+            'desc'    => 'Horizontal scrolling marquee for recent posts. Use [lkst_ticker_posts].',
+            'default' => true
+        ] );
+    }
+
 
     public function init(): void {
         add_shortcode( 'lkst_ticker_posts', [ $this, 'render' ] );

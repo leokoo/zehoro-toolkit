@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "lkst/cons",
+  "title": "Cons",
+  "parent": [
+    "lkst/pros-cons"
+  ],
+  "category": "text",
+  "icon": "no",
+  "description": "Cons list.",
+  "attributes": {
+    "content": {
+      "type": "string",
+      "source": "html",
+      "selector": ".lkst-cons-list"
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "textdomain": "leokoo-site-toolkit"
+}

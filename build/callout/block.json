@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "lkst/callout",
+  "title": "Callout",
+  "category": "text",
+  "icon": "info",
+  "description": "Visual breaks for long-form content.",
+  "attributes": {
+    "type": {
+      "type": "string",
+      "default": "info"
+    },
+    "content": {
+      "type": "string",
+      "source": "html",
+      "selector": ".lkst-callout-content"
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "textdomain": "leokoo-site-toolkit"
+}

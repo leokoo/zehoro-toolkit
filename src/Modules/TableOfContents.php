@@ -1,5 +1,6 @@
 <?php
 namespace LK\SiteToolkit\Modules;
+use LK\SiteToolkit\Core\Plugin;
 
 use LK\SiteToolkit\Core\ModuleInterface;
 
@@ -17,7 +18,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @package LK\SiteToolkit\Modules
  */
-class TableOfContents implements ModuleInterface {
+class TableOfContents implements \LK\SiteToolkit\Core\ModuleInterface {
+
+    public static function register(): void {
+        Plugin::register_module( 'table_of_contents', self::class, [
+            'title'   => 'Table of Contents',
+            'desc'    => 'Wirecutter-style TOC. Auto-injects at the top of posts, or use [lkst_toc].',
+            'default' => true,
+            'settings_page' => 'lkst-toc-settings'
+        ] );
+    }
+
 
     public function init(): void {
         if ( is_admin() ) {
@@ -79,6 +90,13 @@ class TableOfContents implements ModuleInterface {
         $post = get_post();
         if ( ! $post ) return;
 
+        $cache_key = 'lkst_toc_' . $post->ID;
+        $cached = get_transient( $cache_key );
+        if ( is_array( $cached ) && isset( $cached['time'] ) && $cached['time'] === $post->post_modified ) {
+            $lkst_toc_items = $cached['items'];
+            return;
+        }
+
         // Raw content — no shortcode expansion, no wpautop.
         // Headings in Gutenberg posts are already plain HTML here.
         $content        = $post->post_content;
@@ -89,7 +107,7 @@ class TableOfContents implements ModuleInterface {
             $level = $matches[1];
             $attrs = $matches[2];
             $text  = strip_tags( $matches[3] );
-            if ( preg_match( '/id=[\'"]([\'"]+)[\'"]/i', $attrs, $id_m ) ) {
+            if ( preg_match( '/id=[\'"]([^\'"]+)[\'"]/i', $attrs, $id_m ) ) {
                 $id = $id_m[1];
             } else {
                 $id = sanitize_title( $text );
@@ -98,6 +116,8 @@ class TableOfContents implements ModuleInterface {
             $lkst_toc_items[] = [ 'level' => $level, 'id' => $id, 'text' => trim( $text ) ];
             return $matches[0];
         }, $content );
+        
+        set_transient( $cache_key, [ 'time' => $post->post_modified, 'items' => $lkst_toc_items ], 7 * DAY_IN_SECONDS );
     }
 
     public function process_content( string $content ): string {
@@ -165,10 +185,10 @@ class TableOfContents implements ModuleInterface {
     }
 
     private function build_toc_html( array $items ): string {
-        $html  = '<div class="lkst-toc-wrapper is-open" data-lkst-toc>';
+        $html  = '<div class="lkst-toc-wrapper" data-lkst-toc>';
         $html .= '<div class="lkst-toc-header">';
         $html .= '<div class="lkst-toc-title"><strong>BROWSE</strong> <span class="lkst-toc-sep">|</span> <div class="lkst-toc-active-text-wrapper"><span class="lkst-toc-active-text">Sections in this article</span></div></div>';
-        $html .= '<button class="lkst-toc-toggle" aria-expanded="true" aria-label="Toggle table of contents">';
+        $html .= '<button class="lkst-toc-toggle" aria-expanded="false" aria-label="Toggle table of contents">';
         $html .= '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
         $html .= '</button>';
         $html .= '</div>';

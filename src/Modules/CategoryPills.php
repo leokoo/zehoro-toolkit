@@ -1,5 +1,6 @@
 <?php
 namespace LK\SiteToolkit\Modules;
+use LK\SiteToolkit\Core\Plugin;
 
 use LK\SiteToolkit\Core\ModuleInterface;
 
@@ -14,7 +15,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @package LK\SiteToolkit\Modules
  */
-class CategoryPills implements ModuleInterface {
+class CategoryPills implements \LK\SiteToolkit\Core\ModuleInterface {
+
+    public static function register(): void {
+        Plugin::register_module( 'category_pills', self::class, [
+            'title'   => 'Category Pills',
+            'desc'    => 'Dynamic post category or tag pills for archives. Use [lkst_top_category_pills].',
+            'default' => true
+        ] );
+    }
+
 
     public function init(): void {
         add_shortcode( 'lkst_top_category_pills', [ $this, 'render' ] );

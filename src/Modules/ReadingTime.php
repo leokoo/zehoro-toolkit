@@ -1,5 +1,6 @@
 <?php
 namespace LK\SiteToolkit\Modules;
+use LK\SiteToolkit\Core\Plugin;
 
 use LK\SiteToolkit\Core\ModuleInterface;
 
@@ -16,7 +17,16 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @package LK\SiteToolkit\Modules
  */
-class ReadingTime implements ModuleInterface {
+class ReadingTime implements \LK\SiteToolkit\Core\ModuleInterface {
+
+    public static function register(): void {
+        Plugin::register_module( 'reading_time', self::class, [
+            'title'   => 'Reading Time',
+            'desc'    => 'Calculates and displays estimated reading time. Use [lkst_read_time].',
+            'default' => true
+        ] );
+    }
+
 
     public function init(): void {
         add_shortcode( 'lkst_read_time', [ $this, 'render' ] );
