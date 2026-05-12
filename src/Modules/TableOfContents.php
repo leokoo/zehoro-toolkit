@@ -138,7 +138,7 @@ class TableOfContents implements \LK\SiteToolkit\Core\ModuleInterface {
             $level      = $matches[1];
             $attributes = $matches[2];
             $text       = strip_tags( $matches[3] );
-            if ( preg_match( '/id=[\'"]([\'"]+)[\'"]/i', $attributes, $id_matches ) ) {
+            if ( preg_match( '/id=[\'"]([^\'"]+)[\'"]/i', $attributes, $id_matches ) ) {
                 $id = $id_matches[1];
             } else {
                 $id          = sanitize_title( $text );
