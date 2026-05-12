@@ -17,8 +17,7 @@
       "selector": ".lkst-callout-content"
     }
   },
-  "editorScript": "file:./index.js",
-  "editorStyle": "file:./index.css",
-  "style": "file:./style-index.css",
+  "editorScript": "file:../callout.js",
+  "style": "file:../style-callout.css",
   "textdomain": "leokoo-site-toolkit"
 }

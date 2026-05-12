@@ -16,8 +16,7 @@
       "selector": ".lkst-cons-list"
     }
   },
-  "editorScript": "file:./index.js",
-  "editorStyle": "file:./index.css",
-  "style": "file:./style-index.css",
+  "editorScript": "file:../cons.js",
+  "style": "file:../style-cons.css",
   "textdomain": "leokoo-site-toolkit"
 }

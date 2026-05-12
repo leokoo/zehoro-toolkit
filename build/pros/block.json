@@ -16,8 +16,7 @@
       "selector": ".lkst-pros-list"
     }
   },
-  "editorScript": "file:./index.js",
-  "editorStyle": "file:./index.css",
-  "style": "file:./style-index.css",
+  "editorScript": "file:../pros.js",
+  "style": "file:../style-pros.css",
   "textdomain": "leokoo-site-toolkit"
 }
