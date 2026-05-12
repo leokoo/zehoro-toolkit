@@ -1,6 +1,6 @@
 # Leokoo Site Toolkit
 
-A lightweight, builder-agnostic utility suite for WordPress sites. Designed to replace bloated ecosystem plugins, this toolkit delivers highly-optimized frontend components like a Wirecutter-style Table of Contents, Author Boxes, and an intelligent Content CTA engine.
+A lightweight, builder-agnostic utility suite for WordPress sites. Designed to replace bloated ecosystem plugins, this toolkit delivers highly-optimized frontend components like a Wirecutter-style Table of Contents and Author Boxes.
 
 Originally developed for Bricks Builder, it has been fully refactored into a builder-agnostic architecture, meaning it works flawlessly with Bricks, EtchWP, Gutenberg, or Elementor.
 
@@ -13,13 +13,7 @@ A smart, zero-dependency TOC that automatically parses post content and generate
 - **Dynamic Scroll-Spy:** The header text updates dynamically as the user scrolls past sections.
 - **Seamless Marquee:** If a heading is too long for a mobile screen, it elegantly fades and triggers an infinite horizontal CSS scroll.
 
-### 2. Intelligent Content CTAs
-A unified injection engine for Power CTAs, Middle CTAs, and Sidebar CTAs.
-- **Smart Injection:** Automatically injects newsletter forms and calls-to-action into the content stream based on paragraph counts and percentage thresholds.
-- **Deepest Match Overrides:** Granular category targeting allows specific CTAs to override default rules based on the post's deepest taxonomy level.
-- **Flexible Layouts:** Supports text-only, image-left, image-right, and full-width image layouts.
-
-### 3. Essential Editorial Utilities
+### 2. Essential Editorial Utilities
 - **Author Box (`[lkst_author_box]`):** A beautiful author profile card supporting custom taglines, credential chips, and integrated social links.
 - **Reading Time (`[lkst_read_time]`):** Dynamic word-count analysis for "X min read" estimates.
 - **Category Pills (`[lkst_top_category_pills]`):** Dynamic term queries to display the most popular categories/tags for custom archive layouts.
