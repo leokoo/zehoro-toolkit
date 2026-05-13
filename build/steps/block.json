@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "lkst/steps",
+  "title": "Steps / Process",
+  "category": "leokoo-site-toolkit",
+  "icon": "list-view",
+  "description": "Numbered how-to steps with HowTo schema.",
+  "keywords": ["steps", "process", "how-to", "tutorial"],
+  "attributes": {
+    "taskName": {
+      "type": "string",
+      "default": ""
+    },
+    "steps": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide"]
+  },
+  "editorScript": "lkst-steps-editor",
+  "textdomain": "leokoo-site-toolkit"
+}

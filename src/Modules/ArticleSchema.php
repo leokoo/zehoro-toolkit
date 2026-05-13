@@ -56,6 +56,20 @@ class ArticleSchema implements ModuleInterface {
             || defined( 'SURERANK_VERSION' );                  // SureRank (constant)
     }
 
+    /**
+     * Returns true if WP Review Pro is active.
+     * When true, suppress our schema on review post types to avoid duplicate
+     * Review JSON-LD (WP Review Pro emits its own at priority 10).
+     * Use add_filter( 'lkst_article_schema_suppress_wp_review', '__return_false' )
+     * to override if you want both outputs (not recommended).
+     */
+    public static function wp_review_pro_active(): bool {
+        return apply_filters(
+            'lkst_article_schema_suppress_wp_review',
+            defined( 'MTS_WP_REVIEW_DB_TABLE' )
+        );
+    }
+
     // ── Schema type resolution ───────────────────────────────────────────────
 
     public static function get_schema_type( string $post_type ): string {
@@ -152,6 +166,9 @@ class ArticleSchema implements ModuleInterface {
 
         global $post;
 
+        // WP Review Pro handles its own Review JSON-LD — don't duplicate it.
+        if ( self::wp_review_pro_active() ) return;
+
         // Skip pages unless explicitly opted in
         if ( get_post_type( $post ) === 'page' && ! apply_filters( 'lkst_article_schema_on_pages', false ) ) {
             return;
@@ -186,12 +203,21 @@ class ArticleSchema implements ModuleInterface {
     }
 
     public function render_meta_box( \WP_Post $post ): void {
-        // ── Conflict warning ────────────────────────────────────────────────
+        // ── Conflict warning — SEO plugin ────────────────────────────────────
         if ( self::seo_plugin_active() ) {
             echo '<p style="color:#856404;background:#fff3cd;padding:8px 10px;border-radius:4px;font-size:12px;margin:0;line-height:1.5;">';
             echo '⚠️ <strong>Schema output disabled.</strong><br>An SEO plugin (Yoast / SEOPress / RankMath / AIOSEO / SureRank) is already active — LKST will not duplicate the schema.';
             echo '</p>';
             echo '<p style="font-size:11px;color:#999;margin:8px 0 0;">To override:<br><code>add_filter(\'lkst_article_schema_force\', \'__return_true\');</code></p>';
+            return;
+        }
+
+        // ── Conflict warning — WP Review Pro ─────────────────────────────────
+        if ( self::wp_review_pro_active() ) {
+            echo '<p style="color:#856404;background:#fff3cd;padding:8px 10px;border-radius:4px;font-size:12px;margin:0;line-height:1.5;">';
+            echo '⚠️ <strong>Schema output disabled.</strong><br>WP Review Pro is active and handles its own Review JSON-LD — LKST will not duplicate it.';
+            echo '</p>';
+            echo '<p style="font-size:11px;color:#999;margin:8px 0 0;">To override:<br><code>add_filter(\'lkst_article_schema_suppress_wp_review\', \'__return_false\');</code></p>';
             return;
         }
 
