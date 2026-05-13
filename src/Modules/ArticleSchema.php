@@ -8,23 +8,68 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class ArticleSchema implements ModuleInterface {
 
+    /**
+     * Default post-type → schema.org @type map.
+     * Filterable via lkst_article_schema_type_map.
+     */
+    private static array $type_map = [
+        'post'     => 'BlogPosting',
+        'page'     => 'WebPage',
+        'recipe'   => 'Recipe',
+        'recipes'  => 'Recipe',
+        'review'   => 'Review',
+        'reviews'  => 'Review',
+        'service'  => 'Service',
+        'services' => 'Service',
+        'product'  => 'Product',
+    ];
+
     public static function register(): void {
         Plugin::register_module( 'article_schema', self::class, [
             'title'   => 'Article Schema (E-E-A-T)',
-            'desc'    => 'Automatically outputs JSON-LD Article schema in the head of single posts.',
+            'desc'    => 'Post-type-aware JSON-LD schema (BlogPosting, Recipe, Review, Service…). Skips automatically if Yoast / SEOPress / RankMath / AIOSEO / SureRank is active.',
             'default' => true
         ] );
     }
 
     public function init(): void {
-        add_action( 'wp_head', [ $this, 'output_schema' ] );
+        add_action( 'wp_head',     [ $this, 'output_schema' ] );
+        add_action( 'add_meta_boxes', [ $this, 'register_meta_box' ] );
     }
 
-    public function output_schema(): void {
-        if ( ! is_single() ) return;
+    // ── SEO plugin conflict detection ────────────────────────────────────────
 
-        global $post;
+    /**
+     * Returns true if a major SEO plugin that already outputs schema is active.
+     * Use add_filter( 'lkst_article_schema_force', '__return_true' ) to bypass.
+     */
+    public static function seo_plugin_active(): bool {
+        if ( apply_filters( 'lkst_article_schema_force', false ) ) {
+            return false;
+        }
 
+        return defined( 'WPSEO_VERSION' )                      // Yoast SEO
+            || defined( 'SEOPRESS_VERSION' )                   // SEOPress
+            || defined( 'RANK_MATH_VERSION' )                  // Rank Math
+            || defined( 'AIOSEO_VERSION' )                     // All-in-One SEO
+            || class_exists( 'SureRank\Core\SureRank' )        // SureRank (class)
+            || defined( 'SURERANK_VERSION' );                  // SureRank (constant)
+    }
+
+    // ── Schema type resolution ───────────────────────────────────────────────
+
+    public static function get_schema_type( string $post_type ): string {
+        $map = apply_filters( 'lkst_article_schema_type_map', self::$type_map );
+        return $map[ $post_type ] ?? 'Article';
+    }
+
+    // ── Schema builder (shared by front-end output and editor preview) ───────
+
+    public static function build_schema( \WP_Post $post ): array {
+        $post_type   = get_post_type( $post );
+        $schema_type = self::get_schema_type( $post_type );
+
+        // Author
         $author_id   = $post->post_author;
         $author_name = get_the_author_meta( 'display_name', $author_id );
         $author_url  = get_author_posts_url( $author_id );
@@ -35,41 +80,40 @@ class ArticleSchema implements ModuleInterface {
             'url'   => $author_url,
         ];
 
-        // Override URL if the user has a custom website entered in their profile
-        $custom_author_url = get_the_author_meta( 'user_url', $author_id );
-        if ( ! empty( $custom_author_url ) ) {
-            $author_schema['url'] = esc_url( $custom_author_url );
+        $custom_url = get_the_author_meta( 'user_url', $author_id );
+        if ( ! empty( $custom_url ) ) {
+            $author_schema['url'] = esc_url( $custom_url );
         }
 
-        // Add social links from AuthorBox if available (lkst_author_linkedin, etc)
         $linkedin = get_the_author_meta( 'lkst_author_linkedin', $author_id );
         $twitter  = get_the_author_meta( 'lkst_author_twitter', $author_id );
-        $same_as  = [];
-        if ( ! empty( $linkedin ) ) $same_as[] = esc_url( $linkedin );
-        if ( ! empty( $twitter ) ) $same_as[] = esc_url( $twitter );
+        $same_as  = array_values( array_filter( [ $linkedin, $twitter ] ) );
         if ( ! empty( $same_as ) ) {
-            $author_schema['sameAs'] = $same_as;
+            $author_schema['sameAs'] = array_map( 'esc_url', $same_as );
         }
+
+        // Core schema
+        $schema_type = ( get_post_type( $post->ID ) === 'post' ) ? 'BlogPosting' : 'Article';
 
         $schema = [
             '@context'         => 'https://schema.org',
-            '@type'            => 'Article',
+            '@type'            => $schema_type,
             'mainEntityOfPage' => [
                 '@type' => 'WebPage',
                 '@id'   => get_permalink( $post->ID ),
             ],
-            'headline'         => get_the_title( $post->ID ),
-            'datePublished'    => get_the_date( 'c', $post->ID ),
-            'dateModified'     => get_the_modified_date( 'c', $post->ID ),
-            'author'           => $author_schema,
-            'publisher'        => [
+            'headline'      => get_the_title( $post->ID ),
+            'datePublished' => get_the_date( 'c', $post->ID ),
+            'dateModified'  => get_the_modified_date( 'c', $post->ID ),
+            'author'        => $author_schema,
+            'publisher'     => [
                 '@type' => 'Organization',
                 'name'  => get_bloginfo( 'name' ),
                 'url'   => home_url(),
             ],
         ];
 
-        // Publisher Logo
+        // Publisher logo
         $custom_logo_id = get_theme_mod( 'custom_logo' );
         if ( $custom_logo_id ) {
             $logo_url = wp_get_attachment_image_url( $custom_logo_id, 'full' );
@@ -81,7 +125,7 @@ class ArticleSchema implements ModuleInterface {
             }
         }
 
-        // Featured Image
+        // Featured image
         $thumbnail_id = get_post_thumbnail_id( $post->ID );
         if ( $thumbnail_id ) {
             $image_url = wp_get_attachment_image_url( $thumbnail_id, 'full' );
@@ -90,15 +134,148 @@ class ArticleSchema implements ModuleInterface {
             }
         }
 
-        // Word Count
+        // Word count
         $word_count = str_word_count( wp_strip_all_tags( $post->post_content ) );
         if ( $word_count > 0 ) {
             $schema['wordCount'] = $word_count;
         }
 
+        return apply_filters( 'lkst_article_schema', $schema, $post );
+    }
+
+    // ── Front-end JSON-LD output ─────────────────────────────────────────────
+
+    public function output_schema(): void {
+        if ( ! is_singular() ) return;
+
+        if ( self::seo_plugin_active() ) return;
+
+        global $post;
+
+        // Skip pages unless explicitly opted in
+        if ( get_post_type( $post ) === 'page' && ! apply_filters( 'lkst_article_schema_on_pages', false ) ) {
+            return;
+        }
+
+        $schema = self::build_schema( $post );
+
         echo "\n<!-- LKST Article Schema -->\n";
         echo '<script type="application/ld+json">';
         echo wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
         echo "</script>\n";
+    }
+
+    // ── Gutenberg / Classic editor sidebar meta box ──────────────────────────
+
+    public function register_meta_box(): void {
+        $post_types = array_values(
+            array_diff(
+                array_keys( get_post_types( [ 'public' => true ] ) ),
+                [ 'attachment' ]
+            )
+        );
+
+        add_meta_box(
+            'lkst_article_schema_preview',
+            '🔍 Article Schema (LKST)',
+            [ $this, 'render_meta_box' ],
+            $post_types,
+            'side',
+            'default'
+        );
+    }
+
+    public function render_meta_box( \WP_Post $post ): void {
+        // ── Conflict warning ────────────────────────────────────────────────
+        if ( self::seo_plugin_active() ) {
+            echo '<p style="color:#856404;background:#fff3cd;padding:8px 10px;border-radius:4px;font-size:12px;margin:0;line-height:1.5;">';
+            echo '⚠️ <strong>Schema output disabled.</strong><br>An SEO plugin (Yoast / SEOPress / RankMath / AIOSEO / SureRank) is already active — LKST will not duplicate the schema.';
+            echo '</p>';
+            echo '<p style="font-size:11px;color:#999;margin:8px 0 0;">To override:<br><code>add_filter(\'lkst_article_schema_force\', \'__return_true\');</code></p>';
+            return;
+        }
+
+        // ── Build preview data ──────────────────────────────────────────────
+        $schema      = self::build_schema( $post );
+        $schema_type = $schema['@type'];
+        $has_image   = ! empty( $schema['image'] );
+        $has_logo    = ! empty( $schema['publisher']['logo'] );
+        $word_count  = $schema['wordCount'] ?? 0;
+        $headline    = $schema['headline'];
+        $short_hl    = mb_strlen( $headline ) > 45 ? mb_substr( $headline, 0, 42 ) . '…' : $headline;
+        $json        = wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT );
+        ?>
+        <style>
+        #lkst-schema-preview{font-size:12px;}
+        #lkst-schema-preview table{width:100%;border-collapse:collapse;}
+        #lkst-schema-preview td{padding:3px 0;vertical-align:top;}
+        #lkst-schema-preview td:first-child{color:#555;width:38%;padding-right:6px;font-weight:500;}
+        .lkst-ok{color:#2e7d32;font-weight:600;}
+        .lkst-warn{color:#b45309;font-weight:600;}
+        #lkst-schema-json{
+            background:#f5f5f5;padding:8px;border-radius:4px;
+            font-size:10px;font-family:monospace;
+            overflow:auto;max-height:200px;
+            white-space:pre-wrap;word-break:break-all;
+            margin:8px 0 0;display:none;
+        }
+        #lkst-schema-toggle{
+            font-size:11px;cursor:pointer;color:#0073aa;
+            text-decoration:underline;display:inline-block;margin-top:6px;
+            background:none;border:none;padding:0;
+        }
+        </style>
+        <div id="lkst-schema-preview">
+            <table>
+                <tr>
+                    <td>@type</td>
+                    <td><strong><?php echo esc_html( $schema_type ); ?></strong></td>
+                </tr>
+                <tr>
+                    <td>Headline</td>
+                    <td title="<?php echo esc_attr( $headline ); ?>"><?php echo esc_html( $short_hl ); ?></td>
+                </tr>
+                <tr>
+                    <td>Author</td>
+                    <td><?php echo esc_html( $schema['author']['name'] ); ?></td>
+                </tr>
+                <tr>
+                    <td>Published</td>
+                    <td><?php echo esc_html( get_the_date( 'd M Y', $post->ID ) ); ?></td>
+                </tr>
+                <tr>
+                    <td>Modified</td>
+                    <td><?php echo esc_html( get_the_modified_date( 'd M Y', $post->ID ) ); ?></td>
+                </tr>
+                <tr>
+                    <td>Image</td>
+                    <td class="<?php echo $has_image ? 'lkst-ok' : 'lkst-warn'; ?>">
+                        <?php echo $has_image ? '✓ Set' : '✗ Missing'; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Logo</td>
+                    <td class="<?php echo $has_logo ? 'lkst-ok' : 'lkst-warn'; ?>">
+                        <?php echo $has_logo ? '✓ Set' : '✗ Missing'; ?>
+                    </td>
+                </tr>
+                <?php if ( $word_count > 0 ) : ?>
+                <tr>
+                    <td>Words</td>
+                    <td><?php echo esc_html( number_format( $word_count ) ); ?></td>
+                </tr>
+                <?php endif; ?>
+            </table>
+
+            <button type="button" id="lkst-schema-toggle" onclick="
+                var p=document.getElementById('lkst-schema-json');
+                var open=p.style.display!=='none';
+                p.style.display=open?'none':'block';
+                this.textContent=open?'▼ View full JSON-LD':'▲ Hide JSON-LD';
+            ">▼ View full JSON-LD</button>
+
+            <pre id="lkst-schema-json"><?php echo esc_html( $json ); ?></pre>
+        </div>
+        <?php
     }
 }
