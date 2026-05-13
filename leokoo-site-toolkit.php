@@ -13,9 +13,14 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-defined( 'LKST_VERSION' ) || define( 'LKST_VERSION', '1.4.0' );
-defined( 'LKST_DIR' )     || define( 'LKST_DIR',     plugin_dir_path( __FILE__ ) );
-defined( 'LKST_URL' )     || define( 'LKST_URL',     plugin_dir_url( __FILE__ ) );
+// Prevent the plugin running twice when WordPress loads two copies from
+// different folder names (e.g. leokoo-site-toolkit-main/ alongside
+// leokoo-site-toolkit/). The second copy returns immediately.
+if ( defined( 'LKST_VERSION' ) ) return;
+
+define( 'LKST_VERSION', '1.4.0' );
+define( 'LKST_DIR',     plugin_dir_path( __FILE__ ) );
+define( 'LKST_URL',     plugin_dir_url( __FILE__ ) );
 
 // Autoloader for LK\SiteToolkit namespace
 spl_autoload_register( function( $class ) {
