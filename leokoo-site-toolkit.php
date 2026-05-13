@@ -36,6 +36,14 @@ $lkst_updater = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateCheck
     __FILE__,
     'leokoo-site-toolkit'
 );
+// Use Pro token if available (avoids GitHub API rate-limit on unauthenticated calls)
+$gh_token = get_option( 'lkst_pro_github_token', '' );
+if ( empty( $gh_token ) && defined( 'LKST_GITHUB_TOKEN' ) ) {
+    $gh_token = LKST_GITHUB_TOKEN;
+}
+if ( ! empty( $gh_token ) ) {
+    $lkst_updater->setAuthentication( $gh_token );
+}
 $lkst_updater->setBranch( 'main' );
 $lkst_updater->getVcsApi()->enableReleaseAssets();
 
