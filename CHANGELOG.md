@@ -2,6 +2,23 @@
 
 All notable changes to the **Leokoo Site Toolkit** will be documented in this file.
 
+## [1.4.0] - 2026-05-13
+### Added
+- **Steps / Process Block:** SSR Gutenberg block for numbered how-to steps. Emits HowTo JSON-LD schema automatically (defers to SEO plugins when active).
+- **Testimonial Block:** Static testimonial card with avatar, quote, name, role, and company. Three layout variants: card, minimal, highlight.
+- **Stat Callout Block:** Large-number callout block for B2B/SaaS content. Supports centred, left-aligned, and highlighted-box layouts with optional source citation.
+- **Inline Product Mention Block:** Compact horizontal product card for mid-content affiliate references. Image, name, one-liner, and CTA button with configurable `rel`.
+
+### Changed
+- **Build pipeline:** Migrated all four new block editors from vanilla JS (`wp.element.createElement`) to JSX via `@wordpress/scripts`. Source in `src/blocks/`; compiled output in `build/`. Legacy blocks (callout, pros/cons, tldr) are unaffected.
+
+### Fixed
+- **ArticleSchema:** Detects WP Review Pro (`MTS_WP_REVIEW_DB_TABLE`) and suppresses duplicate JSON-LD output when that plugin is active. Filterable via `lkst_article_schema_suppress_wp_review`.
+
+## [1.3.1] - 2026-05-13
+### Fixed
+- **MODULES.md:** Corrected module reference — marked all four Stage 1 blocks as built.
+
 ## [1.3.0] - 2026-05-13
 ### Added
 - **Article Schema Module:** Automatically outputs valid JSON-LD Article/BlogPosting schema for single posts, including author sameAs social links and dateModified signals.
