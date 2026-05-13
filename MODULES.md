@@ -9,13 +9,17 @@
 
 ## Native Gutenberg Blocks
 
-These modules register proper `block.json`-based Gutenberg blocks compiled into `build/`.
+These modules register `block.json`-based Gutenberg blocks. Compiled blocks live in `build/` and use JSX/webpack. Server-side rendered (SSR) blocks use vanilla JS editor scripts in `assets/blocks/` — no build step needed.
 
-| Module file | Slug | Block name | Description |
-|---|---|---|---|
-| `Callout.php` | `callout` | Callout Block | Visual callout / notice / alert for long-form content. Variants: info, warning, success, danger. |
-| `ProsCons.php` | `pros_cons` | Pros & Cons | Wirecutter-style pros/cons box. Registers three blocks: `pros-cons` (wrapper), `pros`, `cons`. |
-| `TLDR.php` | `tldr` | TL;DR / Key Takeaways | Styled summary box for the top of articles. Native Gutenberg block. |
+| Module file | Slug | Block name | Type | Description |
+|---|---|---|---|---|
+| `Callout.php` | `callout` | Callout Block | compiled | Visual callout / notice / alert for long-form content. Variants: info, warning, success, danger. |
+| `ProsCons.php` | `pros_cons` | Pros & Cons | compiled | Wirecutter-style pros/cons box. Registers three blocks: `pros-cons` (wrapper), `pros`, `cons`. |
+| `TLDR.php` | `tldr` | TL;DR / Key Takeaways | compiled | Styled summary box for the top of articles. Native Gutenberg block. |
+| `Steps.php` | `steps` | Steps / Process | SSR | Numbered how-to steps. Auto-emits `HowTo` JSON-LD schema. Editor: vanilla JS repeater with move up/down controls. |
+| `Testimonial.php` | `testimonial` | Testimonial | SSR | Static testimonial card: photo, name, role/company, quote. Three layout variants (card / minimal / highlight). |
+| `StatCallout.php` | `stat_callout` | Stat Callout | SSR | Large bold number + label for B2B/SaaS content marketing. Optional source citation. Three layout variants. |
+| `InlineProduct.php` | `inline_product` | Inline Product Mention | SSR | Compact horizontal product card for mid-content references: thumbnail, name, one-liner, CTA button. Configurable link rel. |
 
 ---
 
@@ -66,11 +70,4 @@ These modules register `[lkst_*]` shortcodes and/or auto-inject into `the_conten
 
 ## Planned — Not Yet Built
 
-These are confirmed for a future free-tier release.
-
-| Block | Description |
-|---|---|
-| **Steps / Process** | Numbered how-to steps with expandable detail. Emits `HowTo` JSON-LD schema. Biggest SEO gap in the current set. |
-| **Testimonial** | Static testimonial card: photo, name, role/company, quote. E-E-A-T and social proof for corporate sites. |
-| **Stat Callout** | Large bold number + label (e.g. "10,000+ users"). B2B/SaaS content marketing. |
-| **Inline Product Mention** | Compact horizontal product card for mid-content references: thumbnail, name, one-liner, small CTA button. Inspired by Azonpress widget-small template. |
+All four originally-planned free blocks have been built (see Native Gutenberg Blocks above). Future additions TBD.
