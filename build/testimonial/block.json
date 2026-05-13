@@ -6,7 +6,12 @@
   "category": "leokoo-site-toolkit",
   "icon": "format-quote",
   "description": "Static testimonial card: photo, name, role/company, and quote.",
-  "keywords": ["testimonial", "quote", "review", "social proof"],
+  "keywords": [
+    "testimonial",
+    "quote",
+    "review",
+    "social proof"
+  ],
   "attributes": {
     "quote": {
       "type": "string",
@@ -35,8 +40,10 @@
   },
   "supports": {
     "html": false,
-    "align": ["wide"]
+    "align": [
+      "wide"
+    ]
   },
-  "editorScript": "lkst-testimonial-editor",
+  "editorScript": "file:./index.js",
   "textdomain": "leokoo-site-toolkit"
 }

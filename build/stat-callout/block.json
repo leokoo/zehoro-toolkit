@@ -6,7 +6,13 @@
   "category": "leokoo-site-toolkit",
   "icon": "chart-bar",
   "description": "Large bold number + label for B2B/SaaS content marketing.",
-  "keywords": ["stat", "statistic", "number", "callout", "data"],
+  "keywords": [
+    "stat",
+    "statistic",
+    "number",
+    "callout",
+    "data"
+  ],
   "attributes": {
     "stat": {
       "type": "string",
@@ -35,8 +41,11 @@
   },
   "supports": {
     "html": false,
-    "align": ["wide", "full"]
+    "align": [
+      "wide",
+      "full"
+    ]
   },
-  "editorScript": "lkst-stat-callout-editor",
+  "editorScript": "file:./index.js",
   "textdomain": "leokoo-site-toolkit"
 }

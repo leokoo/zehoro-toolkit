@@ -6,12 +6,7 @@
   "category": "leokoo-site-toolkit",
   "icon": "list-view",
   "description": "Numbered how-to steps with HowTo schema.",
-  "keywords": [
-    "steps",
-    "process",
-    "how-to",
-    "tutorial"
-  ],
+  "keywords": ["steps", "process", "how-to", "tutorial"],
   "attributes": {
     "taskName": {
       "type": "string",
@@ -27,9 +22,7 @@
   },
   "supports": {
     "html": false,
-    "align": [
-      "wide"
-    ]
+    "align": ["wide"]
   },
   "editorScript": "file:./index.js",
   "textdomain": "leokoo-site-toolkit"

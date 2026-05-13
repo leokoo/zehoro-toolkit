@@ -1,24 +1,26 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "lkst/inline-product",
-  "title": "Inline Product Mention",
+  "name": "lkst/testimonial",
+  "title": "Testimonial",
   "category": "leokoo-site-toolkit",
-  "icon": "cart",
-  "description": "Compact horizontal product card for mid-content references.",
-  "keywords": [
-    "product",
-    "affiliate",
-    "mention",
-    "card",
-    "inline"
-  ],
+  "icon": "format-quote",
+  "description": "Static testimonial card: photo, name, role/company, and quote.",
+  "keywords": ["testimonial", "quote", "review", "social proof"],
   "attributes": {
+    "quote": {
+      "type": "string",
+      "default": ""
+    },
     "name": {
       "type": "string",
       "default": ""
     },
-    "desc": {
+    "role": {
+      "type": "string",
+      "default": ""
+    },
+    "company": {
       "type": "string",
       "default": ""
     },
@@ -26,28 +28,14 @@
       "type": "string",
       "default": ""
     },
-    "imageAlt": {
+    "layout": {
       "type": "string",
-      "default": ""
-    },
-    "btnText": {
-      "type": "string",
-      "default": "Check Price"
-    },
-    "btnUrl": {
-      "type": "string",
-      "default": ""
-    },
-    "btnRel": {
-      "type": "string",
-      "default": "nofollow sponsored"
+      "default": "card"
     }
   },
   "supports": {
     "html": false,
-    "align": [
-      "wide"
-    ]
+    "align": ["wide"]
   },
   "editorScript": "file:./index.js",
   "textdomain": "leokoo-site-toolkit"

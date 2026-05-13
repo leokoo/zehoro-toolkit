@@ -1,20 +1,18 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "lkst/inline-product",
-  "title": "Inline Product Mention",
+  "name": "lkst/stat-callout",
+  "title": "Stat Callout",
   "category": "leokoo-site-toolkit",
-  "icon": "cart",
-  "description": "Compact horizontal product card for mid-content references.",
-  "keywords": [
-    "product",
-    "affiliate",
-    "mention",
-    "card",
-    "inline"
-  ],
+  "icon": "chart-bar",
+  "description": "Large bold number + label for B2B/SaaS content marketing.",
+  "keywords": ["stat", "statistic", "number", "callout", "data"],
   "attributes": {
-    "name": {
+    "stat": {
+      "type": "string",
+      "default": ""
+    },
+    "label": {
       "type": "string",
       "default": ""
     },
@@ -22,32 +20,22 @@
       "type": "string",
       "default": ""
     },
-    "imageUrl": {
+    "source": {
       "type": "string",
       "default": ""
     },
-    "imageAlt": {
+    "sourceUrl": {
       "type": "string",
       "default": ""
     },
-    "btnText": {
+    "layout": {
       "type": "string",
-      "default": "Check Price"
-    },
-    "btnUrl": {
-      "type": "string",
-      "default": ""
-    },
-    "btnRel": {
-      "type": "string",
-      "default": "nofollow sponsored"
+      "default": "centered"
     }
   },
   "supports": {
     "html": false,
-    "align": [
-      "wide"
-    ]
+    "align": ["wide", "full"]
   },
   "editorScript": "file:./index.js",
   "textdomain": "leokoo-site-toolkit"

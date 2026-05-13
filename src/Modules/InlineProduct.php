@@ -31,17 +31,11 @@ class InlineProduct implements ModuleInterface {
     }
 
     public function register_block(): void {
+        // block.json declares editorScript: "file:./index.js"; register_block_type
+        // auto-enqueues build/inline-product/index.js with deps from index.asset.php.
         register_block_type(
             LKST_DIR . 'build/inline-product',
             [ 'render_callback' => [ $this, 'render' ] ]
-        );
-
-        wp_register_script(
-            'lkst-inline-product-editor',
-            LKST_URL . 'assets/blocks/inline-product-editor.js',
-            [ 'wp-blocks', 'wp-block-editor', 'wp-components', 'wp-element', 'wp-i18n' ],
-            LKST_VERSION,
-            false
         );
     }
 

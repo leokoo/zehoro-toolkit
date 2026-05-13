@@ -6,13 +6,7 @@
   "category": "leokoo-site-toolkit",
   "icon": "cart",
   "description": "Compact horizontal product card for mid-content references.",
-  "keywords": [
-    "product",
-    "affiliate",
-    "mention",
-    "card",
-    "inline"
-  ],
+  "keywords": ["product", "affiliate", "mention", "card", "inline"],
   "attributes": {
     "name": {
       "type": "string",
@@ -45,9 +39,7 @@
   },
   "supports": {
     "html": false,
-    "align": [
-      "wide"
-    ]
+    "align": ["wide"]
   },
   "editorScript": "file:./index.js",
   "textdomain": "leokoo-site-toolkit"

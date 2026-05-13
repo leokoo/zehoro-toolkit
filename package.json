@@ -1,0 +1,14 @@
+{
+  "name": "leokoo-site-toolkit",
+  "version": "1.3.1",
+  "description": "Gutenberg block build pipeline for Leokoo Site Toolkit free plugin",
+  "private": true,
+  "scripts": {
+    "build": "wp-scripts build --webpack-src-dir=src/blocks --output-path=build --config webpack.config.js",
+    "start": "wp-scripts start --webpack-src-dir=src/blocks --output-path=build --config webpack.config.js",
+    "lint:js": "wp-scripts lint-js src/blocks"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^30.27.0"
+  }
+}
