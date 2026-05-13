@@ -3,7 +3,7 @@
  * Plugin Name:  Leokoo Site Toolkit
  * Plugin URI:   https://leokoo.com
  * Description:  Modular utility suite for WordPress sites.
- * Version:      1.2.1
+ * Version:      1.3.0
  * Author:       Leo Koo
  * Author URI:   https://leokoo.com
  * Text Domain:  leokoo-site-toolkit
@@ -13,7 +13,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'LKST_VERSION', '1.2.1' );
+define( 'LKST_VERSION', '1.3.0' );
 define( 'LKST_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LKST_URL', plugin_dir_url( __FILE__ ) );
 

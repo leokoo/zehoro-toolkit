@@ -2,6 +2,12 @@
 
 All notable changes to the **Leokoo Site Toolkit** will be documented in this file.
 
+## [1.3.0] - 2026-05-13
+### Added
+- **Article Schema Module:** Automatically outputs valid JSON-LD Article/BlogPosting schema for single posts, including author sameAs social links and dateModified signals.
+- **Reading Progress Bar:** Added a lightweight, high-performance scroll progress bar at the top of the viewport.
+- **Disclaimer Presets:** Refactored the Affiliate Disclosure module into a global Disclaimer module with standard presets for Medical and Legal sites.
+
 ## [1.2.1] - 2026-05-13
 ### Added
 - **Plugin Update Checker:** Integrated the PUC library to enable native WordPress dashboard updates directly from GitHub.
