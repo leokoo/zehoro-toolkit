@@ -2,6 +2,18 @@
 
 All notable changes to the **Leokoo Site Toolkit** will be documented in this file.
 
+## [1.5.2] - 2026-05-23
+
+### Fixed (footgun removal)
+- **Author Box CTA defaults** — previous default URLs (`/blog/` for "Read the articles" and `#newsletter` for "Get the newsletter") silently rendered broken links on any site that didn't set the options. Defaults are now **empty** — both buttons hide unless the site owner explicitly configures them via:
+  - **wp_options**: `lkst_cta_primary_url`, `lkst_cta_secondary_url` (set via `update_option()` or wp-cli)
+  - **filters**: `lkst/author_box/cta_primary`, `lkst/author_box/cta_secondary`
+- Default primary CTA label updated from `Read the articles` → `Read more articles` (more conventional phrasing).
+
+### Migration notes
+- Sites that **were relying on the default `/blog/` button**: that URL was always broken on sites whose post archive isn't literally `/blog/`. The button now hides instead of misleading. To restore: set `lkst_cta_primary_url` to your actual archive URL (often `/news/`, `/articles/`, or whatever the site uses).
+- Sites that **set the option themselves**: no impact — your saved value is honoured.
+
 ## [1.5.1] - 2026-05-23
 
 ### Changed (visual — heads up if you rely on the legacy badge look)

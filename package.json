@@ -1,6 +1,6 @@
 {
   "name": "leokoo-site-toolkit",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Gutenberg block build pipeline for Leokoo Site Toolkit free plugin",
   "private": true,
   "scripts": {
