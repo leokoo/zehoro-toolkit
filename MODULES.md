@@ -1,7 +1,7 @@
 # Leokoo Site Toolkit — Module Reference
 
 **Plugin:** Leokoo Site Toolkit (Free)
-**Version:** 1.3.1
+**Version:** 1.5.0
 **Namespace:** `LK\SiteToolkit\Modules`
 **Source:** `src/Modules/`
 
@@ -56,6 +56,16 @@ These modules register `[lkst_*]` shortcodes and/or auto-inject into `the_conten
 |---|---|---|
 | `ReadingProgress.php` | `reading_progress` | 3px sticky progress bar at top of screen, fills as user scrolls. |
 | `VisualStyles.php` | `styles` | Brand color customisation for Author Box, CTAs, and Category Pills via CSS custom properties. |
+
+---
+
+## Interaction / Composition Modules
+
+These modules ship no markup of their own — they bind behaviour to standardised `data-*` attributes that *other* modules (or hand-written markup) emit. This is the composition pattern that lets Pro modules like Inline Subscribe layer on free behaviour without coupling.
+
+| Module file | Slug | Default | Description |
+|---|---|---|---|
+| `CtaSwap.php` | `cta_swap` | off | **Inline button-to-form swap behaviour.** Bind a trigger button to a target form via `data-lkst-swap-group` + `data-lkst-swap-target`. Clicking the trigger swaps it out for the target (e.g. "Sign up" button → reveals newsletter form inline). Handles focus, ESC-to-back, reduced-motion. ~50 lines of vanilla JS, zero deps. Composes with Pro Inline Subscribe (v1.4.1+) and any other module that opts in by rendering the right attributes. |
 
 ---
 
