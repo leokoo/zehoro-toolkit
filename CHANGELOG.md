@@ -2,6 +2,20 @@
 
 All notable changes to the **Leokoo Site Toolkit** will be documented in this file.
 
+## [1.5.1] - 2026-05-23
+
+### Changed (visual — heads up if you rely on the legacy badge look)
+- **Last Updated badge — unstyled by default.** The `[lkst_last_updated]` shortcode previously rendered with hard-coded inline styles (small uppercase pill, cream background, dark text). That meant the badge looked the same no matter where it was placed and was extremely difficult to override from a theme or builder context. The default output is now an unstyled `<span class="lkst-last-updated">Updated: <time>...</time></span>` that inherits surrounding typography.
+- **Pill look is now opt-in.** Pass `variant="pill"` to restore the legacy editorial-pill styling: `[lkst_last_updated variant="pill"]`. Or add the `.lkst-last-updated--pill` modifier class manually in custom markup. The stylesheet still ships the pill rules, just under the new modifier class.
+- **`label` attribute** added — `[lkst_last_updated label="Last edited:"]` to customise the prefix. Pass an empty string to omit the label entirely (just the date).
+- **Markup is now semantic** — wrapper changed from `<div>` to `<span>` (inline), and the date is wrapped in a `<time datetime="ISO-8601">` element for screen readers and structured-data crawlers.
+- **`lkst-editorial-block` class removed from the wrapper.** It was misleading: the badge isn't an editorial block, it's a freshness signal. Sites that styled against this class should switch to `.lkst-last-updated` or `.lkst-last-updated--pill`.
+
+### Migration notes
+- Sites with **auto-inject enabled** will see the badge change from a styled pill to plain inline text at the top of single posts. To restore the pill: disable auto-inject in *Site Toolkit → Last Updated*, then place `[lkst_last_updated variant="pill"]` manually.
+- Sites with **theme/builder overrides targeting `.lkst-last-updated { ... }`**: those rules now apply only to the unstyled default. To target the pill, switch your selector to `.lkst-last-updated--pill`.
+- **No data migration is needed** — the change is purely presentational.
+
 ## [1.5.0] - 2026-05-22
 
 ### Added

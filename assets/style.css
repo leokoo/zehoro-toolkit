@@ -779,15 +779,25 @@
 
 /* =============================================================================
    Last Updated Badge  (.lkst-last-updated)
+   ----------------------------------------------------------------------------
+   Default (`.lkst-last-updated`) is intentionally unstyled — it inherits the
+   surrounding typography so it composes cleanly inside article bodies, page
+   hero metadata rows, sidebars, etc.
+
+   The legacy "editorial pill" look is now opt-in via the modifier class
+   `.lkst-last-updated--pill`, applied either by:
+     • passing variant="pill" to the shortcode: [lkst_last_updated variant="pill"]
+     • or by hand: <span class="lkst-last-updated lkst-last-updated--pill">…</span>
    ============================================================================= */
 
-.lkst-last-updated {
+.lkst-last-updated--pill {
 	display: inline-block;
 	font-size: 12px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	padding: 4px 10px;
+	background: var(--lkst-bg-light, #F5F0E8);
 	color: var(--lkst-primary-contrast, #0F1A2E);
 	border-radius: 3px;
 	margin-bottom: 1em;

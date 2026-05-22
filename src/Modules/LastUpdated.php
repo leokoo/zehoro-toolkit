@@ -68,22 +68,63 @@ class LastUpdated implements ModuleInterface {
         </div>
         <?php
     }
-    public function render_shortcode(): string {
+    /**
+     * Render the last-updated badge.
+     *
+     * Default output is intentionally unstyled — just a <span> wrapper with the
+     * `.lkst-last-updated` marker class, a configurable label prefix, and a
+     * semantic <time datetime="..."> element. The badge inherits surrounding
+     * typography so it composes cleanly with whatever context it lives in
+     * (article body, sidebar, page-hero metadata row, etc.).
+     *
+     * Sites that want the legacy "editorial pill" look (small uppercase pill,
+     * cream background, dark text) opt in via the `variant` attribute:
+     *   [lkst_last_updated variant="pill"]
+     *
+     * Attributes:
+     *   variant  default | pill   — `pill` adds the .lkst-last-updated--pill
+     *                               modifier class which the bundled stylesheet
+     *                               styles as the legacy editorial pill.
+     *   label    string           — Prefix text before the date. Default
+     *                               "Updated:". Pass empty string to omit.
+     */
+    public function render_shortcode( $atts = [] ): string {
+        $atts = shortcode_atts( [
+            'variant' => 'default',
+            'label'   => 'Updated:',
+        ], $atts, 'lkst_last_updated' );
+
         $post_id = get_the_ID();
         if ( ! $post_id ) return '';
-        $pub_time = get_post_time( 'U', true, $post_id );
-        $mod_time = get_post_modified_time( 'U', true, $post_id );
+
+        $pub_time  = get_post_time( 'U', true, $post_id );
+        $mod_time  = get_post_modified_time( 'U', true, $post_id );
         $threshold = (int) get_option( 'lkst_lu_threshold_days', '30' ) * DAY_IN_SECONDS;
-        
+
         if ( ( $mod_time - $pub_time ) < $threshold ) return '';
 
+        $classes = [ 'lkst-last-updated' ];
+        if ( $atts['variant'] === 'pill' ) {
+            $classes[] = 'lkst-last-updated--pill';
+        }
+
+        $label    = trim( (string) $atts['label'] );
+        $iso_date = get_post_modified_time( 'c', true, $post_id );
+        $display  = get_the_modified_date( '', $post_id );
+
         return sprintf(
-            '<div class="lkst-last-updated lkst-editorial-block" style="display:inline-block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; padding:4px 10px; background:var(--lkst-bg-light, #F5F0E8); color:var(--lkst-primary-contrast, #0F1A2E); border-radius:3px; margin-bottom:1em;">Updated: %s</div>',
-            esc_html( get_the_modified_date( '', $post_id ) )
+            '<span class="%1$s">%2$s<time datetime="%3$s">%4$s</time></span>',
+            esc_attr( implode( ' ', $classes ) ),
+            $label === '' ? '' : esc_html( $label ) . ' ',
+            esc_attr( $iso_date ),
+            esc_html( $display )
         );
     }
     public function auto_inject( $content ) {
         if ( is_single() && in_the_loop() && is_main_query() && get_option( 'lkst_lu_auto_inject', '0' ) ) {
+            // Auto-inject uses the default unstyled variant. Site owners who want
+            // the pill look should disable auto-inject and place the shortcode
+            // with [lkst_last_updated variant="pill"] manually.
             $badge = $this->render_shortcode();
             if ( $badge ) {
                 return $badge . $content;
