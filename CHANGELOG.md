@@ -2,6 +2,15 @@
 
 All notable changes to the **Leokoo Site Toolkit** will be documented in this file.
 
+## [1.5.0] - 2026-05-22
+
+### Added
+- **CTA Swap module:** progressive-disclosure pattern for swapping CTA-button groups inline with hidden forms. Data-attribute API — `data-lkst-swap-group`, `data-lkst-swap-target`, `data-lkst-swap-back`. No shortcode, no PHP rendering — author marks up the buttons and form however they want, the module ships only the ~50-line vanilla-JS swap behaviour + minimal hidden-state CSS. Common pattern used by Substack, Mailchimp, ConvertKit etc. for newsletter signups, donation flows, multi-step CTAs. Disabled by default — enable via **Site Toolkit → Modules**.
+  - ESC key closes an open swap
+  - Focus is moved to the first focusable element in the form when opened
+  - Focus is restored to the originating trigger when closed
+  - Vanilla JS, zero dependencies, footer-loaded, respects `prefers-reduced-motion`
+
 ## [1.4.1] - 2026-05-22
 ### Added
 - **Reading Time Bricks dynamic tag:** `{lkst_read_time}` is now registered as a Bricks dynamic data tag, mirroring the existing `[lkst_read_time]` shortcode. Use either inside a Bricks element setting to render the estimated reading time for the current post.
