@@ -2,6 +2,13 @@
 
 All notable changes to the **Leokoo Site Toolkit** will be documented in this file.
 
+## [1.4.1] - 2026-05-22
+### Added
+- **Reading Time Bricks dynamic tag:** `{lkst_read_time}` is now registered as a Bricks dynamic data tag, mirroring the existing `[lkst_read_time]` shortcode. Use either inside a Bricks element setting to render the estimated reading time for the current post.
+
+### Fixed
+- **ReadingTime docblock:** Replaced an escaped apostrophe (`\'`) in the file header comment with a straight apostrophe — purely cosmetic, no behavioural change.
+
 ## [1.4.0] - 2026-05-13
 ### Added
 - **Steps / Process Block:** SSR Gutenberg block for numbered how-to steps. Emits HowTo JSON-LD schema automatically (defers to SEO plugins when active).
