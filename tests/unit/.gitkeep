@@ -1,0 +1,2 @@
+# Placeholder for pure-PHP unit tests (no WP loaded).
+# Drop *Test.php files here that test plain logic without needing WP_UnitTestCase.
