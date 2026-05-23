@@ -6,3 +6,17 @@
 # Node
 /node_modules/
 package-lock.json
+
+# Composer — dev dependencies (installed via `composer install`). The runtime
+# `yahnis-elsts/` PUC vendor stays committed so release zips work.
+/vendor/*
+!/vendor/yahnis-elsts/
+
+# PHPUnit artifacts
+/.phpunit.result.cache
+/.phpunit.cache/
+/tests/_output/
+
+# Local test runs may create these — never commit
+/tmp/wordpress/
+/wp-cli.local.yml
