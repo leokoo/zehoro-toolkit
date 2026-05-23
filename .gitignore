@@ -20,3 +20,5 @@ package-lock.json
 # Local test runs may create these — never commit
 /tmp/wordpress/
 /wp-cli.local.yml
+# Composer lock — not committed for plugin-style projects (dev deps are loose pins)
+composer.lock
