@@ -1,7 +1,7 @@
 # Leokoo Site Toolkit — Module Reference
 
 **Plugin:** Leokoo Site Toolkit (Free)
-**Version:** 1.5.0
+**Version:** 1.6.0
 **Namespace:** `LK\SiteToolkit\Modules`
 **Source:** `src/Modules/`
 
@@ -31,6 +31,7 @@ These modules register `[lkst_*]` shortcodes and/or auto-inject into `the_conten
 |---|---|---|---|
 | `AuthorBox.php` | `author_box` | `[lkst_author_box]` `[lkst_author_socials]` | Full author card with biography, social icons, and CTA buttons. Resolves author outside the loop (safe for Bricks/Etch). Settings page: `lkst-author-box`. |
 | `CategoryPills.php` | `category_pills` | `[lkst_top_category_pills]` | Dynamic category/tag pill links for archives. Accepts `limit` attribute. |
+| `HomeFilterPills.php` | `home_filter_pills` | `[lkst_home_filter_pills]` | Cross-CPT topic navigation pills. Each pill links to a category or CPT archive (clean URL, no JS). Items configured per-site via `lkst/home_filter_pills/items` filter. Accepts `scheme="light\|dark"` attribute. |
 | `ContentBox.php` | `content_box` | `[lkst_box]` | Manual CTA or email-capture box. Types: `cta` (external form shortcode) or `email` (built-in AJAX form with webhook delivery). Migrates from legacy `basic_cta` slug. |
 | `Disclaimer.php` | `disclosure` | *(auto-inject)* | Legal/medical/custom disclaimer. Auto-appends styled box to post content. Configurable per post type. **Note:** internal slug is `disclosure` for backward compatibility. |
 | `FAQ.php` | `faq` | `[lkst_faq question="..."]` | Styled FAQ accordions with automatic `FAQPage` JSON-LD schema. Defers schema to Yoast/RankMath/SureRank when active. |

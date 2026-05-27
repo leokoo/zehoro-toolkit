@@ -2,6 +2,21 @@
 
 All notable changes to the **Leokoo Site Toolkit** will be documented in this file.
 
+## [1.6.0] - 2026-05-27
+
+### Added
+- **Home Filter Pills module** (`HomeFilterPills.php`, slug `home_filter_pills`) — new shortcode `[lkst_home_filter_pills]` that renders a cross-CPT navigation pill bar. Each pill is a real anchor that navigates to a category or CPT archive (clean SEO URL, shareable, no JS, no AJAX, no custom taxonomy required). Site-specific destinations are configured via the `lkst/home_filter_pills/items` filter so the module stays generic across sites.
+  - Pill item shape: `[ 'label' => ..., 'url' => ..., 'count' => int|array|null ]`
+  - Count spec supports three resolver types: `category` (by slug), `tax` (any taxonomy by slug), `cpt` (post type publish count)
+  - Active state derived from current URL path (with `aria-current="page"` for screen readers)
+  - Two visual schemes via shortcode attr: `scheme="dark"` (default, white-on-dark) or `scheme="light"` (dark-text-on-cream for use on light sections)
+  - Reuses `.lkst-cat-pill` shape from `CategoryPills.php`, adds `.lkst-cat-pills--light` and `.is-active` rules to `assets/style.css`
+- **`.is-active` state styling** (`assets/style.css`) for `.lkst-cat-pill` — navy bg + cream text. Used by both modules.
+- **`.lkst-cat-pills--light` variant** (`assets/style.css`) — cream-bg pill style for sections with light backgrounds. Uses CSS `color-mix()` so the pill auto-tracks the site's `--lkst-primary-contrast` and `--lkst-bg-light` settings.
+
+### Rationale
+Replaces an ill-fitting Bricks `filter-radio` + AJAX pattern that had been deployed on leokoo.com home page (v1.9 of that site). The Bricks filter required a custom taxonomy + backfill across all existing posts + a `save_post` auto-tagger + `?brx_lkflr=` URL pollution + DOM-order surgery (filter must render after loop, see Bricks build-system gotcha G32) + ~80 lines of CSS to hide native radio inputs. Replaced with this anchor-based pattern (matches FGB Malaysia's `fgb_category_pills` shape and the standard WordPress archive-navigation idiom).
+
 ## [1.5.2] - 2026-05-23
 
 ### Fixed (footgun removal)

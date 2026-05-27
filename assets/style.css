@@ -54,6 +54,33 @@
 	opacity: 0.5;
 }
 
+/* Light variant — for use on light/cream backgrounds (e.g. home article
+   section, fellowship-tinted hero panels). Uses light-bg-friendly colors
+   while keeping the same shape. */
+.lkst-cat-pills--light .lkst-cat-pill {
+	background: var(--lkst-bg-light, #F5F0E8);
+	border-color: color-mix(in oklch, var(--lkst-primary-contrast, #0F1A2E) 12%, transparent);
+	color: color-mix(in oklch, var(--lkst-primary-contrast, #0F1A2E) 65%, transparent);
+}
+
+.lkst-cat-pills--light .lkst-cat-pill:hover {
+	background: color-mix(in oklch, var(--lkst-primary-contrast, #0F1A2E) 8%, var(--lkst-bg-light, #F5F0E8));
+	border-color: color-mix(in oklch, var(--lkst-primary-contrast, #0F1A2E) 20%, transparent);
+	color: var(--lkst-primary-contrast, #0F1A2E);
+}
+
+/* Active state — works on both schemes. Navy bg, light text. */
+.lkst-cat-pill.is-active,
+.lkst-cat-pill.is-active:hover {
+	background: var(--lkst-primary-contrast, #0F1A2E);
+	border-color: var(--lkst-primary-contrast, #0F1A2E);
+	color: var(--lkst-bg-light, #F5F0E8);
+}
+
+.lkst-cat-pill.is-active .lkst-pill-count {
+	opacity: 0.7;
+}
+
 
 /* =============================================================================
    News ticker  (.lkst-ticker)
