@@ -2,6 +2,14 @@
 
 All notable changes to the **Leokoo Site Toolkit** will be documented in this file.
 
+## [Unreleased]
+
+### Internal — test coverage backfill
+
+- **AuthorBox: 3 → 21 tests** (`tests/integration/AuthorBoxTest.php`). Original 3 tests covered the v1.5.2 empty-default-URL regression on the primary CTA — `render_box`'s secondary-CTA path and the entire `render_socials` standalone shortcode (166 untested lines) were not covered. Expanded to add: secondary CTA empty-URL hide / configured render / filter override / independence from primary; identity rendering (tagline, bio with nl2br, chips 1–3 in source order, partial chips); in-box socials section markup; `[lkst_author_socials]` shortcode end-to-end (no URLs → empty, single platform, all four platforms with correct dashicon mapping, `esc_url` drops `javascript:` protocol, unconfigured platforms omitted).
+- **TableOfContents: 0 → 21 tests** (`tests/integration/TableOfContentsTest.php`). Same regression class as ContentStream (Pro): `preg_replace_callback` over `the_content`, builder-preview short-circuits, structural injection point. Covers `sanitize_settings` (non-array fallback, unknown post types dropped, invalid `insertion` falls back to `auto`); auto-insertion (TOC prepended only when ≥ 2 headings, anchor IDs injected for headings without one, existing IDs preserved, h2 vs h3 depth class); shortcode-mode (`[lkst_toc]` placeholder replaced when valid, stripped when under 2 headings per the module's Bug 4 comment, no auto-inject); short-circuits (post-type filter, Bricks/Etchwp/Elementor previews, global processing-flag re-entry guard); `preparse_toc_headings` populates global `$lkst_toc_items`; `render_shortcode` returns empty under 2 items and renders when ≥ 2.
+- No shipped behavior changed. New tests run against the current v1.6.0 surface via `composer test`.
+
 ## [1.6.0] - 2026-05-27
 
 ### Added
