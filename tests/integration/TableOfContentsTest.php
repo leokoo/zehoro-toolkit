@@ -63,6 +63,19 @@ class TableOfContentsTest extends WP_UnitTestCase {
             'post_content' => $body,
         ] );
         $this->go_to( get_permalink( $post_id ) );
+
+        // go_to() fires the `wp` action, which fires preparse_toc_headings(),
+        // which populates global $lkst_toc_items from the seeded body. For
+        // tests that pass a DIFFERENT body to process_content(), we don't
+        // want the seeded items leaking through — process_content() prefers
+        // the global over re-parsing. Clear it so each test starts fresh.
+        global $lkst_toc_items;
+        $lkst_toc_items = null;
+
+        // Also clear the transient cache so re-running preparse_toc_headings()
+        // in tests that exercise it directly hits the cold path.
+        delete_transient( 'lkst_toc_' . $post_id );
+
         return $post_id;
     }
 
