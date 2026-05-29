@@ -243,8 +243,11 @@ class TableOfContentsTest extends WP_UnitTestCase {
     }
 
     public function test_bricks_preview_short_circuits() {
-        $_GET['bricks'] = '1';
+        // Order matters: post_with_headings() calls go_to(), which rebuilds
+        // $_GET from the URL's query string and wipes anything we set first.
+        // Set the preview flag AFTER navigating.
         $this->post_with_headings( 3 );
+        $_GET['bricks'] = '1';
         $content = "<h2>A</h2><h2>B</h2><h2>C</h2>";
 
         $output = $this->toc->process_content( $content );
@@ -254,8 +257,8 @@ class TableOfContentsTest extends WP_UnitTestCase {
     }
 
     public function test_etchwp_preview_short_circuits() {
-        $_GET['etchwp'] = '1';
         $this->post_with_headings( 3 );
+        $_GET['etchwp'] = '1';
         $content = "<h2>A</h2><h2>B</h2><h2>C</h2>";
 
         $output = $this->toc->process_content( $content );
@@ -264,8 +267,8 @@ class TableOfContentsTest extends WP_UnitTestCase {
     }
 
     public function test_elementor_preview_short_circuits() {
-        $_GET['elementor-preview'] = '1';
         $this->post_with_headings( 3 );
+        $_GET['elementor-preview'] = '1';
         $content = "<h2>A</h2><h2>B</h2><h2>C</h2>";
 
         $output = $this->toc->process_content( $content );
