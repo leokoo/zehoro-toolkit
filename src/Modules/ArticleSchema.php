@@ -160,7 +160,7 @@ class ArticleSchema implements ModuleInterface {
         // existing site code (and Zehoro Toolkit Pro's EntityMap) keeps working
         // until everything migrates to zehoro_article_schema.
         if ( has_filter( 'lkst_article_schema' ) ) {
-            $schema = apply_filters_deprecated( 'lkst_article_schema', [ $schema, $post ], '2.0.0', 'zehoro_article_schema' );
+            $schema = apply_filters_deprecated( 'lkst_article_schema', [ $schema, $post ], '1.7.0', 'zehoro_article_schema' );
         }
 
         return $schema;
