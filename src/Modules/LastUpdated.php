@@ -40,26 +40,26 @@ class LastUpdated implements ModuleInterface {
         if ( ! current_user_can( 'manage_options' ) ) return;
         ?>
         <div class="wrap">
-            <h1><?php esc_html_e( 'Last Updated Badge', 'leokoo-site-toolkit' ); ?></h1>
+            <h1><?php esc_html_e( 'Last Updated Badge', 'zehoro-toolkit' ); ?></h1>
             <form method="post" action="options.php">
                 <?php settings_fields( 'lkst_last_updated_group' ); ?>
                 <table class="form-table">
                     <tr>
-                        <th><label for="lkst_lu_auto_inject"><?php esc_html_e( 'Auto Inject (Top of content)', 'leokoo-site-toolkit' ); ?></label></th>
+                        <th><label for="lkst_lu_auto_inject"><?php esc_html_e( 'Auto Inject (Top of content)', 'zehoro-toolkit' ); ?></label></th>
                         <td><input type="checkbox" id="lkst_lu_auto_inject" name="lkst_lu_auto_inject" value="1" <?php checked(get_option('lkst_lu_auto_inject', '0')); ?>></td>
                     </tr>
                     <tr>
-                        <th><label for="lkst_lu_threshold_days"><?php esc_html_e( 'Threshold (Days)', 'leokoo-site-toolkit' ); ?></label></th>
+                        <th><label for="lkst_lu_threshold_days"><?php esc_html_e( 'Threshold (Days)', 'zehoro-toolkit' ); ?></label></th>
                         <td>
                             <input type="number" id="lkst_lu_threshold_days" name="lkst_lu_threshold_days" value="<?php echo esc_attr(get_option('lkst_lu_threshold_days', '30')); ?>" class="small-text">
-                            <p class="description"><?php esc_html_e('Only show the badge if the post was updated more than X days after it was published.', 'leokoo-site-toolkit'); ?></p>
+                            <p class="description"><?php esc_html_e('Only show the badge if the post was updated more than X days after it was published.', 'zehoro-toolkit'); ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <th><label for="lkst_lu_schema"><?php esc_html_e( 'Output dateModified Schema', 'leokoo-site-toolkit' ); ?></label></th>
+                        <th><label for="lkst_lu_schema"><?php esc_html_e( 'Output dateModified Schema', 'zehoro-toolkit' ); ?></label></th>
                         <td>
                             <input type="checkbox" id="lkst_lu_schema" name="lkst_lu_schema" value="1" <?php checked(get_option('lkst_lu_schema', '1')); ?>>
-                            <p class="description"><?php esc_html_e('Injects structured data into the <head> to alert Google to the fresh content.', 'leokoo-site-toolkit'); ?></p>
+                            <p class="description"><?php esc_html_e('Injects structured data into the <head> to alert Google to the fresh content.', 'zehoro-toolkit'); ?></p>
                         </td>
                     </tr>
                 </table>

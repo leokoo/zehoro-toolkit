@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the **Leokoo Site Toolkit** will be documented in this file.
+All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
 ## [Unreleased]
 
@@ -93,7 +93,7 @@ Replaces an ill-fitting Bricks `filter-radio` + AJAX pattern that had been deplo
 ## [1.2.1] - 2026-05-13
 ### Added
 - **Plugin Update Checker:** Integrated the PUC library to enable native WordPress dashboard updates directly from GitHub.
-- **Custom Block Category:** Registered a dedicated "Leokoo Site Toolkit" category in the Gutenberg editor to group all native toolkit blocks together.
+- **Custom Block Category:** Registered a dedicated "Zehoro Toolkit" category in the Gutenberg editor to group all native toolkit blocks together.
 
 ### Fixed
 - **TOC Regex:** Fixed an inverted regex capture group that was causing the Table of Contents anchor IDs to include unwanted quotation marks.
@@ -101,7 +101,7 @@ Replaces an ill-fitting Bricks `filter-radio` + AJAX pattern that had been deplo
 
 ## [1.2.0] - 2026-05-11
 ### Changed
-- **Pro Refactoring:** Extracted resource-intensive features (Intelligent Content CTAs, CTA Admin, Inline Posts, Freshness Log, Pros/Cons Schema) and moved them to the new Leokoo Site Toolkit Pro add-on to maintain a lightweight core.
+- **Pro Refactoring:** Extracted resource-intensive features (Intelligent Content CTAs, CTA Admin, Inline Posts, Freshness Log, Pros/Cons Schema) and moved them to the new Zehoro Toolkit Pro add-on to maintain a lightweight core.
 
 ## [1.10.0] - 2026-05-06
 

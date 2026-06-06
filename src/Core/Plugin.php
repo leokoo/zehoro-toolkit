@@ -76,8 +76,8 @@ class Plugin {
 		return array_merge(
 			[
 				[
-					'slug'  => 'leokoo-site-toolkit',
-					'title' => __( 'Leokoo Site Toolkit', 'leokoo-site-toolkit' ),
+					'slug'  => 'zehoro-toolkit',
+					'title' => __( 'Zehoro Toolkit', 'zehoro-toolkit' ),
 					'icon'  => 'admin-tools',
 				],
 			],
@@ -96,7 +96,7 @@ class Plugin {
 		// Do not load on page-builder canvas previews.
 		if ( isset( $_GET['bricks'] ) || isset( $_GET['etchwp'] ) || isset( $_GET['elementor-preview'] ) ) return;
 
-		wp_enqueue_style( 'leokoo-site-toolkit', ZEHORO_URL . 'assets/style.css', [], ZEHORO_VERSION );
+		wp_enqueue_style( 'zehoro-toolkit', ZEHORO_URL . 'assets/style.css', [], ZEHORO_VERSION );
 
 		// Always inject CSS custom properties via wp_add_inline_style.
 		$primary   = get_option( 'lkst_color_primary',          '#E8A020' );
@@ -104,7 +104,7 @@ class Plugin {
 		$secondary = get_option( 'lkst_color_secondary',        '#1ECFC4' );
 		$bg_dark   = get_option( 'lkst_color_bg_dark',          '#0F1A2E' );
 		$bg_light  = get_option( 'lkst_color_bg_light',         '#F5F0E8' );
-		wp_add_inline_style( 'leokoo-site-toolkit', sprintf(
+		wp_add_inline_style( 'zehoro-toolkit', sprintf(
 			':root{--lkst-primary-color:%s;--lkst-primary-contrast:%s;--lkst-secondary-color:%s;--lkst-bg-dark:%s;--lkst-bg-light:%s;}',
 			esc_attr( $primary ), esc_attr( $contrast ), esc_attr( $secondary ),
 			esc_attr( $bg_dark ), esc_attr( $bg_light )

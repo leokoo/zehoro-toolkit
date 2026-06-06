@@ -18,22 +18,22 @@ function Edit( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Testimonial Settings', 'leokoo-site-toolkit' ) }
+					title={ __( 'Testimonial Settings', 'zehoro-toolkit' ) }
 					initialOpen={ true }
 				>
 					<SelectControl
-						label={ __( 'Layout', 'leokoo-site-toolkit' ) }
+						label={ __( 'Layout', 'zehoro-toolkit' ) }
 						value={ layout }
 						options={ [
-							{ label: __( 'Card (bordered)', 'leokoo-site-toolkit' ),               value: 'card' },
-							{ label: __( 'Minimal (no border)', 'leokoo-site-toolkit' ),            value: 'minimal' },
-							{ label: __( 'Highlighted (accent left border)', 'leokoo-site-toolkit' ), value: 'highlight' },
+							{ label: __( 'Card (bordered)', 'zehoro-toolkit' ),               value: 'card' },
+							{ label: __( 'Minimal (no border)', 'zehoro-toolkit' ),            value: 'minimal' },
+							{ label: __( 'Highlighted (accent left border)', 'zehoro-toolkit' ), value: 'highlight' },
 						] }
 						onChange={ set( 'layout' ) }
 					/>
 					<TextControl
-						label={ __( 'Avatar image URL', 'leokoo-site-toolkit' ) }
-						help={ __( 'Paste a URL or upload to the media library first.', 'leokoo-site-toolkit' ) }
+						label={ __( 'Avatar image URL', 'zehoro-toolkit' ) }
+						help={ __( 'Paste a URL or upload to the media library first.', 'zehoro-toolkit' ) }
 						value={ imageUrl }
 						onChange={ set( 'imageUrl' ) }
 					/>
@@ -41,29 +41,29 @@ function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<figure { ...blockProps }>
-				<p className="lkst-editor-label">{ __( 'Testimonial', 'leokoo-site-toolkit' ) }</p>
+				<p className="lkst-editor-label">{ __( 'Testimonial', 'zehoro-toolkit' ) }</p>
 				<TextareaControl
-					label={ __( 'Quote', 'leokoo-site-toolkit' ) }
-					placeholder={ __( 'The quote text…', 'leokoo-site-toolkit' ) }
+					label={ __( 'Quote', 'zehoro-toolkit' ) }
+					placeholder={ __( 'The quote text…', 'zehoro-toolkit' ) }
 					value={ quote }
 					rows={ 3 }
 					onChange={ set( 'quote' ) }
 				/>
 				<TextControl
-					label={ __( 'Name', 'leokoo-site-toolkit' ) }
-					placeholder={ __( 'Jane Smith', 'leokoo-site-toolkit' ) }
+					label={ __( 'Name', 'zehoro-toolkit' ) }
+					placeholder={ __( 'Jane Smith', 'zehoro-toolkit' ) }
 					value={ name }
 					onChange={ set( 'name' ) }
 				/>
 				<TextControl
-					label={ __( 'Role / Title', 'leokoo-site-toolkit' ) }
-					placeholder={ __( 'CEO', 'leokoo-site-toolkit' ) }
+					label={ __( 'Role / Title', 'zehoro-toolkit' ) }
+					placeholder={ __( 'CEO', 'zehoro-toolkit' ) }
 					value={ role }
 					onChange={ set( 'role' ) }
 				/>
 				<TextControl
-					label={ __( 'Company', 'leokoo-site-toolkit' ) }
-					placeholder={ __( 'Acme Corp', 'leokoo-site-toolkit' ) }
+					label={ __( 'Company', 'zehoro-toolkit' ) }
+					placeholder={ __( 'Acme Corp', 'zehoro-toolkit' ) }
 					value={ company }
 					onChange={ set( 'company' ) }
 				/>

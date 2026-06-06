@@ -1,6 +1,6 @@
-# Leokoo Site Toolkit — Module Reference
+# Zehoro Toolkit — Module Reference
 
-**Plugin:** Leokoo Site Toolkit (Free)
+**Plugin:** Zehoro Toolkit (Free)
 **Version:** 1.6.0
 **Namespace:** `LK\SiteToolkit\Modules`
 **Source:** `src/Modules/`

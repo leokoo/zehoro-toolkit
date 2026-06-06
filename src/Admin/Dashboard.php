@@ -51,8 +51,8 @@ class Dashboard {
 
 	public function register_menus(): void {
 		add_menu_page(
-			__( 'Leokoo Site Toolkit', 'leokoo-site-toolkit' ),
-			__( 'Site Toolkit', 'leokoo-site-toolkit' ),
+			__( 'Zehoro Toolkit', 'zehoro-toolkit' ),
+			__( 'Site Toolkit', 'zehoro-toolkit' ),
 			'manage_options',
 			'lkst-dashboard',
 			[ $this, 'render_dashboard_page' ],
@@ -62,29 +62,29 @@ class Dashboard {
 
 		add_submenu_page(
 			'lkst-dashboard',
-			__( 'Modules', 'leokoo-site-toolkit' ),
-			__( 'Modules', 'leokoo-site-toolkit' ),
+			__( 'Modules', 'zehoro-toolkit' ),
+			__( 'Modules', 'zehoro-toolkit' ),
 			'manage_options',
 			'lkst-dashboard',
 			[ $this, 'render_dashboard_page' ]
 		);
 
 		if ( in_array( 'author_box', $this->active, true ) ) {
-			add_submenu_page( 'lkst-dashboard', __( 'Author Box Settings', 'leokoo-site-toolkit' ), __( 'Author Box', 'leokoo-site-toolkit' ), 'manage_options', 'lkst-author-box', [ $this, 'render_author_box_settings_page' ] );
+			add_submenu_page( 'lkst-dashboard', __( 'Author Box Settings', 'zehoro-toolkit' ), __( 'Author Box', 'zehoro-toolkit' ), 'manage_options', 'lkst-author-box', [ $this, 'render_author_box_settings_page' ] );
 		}
 
 		if ( in_array( 'table_of_contents', $this->active, true ) ) {
-			add_submenu_page( 'lkst-dashboard', __( 'Table of Contents', 'leokoo-site-toolkit' ), __( 'Table of Contents', 'leokoo-site-toolkit' ), 'manage_options', 'lkst-toc-settings',
+			add_submenu_page( 'lkst-dashboard', __( 'Table of Contents', 'zehoro-toolkit' ), __( 'Table of Contents', 'zehoro-toolkit' ), 'manage_options', 'lkst-toc-settings',
 				[ new \Zehoro\Modules\TableOfContents(), 'render_page' ]
 			);
 		}
 
 		if ( in_array( 'rss_support', $this->active, true ) ) {
-			add_submenu_page( 'lkst-dashboard', __( 'RSS Feed Settings', 'leokoo-site-toolkit' ), __( 'RSS Feed', 'leokoo-site-toolkit' ), 'manage_options', 'lkst-rss-feed', [ $this, 'render_rss_feed_settings_page' ] );
+			add_submenu_page( 'lkst-dashboard', __( 'RSS Feed Settings', 'zehoro-toolkit' ), __( 'RSS Feed', 'zehoro-toolkit' ), 'manage_options', 'lkst-rss-feed', [ $this, 'render_rss_feed_settings_page' ] );
 		}
 
 		if ( in_array( 'styles', $this->active, true ) ) {
-			add_submenu_page( 'lkst-dashboard', __( 'Visual Styles', 'leokoo-site-toolkit' ), __( 'Visual Styles', 'leokoo-site-toolkit' ), 'manage_options', 'lkst-styles', [ $this, 'render_styles_settings_page' ] );
+			add_submenu_page( 'lkst-dashboard', __( 'Visual Styles', 'zehoro-toolkit' ), __( 'Visual Styles', 'zehoro-toolkit' ), 'manage_options', 'lkst-styles', [ $this, 'render_styles_settings_page' ] );
 		}
 	}
 
@@ -115,7 +115,7 @@ class Dashboard {
 		$active = get_option( 'lkst_active_modules', $default_active );
 
 		if ( isset( $_GET['updated'] ) ) {
-			echo '<div class="updated notice is-dismissible"><p>' . esc_html__( 'Modules updated successfully.', 'leokoo-site-toolkit' ) . '</p></div>';
+			echo '<div class="updated notice is-dismissible"><p>' . esc_html__( 'Modules updated successfully.', 'zehoro-toolkit' ) . '</p></div>';
 		}
 
 		$modules = [];
@@ -128,8 +128,8 @@ class Dashboard {
 		}
 		?>
 		<div class="wrap lkst-dashboard">
-			<h1><?php esc_html_e( 'Leokoo Site Toolkit — Modules', 'leokoo-site-toolkit' ); ?></h1>
-			<p><?php esc_html_e( 'Enable or disable specific features of the toolkit. Only active modules load their code.', 'leokoo-site-toolkit' ); ?></p>
+			<h1><?php esc_html_e( 'Zehoro Toolkit — Modules', 'zehoro-toolkit' ); ?></h1>
+			<p><?php esc_html_e( 'Enable or disable specific features of the toolkit. Only active modules load their code.', 'zehoro-toolkit' ); ?></p>
 			<form method="post" action="">
 				<?php wp_nonce_field( 'lkst_modules_action', 'lkst_modules_nonce' ); ?>
 				<div class="lkst-modules-grid">
@@ -148,17 +148,17 @@ class Dashboard {
 						<div class="lkst-module-footer">
 							<?php if ( ! empty( $data['settings_link'] ) ) : ?>
 								<a href="<?php echo esc_url( $data['settings_link'] ); ?>" class="lkst-configure-link">
-									<span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e( 'Configure', 'leokoo-site-toolkit' ); ?>
+									<span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e( 'Configure', 'zehoro-toolkit' ); ?>
 								</a>
 							<?php else : ?>
-								<span style="color:#a7aaad;font-style:italic;font-size:12px;"><?php esc_html_e( 'No settings needed', 'leokoo-site-toolkit' ); ?></span>
+								<span style="color:#a7aaad;font-style:italic;font-size:12px;"><?php esc_html_e( 'No settings needed', 'zehoro-toolkit' ); ?></span>
 							<?php endif; ?>
 						</div>
 					</div>
 					<?php endforeach; ?>
 				</div>
 				<p class="submit">
-					<input type="submit" name="lkst_save_modules" class="button button-primary" value="<?php esc_attr_e( 'Save Module Settings', 'leokoo-site-toolkit' ); ?>">
+					<input type="submit" name="lkst_save_modules" class="button button-primary" value="<?php esc_attr_e( 'Save Module Settings', 'zehoro-toolkit' ); ?>">
 				</p>
 			</form>
 		</div>
@@ -168,20 +168,20 @@ class Dashboard {
 	public function render_styles_settings_page(): void {
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Visual Styles', 'leokoo-site-toolkit' ); ?></h1>
-			<p><?php esc_html_e( 'Customize the colors used across all toolkit modules.', 'leokoo-site-toolkit' ); ?></p>
+			<h1><?php esc_html_e( 'Visual Styles', 'zehoro-toolkit' ); ?></h1>
+			<p><?php esc_html_e( 'Customize the colors used across all toolkit modules.', 'zehoro-toolkit' ); ?></p>
 			<form method="post" action="options.php">
 				<?php settings_fields( 'lkst_styles_group' ); ?>
 				<table class="form-table">
-					<tr><th><label for="lkst_color_primary"><?php esc_html_e( 'Primary Brand Color', 'leokoo-site-toolkit' ); ?></label></th>
+					<tr><th><label for="lkst_color_primary"><?php esc_html_e( 'Primary Brand Color', 'zehoro-toolkit' ); ?></label></th>
 						<td><input type="text" id="lkst_color_primary" name="lkst_color_primary" value="<?php echo esc_attr( get_option( 'lkst_color_primary', '#E8A020' ) ); ?>" class="lkst-color-picker"></td></tr>
-					<tr><th><label for="lkst_color_primary_contrast"><?php esc_html_e( 'Primary Contrast Color', 'leokoo-site-toolkit' ); ?></label></th>
+					<tr><th><label for="lkst_color_primary_contrast"><?php esc_html_e( 'Primary Contrast Color', 'zehoro-toolkit' ); ?></label></th>
 						<td><input type="text" id="lkst_color_primary_contrast" name="lkst_color_primary_contrast" value="<?php echo esc_attr( get_option( 'lkst_color_primary_contrast', '#0F1A2E' ) ); ?>" class="lkst-color-picker"></td></tr>
-					<tr><th><label for="lkst_color_secondary"><?php esc_html_e( 'Secondary Brand Color', 'leokoo-site-toolkit' ); ?></label></th>
+					<tr><th><label for="lkst_color_secondary"><?php esc_html_e( 'Secondary Brand Color', 'zehoro-toolkit' ); ?></label></th>
 						<td><input type="text" id="lkst_color_secondary" name="lkst_color_secondary" value="<?php echo esc_attr( get_option( 'lkst_color_secondary', '#1ECFC4' ) ); ?>" class="lkst-color-picker"></td></tr>
-					<tr><th><label for="lkst_color_bg_dark"><?php esc_html_e( 'Dark Background', 'leokoo-site-toolkit' ); ?></label></th>
+					<tr><th><label for="lkst_color_bg_dark"><?php esc_html_e( 'Dark Background', 'zehoro-toolkit' ); ?></label></th>
 						<td><input type="text" id="lkst_color_bg_dark" name="lkst_color_bg_dark" value="<?php echo esc_attr( get_option( 'lkst_color_bg_dark', '#0F1A2E' ) ); ?>" class="lkst-color-picker"></td></tr>
-					<tr><th><label for="lkst_color_bg_light"><?php esc_html_e( 'Light Background', 'leokoo-site-toolkit' ); ?></label></th>
+					<tr><th><label for="lkst_color_bg_light"><?php esc_html_e( 'Light Background', 'zehoro-toolkit' ); ?></label></th>
 						<td><input type="text" id="lkst_color_bg_light" name="lkst_color_bg_light" value="<?php echo esc_attr( get_option( 'lkst_color_bg_light', '#F5F0E8' ) ); ?>" class="lkst-color-picker"></td></tr>
 				</table>
 				<?php submit_button(); ?>
@@ -195,11 +195,11 @@ class Dashboard {
 		$exclude    = [ 'attachment', 'page', 'bricks_template', 'etch_template', 'elementor_library', 'ifso_triggers' ];
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'RSS Feed Support', 'leokoo-site-toolkit' ); ?></h1>
+			<h1><?php esc_html_e( 'RSS Feed Support', 'zehoro-toolkit' ); ?></h1>
 			<form method="post" action="options.php">
 				<?php settings_fields( 'lkst_rss_group' ); ?>
 				<table class="form-table">
-					<tr><th><?php esc_html_e( 'Include Post Types', 'leokoo-site-toolkit' ); ?></th>
+					<tr><th><?php esc_html_e( 'Include Post Types', 'zehoro-toolkit' ); ?></th>
 						<td><?php
 							$selected = get_option( 'lkst_rss_post_types', [ 'post' ] );
 							foreach ( $post_types as $slug => $pt ) :
@@ -222,18 +222,18 @@ class Dashboard {
 	public function render_author_box_settings_page(): void {
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Author Box Settings', 'leokoo-site-toolkit' ); ?></h1>
+			<h1><?php esc_html_e( 'Author Box Settings', 'zehoro-toolkit' ); ?></h1>
 			<form method="post" action="options.php">
 				<?php settings_fields( 'lkst_author_box_group' ); ?>
-				<h2><?php esc_html_e( 'CTA Buttons', 'leokoo-site-toolkit' ); ?></h2>
+				<h2><?php esc_html_e( 'CTA Buttons', 'zehoro-toolkit' ); ?></h2>
 				<table class="form-table">
-					<tr><th><label for="lkst_cta_p_label"><?php esc_html_e( 'Primary button label', 'leokoo-site-toolkit' ); ?></label></th>
+					<tr><th><label for="lkst_cta_p_label"><?php esc_html_e( 'Primary button label', 'zehoro-toolkit' ); ?></label></th>
 						<td><input type="text" id="lkst_cta_p_label" name="lkst_cta_primary_label" value="<?php echo esc_attr( get_option( 'lkst_cta_primary_label', 'Read the articles' ) ); ?>" class="regular-text"></td></tr>
-					<tr><th><label for="lkst_cta_p_url"><?php esc_html_e( 'Primary button URL', 'leokoo-site-toolkit' ); ?></label></th>
+					<tr><th><label for="lkst_cta_p_url"><?php esc_html_e( 'Primary button URL', 'zehoro-toolkit' ); ?></label></th>
 						<td><input type="text" id="lkst_cta_p_url" name="lkst_cta_primary_url" value="<?php echo esc_attr( get_option( 'lkst_cta_primary_url', '/blog/' ) ); ?>" class="regular-text"></td></tr>
-					<tr><th><label for="lkst_cta_s_label"><?php esc_html_e( 'Secondary button label', 'leokoo-site-toolkit' ); ?></label></th>
+					<tr><th><label for="lkst_cta_s_label"><?php esc_html_e( 'Secondary button label', 'zehoro-toolkit' ); ?></label></th>
 						<td><input type="text" id="lkst_cta_s_label" name="lkst_cta_secondary_label" value="<?php echo esc_attr( get_option( 'lkst_cta_secondary_label', 'Get the newsletter' ) ); ?>" class="regular-text"></td></tr>
-					<tr><th><label for="lkst_cta_s_url"><?php esc_html_e( 'Secondary button URL', 'leokoo-site-toolkit' ); ?></label></th>
+					<tr><th><label for="lkst_cta_s_url"><?php esc_html_e( 'Secondary button URL', 'zehoro-toolkit' ); ?></label></th>
 						<td><input type="text" id="lkst_cta_s_url" name="lkst_cta_secondary_url" value="<?php echo esc_attr( get_option( 'lkst_cta_secondary_url', '#newsletter' ) ); ?>" class="regular-text"></td></tr>
 				</table>
 				<?php submit_button(); ?>

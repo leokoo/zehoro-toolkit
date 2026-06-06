@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "lkst/callout",
   "title": "Callout",
-  "category": "leokoo-site-toolkit",
+  "category": "zehoro-toolkit",
   "icon": "info",
   "description": "Visual breaks for long-form content.",
   "attributes": {
@@ -19,5 +19,5 @@
   },
   "editorScript": "file:../callout.js",
   "style": "file:../style-callout.css",
-  "textdomain": "leokoo-site-toolkit"
+  "textdomain": "zehoro-toolkit"
 }

@@ -1,5 +1,5 @@
 {
-  "name": "leokoo/leokoo-site-toolkit",
+  "name": "leokoo/zehoro-toolkit",
   "description": "Modular utility suite for WordPress sites — composer config for development dependencies only. The plugin itself loads via its own SPL autoloader.",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",

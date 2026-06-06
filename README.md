@@ -1,4 +1,4 @@
-# Leokoo Site Toolkit
+# Zehoro Toolkit
 
 A lightweight, builder-agnostic utility suite for WordPress sites. Designed to replace bloated ecosystem plugins, this toolkit delivers highly-optimized frontend components like a Wirecutter-style Table of Contents and Author Boxes.
 
@@ -29,7 +29,7 @@ A smart, zero-dependency TOC that automatically parses post content and generate
 ## 📦 Installation
 
 1. Download the latest release from the repository.
-2. Upload the `leokoo-site-toolkit` folder to your `/wp-content/plugins/` directory.
+2. Upload the `zehoro-toolkit` folder to your `/wp-content/plugins/` directory.
 3. Activate the plugin through the 'Plugins' menu in WordPress.
 4. Navigate to **Site Toolkit > Modules** to selectively enable the features you need.
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * PHPUnit bootstrap for Leokoo Site Toolkit.
+ * PHPUnit bootstrap for Zehoro Toolkit.
  *
  * Loads the WordPress test suite (via wp-phpunit) and then the plugin so
  * all `WP_UnitTestCase`-based integration tests see the plugin's modules
@@ -47,7 +47,7 @@ require_once $wp_tests_dir . '/includes/functions.php';
 // Ensure the plugin is loaded BEFORE WP fires `plugins_loaded` so its module
 // registrations land in the normal hook order.
 tests_add_filter( 'muplugins_loaded', function () {
-    require_once dirname( __DIR__ ) . '/leokoo-site-toolkit.php';
+    require_once dirname( __DIR__ ) . '/zehoro-toolkit.php';
 } );
 
 // Start up the WP testing environment.

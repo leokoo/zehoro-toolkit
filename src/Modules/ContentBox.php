@@ -79,8 +79,8 @@ class ContentBox implements ModuleInterface {
     public function register_settings_page(): void {
         add_submenu_page(
             'lkst-dashboard',
-            __( 'Content Box Settings', 'leokoo-site-toolkit' ),
-            __( 'Content Box', 'leokoo-site-toolkit' ),
+            __( 'Content Box Settings', 'zehoro-toolkit' ),
+            __( 'Content Box', 'zehoro-toolkit' ),
             'manage_options',
             'lkst-content-box',
             [ $this, 'render_page' ]
@@ -99,8 +99,8 @@ class ContentBox implements ModuleInterface {
         $form        = get_option( 'lkst_box_form',        '' );
         ?>
         <div class="wrap">
-            <h1><?php esc_html_e( 'Content Box Settings', 'leokoo-site-toolkit' ); ?></h1>
-            <p><?php esc_html_e( 'These are the site-wide defaults. Override any field directly in the shortcode: ', 'leokoo-site-toolkit' ); ?>
+            <h1><?php esc_html_e( 'Content Box Settings', 'zehoro-toolkit' ); ?></h1>
+            <p><?php esc_html_e( 'These are the site-wide defaults. Override any field directly in the shortcode: ', 'zehoro-toolkit' ); ?>
                <code>[lkst_box type="email" heading="Download the Guide" file_url="https://..."]</code></p>
 
             <form method="post" action="options.php">
@@ -109,67 +109,67 @@ class ContentBox implements ModuleInterface {
                 <table class="form-table">
 
                     <tr>
-                        <th><?php esc_html_e( 'Box Type', 'leokoo-site-toolkit' ); ?></th>
+                        <th><?php esc_html_e( 'Box Type', 'zehoro-toolkit' ); ?></th>
                         <td>
                             <select name="lkst_box_type" id="lkst_box_type">
-                                <option value="cta"   <?php selected( $type, 'cta' ); ?>><?php esc_html_e( 'Newsletter CTA (external form)', 'leokoo-site-toolkit' ); ?></option>
-                                <option value="email" <?php selected( $type, 'email' ); ?>><?php esc_html_e( 'File Download (built-in form + webhook)', 'leokoo-site-toolkit' ); ?></option>
+                                <option value="cta"   <?php selected( $type, 'cta' ); ?>><?php esc_html_e( 'Newsletter CTA (external form)', 'zehoro-toolkit' ); ?></option>
+                                <option value="email" <?php selected( $type, 'email' ); ?>><?php esc_html_e( 'File Download (built-in form + webhook)', 'zehoro-toolkit' ); ?></option>
                             </select>
-                            <p class="description"><?php esc_html_e( 'Override per shortcode with type="cta" or type="email".', 'leokoo-site-toolkit' ); ?></p>
+                            <p class="description"><?php esc_html_e( 'Override per shortcode with type="cta" or type="email".', 'zehoro-toolkit' ); ?></p>
                         </td>
                     </tr>
 
                     <tr>
-                        <th><label for="lkst_box_eyebrow"><?php esc_html_e( 'Eyebrow', 'leokoo-site-toolkit' ); ?></label></th>
-                        <td><input type="text" id="lkst_box_eyebrow" name="lkst_box_eyebrow" value="<?php echo esc_attr( get_option( 'lkst_box_eyebrow', '' ) ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'e.g. Free Resource', 'leokoo-site-toolkit' ); ?>"></td>
+                        <th><label for="lkst_box_eyebrow"><?php esc_html_e( 'Eyebrow', 'zehoro-toolkit' ); ?></label></th>
+                        <td><input type="text" id="lkst_box_eyebrow" name="lkst_box_eyebrow" value="<?php echo esc_attr( get_option( 'lkst_box_eyebrow', '' ) ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'e.g. Free Resource', 'zehoro-toolkit' ); ?>"></td>
                     </tr>
 
                     <tr>
-                        <th><label for="lkst_box_heading"><?php esc_html_e( 'Heading', 'leokoo-site-toolkit' ); ?></label></th>
+                        <th><label for="lkst_box_heading"><?php esc_html_e( 'Heading', 'zehoro-toolkit' ); ?></label></th>
                         <td><input type="text" id="lkst_box_heading" name="lkst_box_heading" value="<?php echo esc_attr( get_option( 'lkst_box_heading', 'Enjoying this? Join the newsletter.' ) ); ?>" class="regular-text"></td>
                     </tr>
 
                     <tr>
-                        <th><label for="lkst_box_desc"><?php esc_html_e( 'Description', 'leokoo-site-toolkit' ); ?></label></th>
+                        <th><label for="lkst_box_desc"><?php esc_html_e( 'Description', 'zehoro-toolkit' ); ?></label></th>
                         <td><textarea id="lkst_box_desc" name="lkst_box_desc" rows="3" class="large-text"><?php echo esc_textarea( get_option( 'lkst_box_desc', '' ) ); ?></textarea></td>
                     </tr>
 
                     <tr>
-                        <th><label for="lkst_box_layout"><?php esc_html_e( 'Layout', 'leokoo-site-toolkit' ); ?></label></th>
+                        <th><label for="lkst_box_layout"><?php esc_html_e( 'Layout', 'zehoro-toolkit' ); ?></label></th>
                         <td>
                             <select name="lkst_box_layout" id="lkst_box_layout">
-                                <option value="text"        <?php selected( $layout, 'text' ); ?>><?php esc_html_e( 'Text Only', 'leokoo-site-toolkit' ); ?></option>
-                                <option value="image-left"  <?php selected( $layout, 'image-left' ); ?>><?php esc_html_e( 'Image Left', 'leokoo-site-toolkit' ); ?></option>
-                                <option value="image-right" <?php selected( $layout, 'image-right' ); ?>><?php esc_html_e( 'Image Right', 'leokoo-site-toolkit' ); ?></option>
-                                <option value="image-top"   <?php selected( $layout, 'image-top' ); ?>><?php esc_html_e( 'Image Top', 'leokoo-site-toolkit' ); ?></option>
+                                <option value="text"        <?php selected( $layout, 'text' ); ?>><?php esc_html_e( 'Text Only', 'zehoro-toolkit' ); ?></option>
+                                <option value="image-left"  <?php selected( $layout, 'image-left' ); ?>><?php esc_html_e( 'Image Left', 'zehoro-toolkit' ); ?></option>
+                                <option value="image-right" <?php selected( $layout, 'image-right' ); ?>><?php esc_html_e( 'Image Right', 'zehoro-toolkit' ); ?></option>
+                                <option value="image-top"   <?php selected( $layout, 'image-top' ); ?>><?php esc_html_e( 'Image Top', 'zehoro-toolkit' ); ?></option>
                             </select>
                         </td>
                     </tr>
 
                     <tr>
-                        <th><label for="lkst_box_image_url"><?php esc_html_e( 'Image URL', 'leokoo-site-toolkit' ); ?></label></th>
+                        <th><label for="lkst_box_image_url"><?php esc_html_e( 'Image URL', 'zehoro-toolkit' ); ?></label></th>
                         <td><input type="url" id="lkst_box_image_url" name="lkst_box_image_url" value="<?php echo esc_attr( get_option( 'lkst_box_image_url', '' ) ); ?>" class="regular-text" placeholder="https://"></td>
                     </tr>
 
                     <!-- CTA: external form shortcode -->
                     <tr class="lkst-box-row-cta" <?php if ( $type !== 'cta' ) echo 'style="display:none"'; ?>>
-                        <th><label for="lkst_box_form"><?php esc_html_e( 'Form Shortcode', 'leokoo-site-toolkit' ); ?></label></th>
+                        <th><label for="lkst_box_form"><?php esc_html_e( 'Form Shortcode', 'zehoro-toolkit' ); ?></label></th>
                         <td>
                             <input type="text" id="lkst_box_form" name="lkst_box_form" value="<?php echo esc_attr( $form ); ?>" class="regular-text" placeholder='[fluentform id="1"]'>
-                            <p class="description"><?php esc_html_e( 'Paste your opt-in form shortcode. Accepts any shortcode-based form plugin.', 'leokoo-site-toolkit' ); ?></p>
+                            <p class="description"><?php esc_html_e( 'Paste your opt-in form shortcode. Accepts any shortcode-based form plugin.', 'zehoro-toolkit' ); ?></p>
                         </td>
                     </tr>
 
                     <!-- Email: webhook + button text -->
                     <tr class="lkst-box-row-email" <?php if ( $type !== 'email' ) echo 'style="display:none"'; ?>>
-                        <th><label for="lkst_box_webhook_url"><?php esc_html_e( 'Webhook URL', 'leokoo-site-toolkit' ); ?></label></th>
+                        <th><label for="lkst_box_webhook_url"><?php esc_html_e( 'Webhook URL', 'zehoro-toolkit' ); ?></label></th>
                         <td>
                             <input type="url" id="lkst_box_webhook_url" name="lkst_box_webhook_url" value="<?php echo esc_attr( $webhook ); ?>" class="regular-text" placeholder="https://hook.make.com/...">
-                            <p class="description"><?php esc_html_e( 'POSTs name, email, file_url, post_id, and source to this URL. Works with Make.com, Zapier, or n8n.', 'leokoo-site-toolkit' ); ?></p>
+                            <p class="description"><?php esc_html_e( 'POSTs name, email, file_url, post_id, and source to this URL. Works with Make.com, Zapier, or n8n.', 'zehoro-toolkit' ); ?></p>
                         </td>
                     </tr>
                     <tr class="lkst-box-row-email" <?php if ( $type !== 'email' ) echo 'style="display:none"'; ?>>
-                        <th><label for="lkst_box_button_text"><?php esc_html_e( 'Button Text', 'leokoo-site-toolkit' ); ?></label></th>
+                        <th><label for="lkst_box_button_text"><?php esc_html_e( 'Button Text', 'zehoro-toolkit' ); ?></label></th>
                         <td><input type="text" id="lkst_box_button_text" name="lkst_box_button_text" value="<?php echo esc_attr( $button_text ); ?>" class="regular-text"></td>
                     </tr>
 
@@ -179,20 +179,20 @@ class ContentBox implements ModuleInterface {
             </form>
 
             <hr>
-            <h2><?php esc_html_e( 'Shortcode Reference', 'leokoo-site-toolkit' ); ?></h2>
+            <h2><?php esc_html_e( 'Shortcode Reference', 'zehoro-toolkit' ); ?></h2>
             <table class="widefat" style="max-width:700px;">
-                <thead><tr><th><?php esc_html_e( 'Attribute', 'leokoo-site-toolkit' ); ?></th><th><?php esc_html_e( 'Default', 'leokoo-site-toolkit' ); ?></th><th><?php esc_html_e( 'Notes', 'leokoo-site-toolkit' ); ?></th></tr></thead>
+                <thead><tr><th><?php esc_html_e( 'Attribute', 'zehoro-toolkit' ); ?></th><th><?php esc_html_e( 'Default', 'zehoro-toolkit' ); ?></th><th><?php esc_html_e( 'Notes', 'zehoro-toolkit' ); ?></th></tr></thead>
                 <tbody>
-                    <tr><td><code>type</code></td><td>setting</td><td><?php esc_html_e( '"cta" or "email"', 'leokoo-site-toolkit' ); ?></td></tr>
-                    <tr><td><code>eyebrow</code></td><td>setting</td><td><?php esc_html_e( 'Small label above the heading', 'leokoo-site-toolkit' ); ?></td></tr>
-                    <tr><td><code>heading</code></td><td>setting</td><td><?php esc_html_e( 'Main headline', 'leokoo-site-toolkit' ); ?></td></tr>
-                    <tr><td><code>desc</code></td><td>setting</td><td><?php esc_html_e( 'Body copy (HTML allowed)', 'leokoo-site-toolkit' ); ?></td></tr>
-                    <tr><td><code>layout</code></td><td>setting</td><td><?php esc_html_e( 'text / image-left / image-right / image-top', 'leokoo-site-toolkit' ); ?></td></tr>
-                    <tr><td><code>image</code></td><td>setting</td><td><?php esc_html_e( 'Image URL (required for image layouts)', 'leokoo-site-toolkit' ); ?></td></tr>
-                    <tr><td><code>form</code></td><td>setting</td><td><?php esc_html_e( 'type="cta" only — form shortcode', 'leokoo-site-toolkit' ); ?></td></tr>
-                    <tr><td><code>file_url</code></td><td><em><?php esc_html_e( 'none', 'leokoo-site-toolkit' ); ?></em></td><td><?php esc_html_e( 'type="email" only — the download URL passed to the webhook', 'leokoo-site-toolkit' ); ?></td></tr>
-                    <tr><td><code>webhook</code></td><td>setting</td><td><?php esc_html_e( 'type="email" only — override the global webhook per article', 'leokoo-site-toolkit' ); ?></td></tr>
-                    <tr><td><code>button_text</code></td><td>setting</td><td><?php esc_html_e( 'type="email" only — submit button label', 'leokoo-site-toolkit' ); ?></td></tr>
+                    <tr><td><code>type</code></td><td>setting</td><td><?php esc_html_e( '"cta" or "email"', 'zehoro-toolkit' ); ?></td></tr>
+                    <tr><td><code>eyebrow</code></td><td>setting</td><td><?php esc_html_e( 'Small label above the heading', 'zehoro-toolkit' ); ?></td></tr>
+                    <tr><td><code>heading</code></td><td>setting</td><td><?php esc_html_e( 'Main headline', 'zehoro-toolkit' ); ?></td></tr>
+                    <tr><td><code>desc</code></td><td>setting</td><td><?php esc_html_e( 'Body copy (HTML allowed)', 'zehoro-toolkit' ); ?></td></tr>
+                    <tr><td><code>layout</code></td><td>setting</td><td><?php esc_html_e( 'text / image-left / image-right / image-top', 'zehoro-toolkit' ); ?></td></tr>
+                    <tr><td><code>image</code></td><td>setting</td><td><?php esc_html_e( 'Image URL (required for image layouts)', 'zehoro-toolkit' ); ?></td></tr>
+                    <tr><td><code>form</code></td><td>setting</td><td><?php esc_html_e( 'type="cta" only — form shortcode', 'zehoro-toolkit' ); ?></td></tr>
+                    <tr><td><code>file_url</code></td><td><em><?php esc_html_e( 'none', 'zehoro-toolkit' ); ?></em></td><td><?php esc_html_e( 'type="email" only — the download URL passed to the webhook', 'zehoro-toolkit' ); ?></td></tr>
+                    <tr><td><code>webhook</code></td><td>setting</td><td><?php esc_html_e( 'type="email" only — override the global webhook per article', 'zehoro-toolkit' ); ?></td></tr>
+                    <tr><td><code>button_text</code></td><td>setting</td><td><?php esc_html_e( 'type="email" only — submit button label', 'zehoro-toolkit' ); ?></td></tr>
                 </tbody>
             </table>
         </div>
@@ -326,12 +326,12 @@ class ContentBox implements ModuleInterface {
             <form class="lkst-box-email-form" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
                 <input type="text"
                        name="lkst_box_name"
-                       placeholder="<?php esc_attr_e( 'Your Name', 'leokoo-site-toolkit' ); ?>"
+                       placeholder="<?php esc_attr_e( 'Your Name', 'zehoro-toolkit' ); ?>"
                        required
                        style="flex:1; min-width:130px; padding:10px; border:1px solid #ccc; border-radius:4px; font-size:14px;">
                 <input type="email"
                        name="lkst_box_email"
-                       placeholder="<?php esc_attr_e( 'Your Email', 'leokoo-site-toolkit' ); ?>"
+                       placeholder="<?php esc_attr_e( 'Your Email', 'zehoro-toolkit' ); ?>"
                        required
                        style="flex:2; min-width:180px; padding:10px; border:1px solid #ccc; border-radius:4px; font-size:14px;">
                 <input type="hidden" name="lkst_box_file_url"  value="<?php echo esc_url( $atts['file_url'] ); ?>">
@@ -366,7 +366,7 @@ class ContentBox implements ModuleInterface {
                 var originalText = btn.textContent;
 
                 btn.disabled    = true;
-                btn.textContent = '<?php echo esc_js( __( 'Sending…', 'leokoo-site-toolkit' ) ); ?>';
+                btn.textContent = '<?php echo esc_js( __( 'Sending…', 'zehoro-toolkit' ) ); ?>';
 
                 var data = new FormData(form);
 
@@ -379,7 +379,7 @@ class ContentBox implements ModuleInterface {
                     if (res.success) {
                         if (msg) {
                             msg.style.color   = '#2e7d32';
-                            msg.textContent   = '<?php echo esc_js( __( 'Success! Check your email for the download link.', 'leokoo-site-toolkit' ) ); ?>';
+                            msg.textContent   = '<?php echo esc_js( __( 'Success! Check your email for the download link.', 'zehoro-toolkit' ) ); ?>';
                             msg.style.display = 'block';
                         }
                         form.reset();
@@ -387,7 +387,7 @@ class ContentBox implements ModuleInterface {
                     } else {
                         if (msg) {
                             msg.style.color   = '#c62828';
-                            msg.textContent   = res.data || '<?php echo esc_js( __( 'An error occurred. Please try again.', 'leokoo-site-toolkit' ) ); ?>';
+                            msg.textContent   = res.data || '<?php echo esc_js( __( 'An error occurred. Please try again.', 'zehoro-toolkit' ) ); ?>';
                             msg.style.display = 'block';
                         }
                         btn.disabled    = false;
@@ -397,7 +397,7 @@ class ContentBox implements ModuleInterface {
                 .catch(function() {
                     if (msg) {
                         msg.style.color   = '#c62828';
-                        msg.textContent   = '<?php echo esc_js( __( 'Network error. Please try again.', 'leokoo-site-toolkit' ) ); ?>';
+                        msg.textContent   = '<?php echo esc_js( __( 'Network error. Please try again.', 'zehoro-toolkit' ) ); ?>';
                         msg.style.display = 'block';
                     }
                     btn.disabled    = false;
@@ -437,10 +437,10 @@ class ContentBox implements ModuleInterface {
         }
 
         if ( empty( $email ) ) {
-            wp_send_json_error( __( 'Please enter a valid email address.', 'leokoo-site-toolkit' ) );
+            wp_send_json_error( __( 'Please enter a valid email address.', 'zehoro-toolkit' ) );
         }
         if ( empty( $webhook ) ) {
-            wp_send_json_error( __( 'This form is not configured yet. Please contact the site owner.', 'leokoo-site-toolkit' ) );
+            wp_send_json_error( __( 'This form is not configured yet. Please contact the site owner.', 'zehoro-toolkit' ) );
         }
 
         $response = wp_remote_post( $webhook, [
@@ -455,9 +455,9 @@ class ContentBox implements ModuleInterface {
         ] );
 
         if ( is_wp_error( $response ) ) {
-            wp_send_json_error( __( 'Could not reach the delivery server. Please try again shortly.', 'leokoo-site-toolkit' ) );
+            wp_send_json_error( __( 'Could not reach the delivery server. Please try again shortly.', 'zehoro-toolkit' ) );
         }
 
-        wp_send_json_success( __( 'Success! Check your email for the download link.', 'leokoo-site-toolkit' ) );
+        wp_send_json_success( __( 'Success! Check your email for the download link.', 'zehoro-toolkit' ) );
     }
 }

@@ -59,7 +59,7 @@ class HomeFilterPills implements \Zehoro\Core\ModuleInterface {
 		$html = sprintf(
 			'<div class="lkst-cat-pills lkst-cat-pills--%s" role="navigation" aria-label="%s">',
 			esc_attr( $scheme ),
-			esc_attr__( 'Filter by topic', 'leokoo-site-toolkit' )
+			esc_attr__( 'Filter by topic', 'zehoro-toolkit' )
 		);
 
 		foreach ( $items as $item ) {

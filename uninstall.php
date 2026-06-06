@@ -1,6 +1,6 @@
 <?php
 /**
- * Uninstall handler — Leokoo Site Toolkit.
+ * Uninstall handler — Zehoro Toolkit.
  *
  * This file is executed automatically when the user clicks "Delete" in the WordPress admin.
  * It ensures the plugin leaves no orphaned options, post meta, or user meta behind.
