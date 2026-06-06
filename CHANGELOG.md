@@ -2,7 +2,13 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
-## [Unreleased]
+## [1.6.1] - 2026-06-06
+
+### Changed — renamed Leokoo Site Toolkit → Zehoro Toolkit
+- Plugin renamed to **Zehoro Toolkit** (the free base for Zehoro Toolkit Pro). Namespace `LK\SiteToolkit\` → `Zehoro\`, constants `LKST_*` → `ZEHORO_*`, slug/folder/text-domain/block-category/handles/PUC → `zehoro-toolkit`, GitHub repo → `leokoo/zehoro-toolkit`.
+- Filter `lkst_article_schema` → `zehoro_article_schema` (the old name still fires via `apply_filters_deprecated`).
+- Removed 4 modules native WordPress core already provides / that add no value: **PostNav** (`core/post-navigation-link`), **ReadingTime** (`core/post-time-to-read`), **ReadingProgress**, **NewsTicker**.
+- Stored `lkst_` data (options, post/user meta, shortcodes, CSS classes, `lkst/` theme filters) intentionally unchanged — no migration.
 
 ### Internal — test coverage backfill
 
