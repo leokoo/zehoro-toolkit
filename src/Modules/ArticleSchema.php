@@ -1,8 +1,8 @@
 <?php
-namespace LK\SiteToolkit\Modules;
+namespace Zehoro\Modules;
 
-use LK\SiteToolkit\Core\Plugin;
-use LK\SiteToolkit\Core\ModuleInterface;
+use Zehoro\Core\Plugin;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -10,7 +10,7 @@ class ArticleSchema implements ModuleInterface {
 
     /**
      * Default post-type → schema.org @type map.
-     * Filterable via lkst_article_schema_type_map.
+     * Filterable via zehoro_article_schema_type_map.
      */
     private static array $type_map = [
         'post'     => 'BlogPosting',
@@ -41,10 +41,10 @@ class ArticleSchema implements ModuleInterface {
 
     /**
      * Returns true if a major SEO plugin that already outputs schema is active.
-     * Use add_filter( 'lkst_article_schema_force', '__return_true' ) to bypass.
+     * Use add_filter( 'zehoro_article_schema_force', '__return_true' ) to bypass.
      */
     public static function seo_plugin_active(): bool {
-        if ( apply_filters( 'lkst_article_schema_force', false ) ) {
+        if ( apply_filters( 'zehoro_article_schema_force', false ) ) {
             return false;
         }
 
@@ -60,12 +60,12 @@ class ArticleSchema implements ModuleInterface {
      * Returns true if WP Review Pro is active.
      * When true, suppress our schema on review post types to avoid duplicate
      * Review JSON-LD (WP Review Pro emits its own at priority 10).
-     * Use add_filter( 'lkst_article_schema_suppress_wp_review', '__return_false' )
+     * Use add_filter( 'zehoro_article_schema_suppress_wp_review', '__return_false' )
      * to override if you want both outputs (not recommended).
      */
     public static function wp_review_pro_active(): bool {
         return apply_filters(
-            'lkst_article_schema_suppress_wp_review',
+            'zehoro_article_schema_suppress_wp_review',
             defined( 'MTS_WP_REVIEW_DB_TABLE' )
         );
     }
@@ -73,7 +73,7 @@ class ArticleSchema implements ModuleInterface {
     // ── Schema type resolution ───────────────────────────────────────────────
 
     public static function get_schema_type( string $post_type ): string {
-        $map = apply_filters( 'lkst_article_schema_type_map', self::$type_map );
+        $map = apply_filters( 'zehoro_article_schema_type_map', self::$type_map );
         return $map[ $post_type ] ?? 'Article';
     }
 
@@ -154,7 +154,16 @@ class ArticleSchema implements ModuleInterface {
             $schema['wordCount'] = $word_count;
         }
 
-        return apply_filters( 'lkst_article_schema', $schema, $post );
+        $schema = apply_filters( 'zehoro_article_schema', $schema, $post );
+
+        // Back-compat: fire the deprecated lkst_ filter name for one release so
+        // existing site code (and Zehoro Toolkit Pro's EntityMap) keeps working
+        // until everything migrates to zehoro_article_schema.
+        if ( has_filter( 'lkst_article_schema' ) ) {
+            $schema = apply_filters_deprecated( 'lkst_article_schema', [ $schema, $post ], '2.0.0', 'zehoro_article_schema' );
+        }
+
+        return $schema;
     }
 
     // ── Front-end JSON-LD output ─────────────────────────────────────────────
@@ -170,7 +179,7 @@ class ArticleSchema implements ModuleInterface {
         if ( self::wp_review_pro_active() ) return;
 
         // Skip pages unless explicitly opted in
-        if ( get_post_type( $post ) === 'page' && ! apply_filters( 'lkst_article_schema_on_pages', false ) ) {
+        if ( get_post_type( $post ) === 'page' && ! apply_filters( 'zehoro_article_schema_on_pages', false ) ) {
             return;
         }
 
@@ -193,7 +202,7 @@ class ArticleSchema implements ModuleInterface {
         );
 
         add_meta_box(
-            'lkst_article_schema_preview',
+            'zehoro_article_schema_preview',
             '🔍 Article Schema (LKST)',
             [ $this, 'render_meta_box' ],
             $post_types,
@@ -208,7 +217,7 @@ class ArticleSchema implements ModuleInterface {
             echo '<p style="color:#856404;background:#fff3cd;padding:8px 10px;border-radius:4px;font-size:12px;margin:0;line-height:1.5;">';
             echo '⚠️ <strong>Schema output disabled.</strong><br>An SEO plugin (Yoast / SEOPress / RankMath / AIOSEO / SureRank) is already active — LKST will not duplicate the schema.';
             echo '</p>';
-            echo '<p style="font-size:11px;color:#999;margin:8px 0 0;">To override:<br><code>add_filter(\'lkst_article_schema_force\', \'__return_true\');</code></p>';
+            echo '<p style="font-size:11px;color:#999;margin:8px 0 0;">To override:<br><code>add_filter(\'zehoro_article_schema_force\', \'__return_true\');</code></p>';
             return;
         }
 
@@ -217,7 +226,7 @@ class ArticleSchema implements ModuleInterface {
             echo '<p style="color:#856404;background:#fff3cd;padding:8px 10px;border-radius:4px;font-size:12px;margin:0;line-height:1.5;">';
             echo '⚠️ <strong>Schema output disabled.</strong><br>WP Review Pro is active and handles its own Review JSON-LD — LKST will not duplicate it.';
             echo '</p>';
-            echo '<p style="font-size:11px;color:#999;margin:8px 0 0;">To override:<br><code>add_filter(\'lkst_article_schema_suppress_wp_review\', \'__return_false\');</code></p>';
+            echo '<p style="font-size:11px;color:#999;margin:8px 0 0;">To override:<br><code>add_filter(\'zehoro_article_schema_suppress_wp_review\', \'__return_false\');</code></p>';
             return;
         }
 

@@ -1,5 +1,5 @@
 <?php
-namespace LK\SiteToolkit\Core;
+namespace Zehoro\Core;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Every module MUST implement this interface.
  * A missing init() is a fatal TypeError, not a silent no-op.
  *
- * @package LK\SiteToolkit\Core
+ * @package Zehoro\Core
  */
 interface ModuleInterface {
 

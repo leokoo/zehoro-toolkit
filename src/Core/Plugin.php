@@ -1,5 +1,5 @@
 <?php
-namespace LK\SiteToolkit\Core;
+namespace Zehoro\Core;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Implements a Module Registry Pattern. Modules self-register their meta
  * and the plugin uses this registry to power the dashboard and frontend.
  *
- * @package LK\SiteToolkit\Core
+ * @package Zehoro\Core
  */
 class Plugin {
 
@@ -37,7 +37,7 @@ class Plugin {
 		// 1. Auto-discover and register all modules
 		$dir = __DIR__ . '/../Modules/';
 		foreach ( glob( $dir . '*.php' ) as $file ) {
-			$class = '\\LK\\SiteToolkit\\Modules\\' . basename( $file, '.php' );
+			$class = '\\Zehoro\\Modules\\' . basename( $file, '.php' );
 			if ( method_exists( $class, 'register' ) ) {
 				$class::register();
 			}
@@ -49,7 +49,7 @@ class Plugin {
 
 		// Admin: init dashboard
 		if ( is_admin() ) {
-			$admin = new \LK\SiteToolkit\Admin\Dashboard( $active );
+			$admin = new \Zehoro\Admin\Dashboard( $active );
 			$admin->init();
 		}
 
@@ -96,7 +96,7 @@ class Plugin {
 		// Do not load on page-builder canvas previews.
 		if ( isset( $_GET['bricks'] ) || isset( $_GET['etchwp'] ) || isset( $_GET['elementor-preview'] ) ) return;
 
-		wp_enqueue_style( 'leokoo-site-toolkit', LKST_URL . 'assets/style.css', [], LKST_VERSION );
+		wp_enqueue_style( 'leokoo-site-toolkit', ZEHORO_URL . 'assets/style.css', [], ZEHORO_VERSION );
 
 		// Always inject CSS custom properties via wp_add_inline_style.
 		$primary   = get_option( 'lkst_color_primary',          '#E8A020' );
@@ -111,7 +111,7 @@ class Plugin {
 		) );
 
 		if ( isset( $this->modules['table_of_contents'] ) ) {
-			wp_enqueue_script( 'lkst-toc', LKST_URL . 'assets/toc.js', [], LKST_VERSION, true );
+			wp_enqueue_script( 'lkst-toc', ZEHORO_URL . 'assets/toc.js', [], ZEHORO_VERSION, true );
 		}
 	}
 
@@ -119,7 +119,7 @@ class Plugin {
 		// Initialize to scan default modules on activation
 		$dir = __DIR__ . '/../Modules/';
 		foreach ( glob( $dir . '*.php' ) as $file ) {
-			$class = '\\LK\\SiteToolkit\\Modules\\' . basename( $file, '.php' );
+			$class = '\\Zehoro\\Modules\\' . basename( $file, '.php' );
 			if ( method_exists( $class, 'register' ) ) {
 				$class::register();
 			}

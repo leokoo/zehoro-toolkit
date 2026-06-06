@@ -1,8 +1,8 @@
 <?php
-namespace LK\SiteToolkit\Modules;
-use LK\SiteToolkit\Core\Plugin;
+namespace Zehoro\Modules;
+use Zehoro\Core\Plugin;
 
-use LK\SiteToolkit\Core\ModuleInterface;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -13,9 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Results are cached in transients (12 h) and invalidated on term changes.
  * Usage: [lkst_top_category_pills limit="8"]
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
-class CategoryPills implements \LK\SiteToolkit\Core\ModuleInterface {
+class CategoryPills implements \Zehoro\Core\ModuleInterface {
 
     public static function register(): void {
         Plugin::register_module( 'category_pills', self::class, [

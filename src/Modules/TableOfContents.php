@@ -1,8 +1,8 @@
 <?php
-namespace LK\SiteToolkit\Modules;
-use LK\SiteToolkit\Core\Plugin;
+namespace Zehoro\Modules;
+use Zehoro\Core\Plugin;
 
-use LK\SiteToolkit\Core\ModuleInterface;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -16,9 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *   - Gutenberg block HTML already contains headings as plain HTML tags
  * Usage: [lkst_toc]
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
-class TableOfContents implements \LK\SiteToolkit\Core\ModuleInterface {
+class TableOfContents implements \Zehoro\Core\ModuleInterface {
 
     public static function register(): void {
         Plugin::register_module( 'table_of_contents', self::class, [

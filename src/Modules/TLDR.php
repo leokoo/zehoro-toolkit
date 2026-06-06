@@ -1,7 +1,7 @@
 <?php
-namespace LK\SiteToolkit\Modules;
-use LK\SiteToolkit\Core\Plugin;
-use LK\SiteToolkit\Core\ModuleInterface;
+namespace Zehoro\Modules;
+use Zehoro\Core\Plugin;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -19,6 +19,6 @@ class TLDR implements ModuleInterface {
     }
     
     public function register_block(): void {
-        register_block_type( LKST_DIR . 'build/tldr' );
+        register_block_type( ZEHORO_DIR . 'build/tldr' );
     }
 }

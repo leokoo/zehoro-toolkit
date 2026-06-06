@@ -6,7 +6,7 @@
  * all `WP_UnitTestCase`-based integration tests see the plugin's modules
  * registered as if a real site activated them.
  *
- * @package LK\SiteToolkit\Tests
+ * @package Zehoro\Tests
  */
 
 // Resolve the wp-phpunit install dir. Default to the composer-installed

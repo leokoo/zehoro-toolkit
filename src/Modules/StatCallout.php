@@ -1,8 +1,8 @@
 <?php
-namespace LK\SiteToolkit\Modules;
+namespace Zehoro\Modules;
 
-use LK\SiteToolkit\Core\Plugin;
-use LK\SiteToolkit\Core\ModuleInterface;
+use Zehoro\Core\Plugin;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Large bold number + label, with optional description and source citation.
  * Inspired by B2B/SaaS content marketing patterns ("10,000+ users").
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
 class StatCallout implements ModuleInterface {
 
@@ -33,7 +33,7 @@ class StatCallout implements ModuleInterface {
         // block.json declares editorScript: "file:./index.js"; register_block_type
         // auto-enqueues build/stat-callout/index.js with deps from index.asset.php.
         register_block_type(
-            LKST_DIR . 'build/stat-callout',
+            ZEHORO_DIR . 'build/stat-callout',
             [ 'render_callback' => [ $this, 'render' ] ]
         );
     }

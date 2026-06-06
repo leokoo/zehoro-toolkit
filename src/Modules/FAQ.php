@@ -1,7 +1,7 @@
 <?php
-namespace LK\SiteToolkit\Modules;
-use LK\SiteToolkit\Core\Plugin;
-use LK\SiteToolkit\Core\ModuleInterface;
+namespace Zehoro\Modules;
+use Zehoro\Core\Plugin;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Automatically aggregates all FAQs on the page and outputs FAQPage JSON-LD schema.
  * Features a "Polite Pre-flight Check" to disable schema if an SEO plugin is detected.
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
 class FAQ implements ModuleInterface {
     

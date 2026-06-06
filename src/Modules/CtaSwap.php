@@ -1,6 +1,6 @@
 <?php
-namespace LK\SiteToolkit\Modules;
-use LK\SiteToolkit\Core\Plugin;
+namespace Zehoro\Modules;
+use Zehoro\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -35,9 +35,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Layout-agnostic — author styles the buttons and form however they want.
  * Module only ships the swap behaviour + minimal hidden-state CSS.
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
-class CtaSwap implements \LK\SiteToolkit\Core\ModuleInterface {
+class CtaSwap implements \Zehoro\Core\ModuleInterface {
 
 	public static function register(): void {
 		Plugin::register_module( 'cta_swap', self::class, [
@@ -58,16 +58,16 @@ class CtaSwap implements \LK\SiteToolkit\Core\ModuleInterface {
 	public function enqueue(): void {
 		wp_enqueue_script(
 			'lkst-cta-swap',
-			LKST_URL . 'assets/cta-swap.js',
+			ZEHORO_URL . 'assets/cta-swap.js',
 			[],
-			LKST_VERSION,
+			ZEHORO_VERSION,
 			true
 		);
 		wp_enqueue_style(
 			'lkst-cta-swap',
-			LKST_URL . 'assets/cta-swap.css',
+			ZEHORO_URL . 'assets/cta-swap.css',
 			[],
-			LKST_VERSION
+			ZEHORO_VERSION
 		);
 	}
 }

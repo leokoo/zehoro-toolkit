@@ -1,8 +1,8 @@
 <?php
-namespace LK\SiteToolkit\Modules;
+namespace Zehoro\Modules;
 
-use LK\SiteToolkit\Core\Plugin;
-use LK\SiteToolkit\Core\ModuleInterface;
+use Zehoro\Core\Plugin;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Static testimonial card: photo, name, role/company, quote.
  * For E-E-A-T and social proof on corporate / SaaS content.
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
 class Testimonial implements ModuleInterface {
 
@@ -33,7 +33,7 @@ class Testimonial implements ModuleInterface {
         // block.json declares editorScript: "file:./index.js"; register_block_type
         // auto-enqueues build/testimonial/index.js with deps from index.asset.php.
         register_block_type(
-            LKST_DIR . 'build/testimonial',
+            ZEHORO_DIR . 'build/testimonial',
             [ 'render_callback' => [ $this, 'render' ] ]
         );
     }

@@ -1,14 +1,14 @@
 <?php
-namespace LK\SiteToolkit\Admin;
+namespace Zehoro\Admin;
 
-use LK\SiteToolkit\Core\Plugin;
+use Zehoro\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Admin dashboard: registers menus, settings pages, and the modules toggle.
  *
- * @package LK\SiteToolkit\Admin
+ * @package Zehoro\Admin
  */
 class Dashboard {
 
@@ -75,7 +75,7 @@ class Dashboard {
 
 		if ( in_array( 'table_of_contents', $this->active, true ) ) {
 			add_submenu_page( 'lkst-dashboard', __( 'Table of Contents', 'leokoo-site-toolkit' ), __( 'Table of Contents', 'leokoo-site-toolkit' ), 'manage_options', 'lkst-toc-settings',
-				[ new \LK\SiteToolkit\Modules\TableOfContents(), 'render_page' ]
+				[ new \Zehoro\Modules\TableOfContents(), 'render_page' ]
 			);
 		}
 
@@ -90,10 +90,10 @@ class Dashboard {
 
 	public function enqueue_assets( string $hook ): void {
 		if ( strpos( $hook, 'lkst-' ) === false ) return;
-		wp_enqueue_style( 'lkst-admin-css', LKST_URL . 'assets/admin.css', [], LKST_VERSION );
+		wp_enqueue_style( 'lkst-admin-css', ZEHORO_URL . 'assets/admin.css', [], ZEHORO_VERSION );
 		if ( strpos( $hook, 'lkst-styles' ) !== false ) {
 			wp_enqueue_style( 'wp-color-picker' );
-			wp_enqueue_script( 'lkst-admin-js', LKST_URL . 'assets/admin.js', [ 'wp-color-picker', 'jquery' ], LKST_VERSION, true );
+			wp_enqueue_script( 'lkst-admin-js', ZEHORO_URL . 'assets/admin.js', [ 'wp-color-picker', 'jquery' ], ZEHORO_VERSION, true );
 		}
 	}
 

@@ -1,8 +1,8 @@
 <?php
-namespace LK\SiteToolkit\Modules;
+namespace Zehoro\Modules;
 
-use LK\SiteToolkit\Core\Plugin;
-use LK\SiteToolkit\Core\ModuleInterface;
+use Zehoro\Core\Plugin;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Pro ContentStream (Phase 2) will add auto-injection on top of this renderer;
  * ContentBox itself is always manual shortcode placement.
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
 class ContentBox implements ModuleInterface {
 

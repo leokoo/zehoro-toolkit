@@ -9,7 +9,7 @@
  *   - Semantic <time datetime="…"> wrapper present
  *   - The legacy .lkst-editorial-block class is NOT in the wrapper (removed in v1.5.1)
  *
- * @package LK\SiteToolkit\Tests\Integration
+ * @package Zehoro\Tests\Integration
  */
 
 class LastUpdatedTest extends WP_UnitTestCase {
