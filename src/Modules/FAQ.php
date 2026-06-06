@@ -1,7 +1,7 @@
 <?php
-namespace LK\SiteToolkit\Modules;
-use LK\SiteToolkit\Core\Plugin;
-use LK\SiteToolkit\Core\ModuleInterface;
+namespace Zehoro\Modules;
+use Zehoro\Core\Plugin;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Automatically aggregates all FAQs on the page and outputs FAQPage JSON-LD schema.
  * Features a "Polite Pre-flight Check" to disable schema if an SEO plugin is detected.
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
 class FAQ implements ModuleInterface {
     
@@ -48,8 +48,8 @@ class FAQ implements ModuleInterface {
     public function register_settings_page(): void {
         add_submenu_page(
             null,
-            __( 'FAQ Settings', 'leokoo-site-toolkit' ),
-            __( 'FAQ Settings', 'leokoo-site-toolkit' ),
+            __( 'FAQ Settings', 'zehoro-toolkit' ),
+            __( 'FAQ Settings', 'zehoro-toolkit' ),
             'manage_options',
             'lkst-faq',
             [ $this, 'render_page' ]
@@ -61,22 +61,22 @@ class FAQ implements ModuleInterface {
         $mode = get_option( 'lkst_faq_schema_mode', 'auto' );
         ?>
         <div class="wrap">
-            <h1><?php esc_html_e( 'FAQ Accordion Settings', 'leokoo-site-toolkit' ); ?></h1>
-            <p><?php esc_html_e( 'Use the shortcode to output styled FAQs in your content:', 'leokoo-site-toolkit' ); ?><br>
+            <h1><?php esc_html_e( 'FAQ Accordion Settings', 'zehoro-toolkit' ); ?></h1>
+            <p><?php esc_html_e( 'Use the shortcode to output styled FAQs in your content:', 'zehoro-toolkit' ); ?><br>
             <code>[lkst_faq question="Your question?"]Your answer.[/lkst_faq]</code></p>
             
             <form method="post" action="options.php">
                 <?php settings_fields( 'lkst_faq_group' ); ?>
                 <table class="form-table">
                     <tr>
-                        <th><label for="lkst_faq_schema_mode"><?php esc_html_e( 'FAQPage Schema (JSON-LD)', 'leokoo-site-toolkit' ); ?></label></th>
+                        <th><label for="lkst_faq_schema_mode"><?php esc_html_e( 'FAQPage Schema (JSON-LD)', 'zehoro-toolkit' ); ?></label></th>
                         <td>
                             <select name="lkst_faq_schema_mode" id="lkst_faq_schema_mode">
-                                <option value="auto" <?php selected($mode, 'auto'); ?>><?php esc_html_e('Auto (Disable if SEO plugin detected)', 'leokoo-site-toolkit'); ?></option>
-                                <option value="force" <?php selected($mode, 'force'); ?>><?php esc_html_e('Always Output Schema', 'leokoo-site-toolkit'); ?></option>
-                                <option value="off" <?php selected($mode, 'off'); ?>><?php esc_html_e('Never Output Schema', 'leokoo-site-toolkit'); ?></option>
+                                <option value="auto" <?php selected($mode, 'auto'); ?>><?php esc_html_e('Auto (Disable if SEO plugin detected)', 'zehoro-toolkit'); ?></option>
+                                <option value="force" <?php selected($mode, 'force'); ?>><?php esc_html_e('Always Output Schema', 'zehoro-toolkit'); ?></option>
+                                <option value="off" <?php selected($mode, 'off'); ?>><?php esc_html_e('Never Output Schema', 'zehoro-toolkit'); ?></option>
                             </select>
-                            <p class="description"><?php esc_html_e('To prevent Google Search Console errors, we recommend Auto. We will safely step aside and let your SEO plugin handle schema if we detect Yoast, RankMath, or SureRank are active.', 'leokoo-site-toolkit'); ?></p>
+                            <p class="description"><?php esc_html_e('To prevent Google Search Console errors, we recommend Auto. We will safely step aside and let your SEO plugin handle schema if we detect Yoast, RankMath, or SureRank are active.', 'zehoro-toolkit'); ?></p>
                         </td>
                     </tr>
                 </table>

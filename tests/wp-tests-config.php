@@ -1,6 +1,6 @@
 <?php
 /**
- * wp-phpunit test config for Leokoo Site Toolkit.
+ * wp-phpunit test config for Zehoro Toolkit.
  *
  * Copy of WordPress's standard wp-tests-config-sample.php with credentials
  * adjusted for the local MySQL set up by composer install + the install-wp-tests

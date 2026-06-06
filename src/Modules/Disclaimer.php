@@ -1,7 +1,7 @@
 <?php
-namespace LK\SiteToolkit\Modules;
-use LK\SiteToolkit\Core\Plugin;
-use LK\SiteToolkit\Core\ModuleInterface;
+namespace Zehoro\Modules;
+use Zehoro\Core\Plugin;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -52,9 +52,9 @@ class Disclaimer implements ModuleInterface {
         if ( $preset === 'off' ) return '';
 
         if ( $preset === 'medical' ) {
-            return __( 'This article is for informational purposes only and does not constitute medical advice. Consult a qualified ophthalmologist for diagnosis and treatment.', 'leokoo-site-toolkit' );
+            return __( 'This article is for informational purposes only and does not constitute medical advice. Consult a qualified ophthalmologist for diagnosis and treatment.', 'zehoro-toolkit' );
         } elseif ( $preset === 'legal' ) {
-            return __( 'This article provides general legal information, not legal advice. For advice specific to your situation, consult a qualified Malaysian lawyer.', 'leokoo-site-toolkit' );
+            return __( 'This article provides general legal information, not legal advice. For advice specific to your situation, consult a qualified Malaysian lawyer.', 'zehoro-toolkit' );
         } elseif ( $preset === 'custom' ) {
             // Fallback for migration: if custom is empty, check old lkst_disc_text
             $custom = get_option( 'lkst_disclaimer_custom_text', '' );
@@ -96,23 +96,23 @@ class Disclaimer implements ModuleInterface {
         $preset     = get_option( 'lkst_disclaimer_preset', 'off' );
         ?>
         <div class="wrap">
-            <h1><?php esc_html_e( 'Disclaimer Settings', 'leokoo-site-toolkit' ); ?></h1>
+            <h1><?php esc_html_e( 'Disclaimer Settings', 'zehoro-toolkit' ); ?></h1>
             <form method="post" action="options.php">
                 <?php settings_fields( 'lkst_disclaimer_group' ); ?>
                 <table class="form-table">
                     <tr>
-                        <th><?php esc_html_e( 'Disclaimer Type', 'leokoo-site-toolkit' ); ?></th>
+                        <th><?php esc_html_e( 'Disclaimer Type', 'zehoro-toolkit' ); ?></th>
                         <td>
                             <select name="lkst_disclaimer_preset" id="lkst_disclaimer_preset">
-                                <option value="off" <?php selected( $preset, 'off' ); ?>><?php esc_html_e( 'Off', 'leokoo-site-toolkit' ); ?></option>
-                                <option value="medical" <?php selected( $preset, 'medical' ); ?>><?php esc_html_e( 'Medical (Standard)', 'leokoo-site-toolkit' ); ?></option>
-                                <option value="legal" <?php selected( $preset, 'legal' ); ?>><?php esc_html_e( 'Legal (Standard)', 'leokoo-site-toolkit' ); ?></option>
-                                <option value="custom" <?php selected( $preset, 'custom' ); ?>><?php esc_html_e( 'Custom', 'leokoo-site-toolkit' ); ?></option>
+                                <option value="off" <?php selected( $preset, 'off' ); ?>><?php esc_html_e( 'Off', 'zehoro-toolkit' ); ?></option>
+                                <option value="medical" <?php selected( $preset, 'medical' ); ?>><?php esc_html_e( 'Medical (Standard)', 'zehoro-toolkit' ); ?></option>
+                                <option value="legal" <?php selected( $preset, 'legal' ); ?>><?php esc_html_e( 'Legal (Standard)', 'zehoro-toolkit' ); ?></option>
+                                <option value="custom" <?php selected( $preset, 'custom' ); ?>><?php esc_html_e( 'Custom', 'zehoro-toolkit' ); ?></option>
                             </select>
                         </td>
                     </tr>
                     <tr>
-                        <th><?php esc_html_e( 'Custom Text', 'leokoo-site-toolkit' ); ?></th>
+                        <th><?php esc_html_e( 'Custom Text', 'zehoro-toolkit' ); ?></th>
                         <td>
                             <?php
                             $custom_text = get_option( 'lkst_disclaimer_custom_text', '' );
@@ -121,11 +121,11 @@ class Disclaimer implements ModuleInterface {
                             }
                             ?>
                             <textarea name="lkst_disclaimer_custom_text" rows="4" class="large-text"><?php echo esc_textarea( $custom_text ); ?></textarea>
-                            <p class="description"><?php esc_html_e( 'Only used if "Custom" is selected above.', 'leokoo-site-toolkit' ); ?></p>
+                            <p class="description"><?php esc_html_e( 'Only used if "Custom" is selected above.', 'zehoro-toolkit' ); ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <th><?php esc_html_e( 'Active Post Types', 'leokoo-site-toolkit' ); ?></th>
+                        <th><?php esc_html_e( 'Active Post Types', 'zehoro-toolkit' ); ?></th>
                         <td>
                             <?php 
                             $active = get_option( 'lkst_disclaimer_post_types', [ 'post' ] );

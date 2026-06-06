@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "lkst/tldr",
   "title": "TL;DR / Key Takeaways",
-  "category": "leokoo-site-toolkit",
+  "category": "zehoro-toolkit",
   "icon": "list-view",
   "description": "A styled summary box for the top of your articles.",
   "attributes": {
@@ -20,5 +20,5 @@
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "style": "file:./style-index.css",
-  "textdomain": "leokoo-site-toolkit"
+  "textdomain": "zehoro-toolkit"
 }

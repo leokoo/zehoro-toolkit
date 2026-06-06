@@ -1,8 +1,8 @@
 <?php
-namespace LK\SiteToolkit\Modules;
-use LK\SiteToolkit\Core\Plugin;
+namespace Zehoro\Modules;
+use Zehoro\Core\Plugin;
 
-use LK\SiteToolkit\Core\ModuleInterface;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -16,9 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *   - Gutenberg block HTML already contains headings as plain HTML tags
  * Usage: [lkst_toc]
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
-class TableOfContents implements \LK\SiteToolkit\Core\ModuleInterface {
+class TableOfContents implements \Zehoro\Core\ModuleInterface {
 
     public static function register(): void {
         Plugin::register_module( 'table_of_contents', self::class, [
@@ -208,27 +208,27 @@ class TableOfContents implements \LK\SiteToolkit\Core\ModuleInterface {
         $pt_exclude = [ 'attachment', 'bricks_template', 'etch_template', 'elementor_library', 'ifso_triggers' ];
         ?>
         <div class="wrap">
-            <h1><?php esc_html_e( 'Table of Contents Settings', 'leokoo-site-toolkit' ); ?></h1>
+            <h1><?php esc_html_e( 'Table of Contents Settings', 'zehoro-toolkit' ); ?></h1>
             <form method="post" action="options.php">
                 <?php settings_fields( 'lkst_toc_group' ); ?>
                 <table class="form-table">
                     <tr>
-                        <th><?php esc_html_e( 'Insertion Method', 'leokoo-site-toolkit' ); ?></th>
+                        <th><?php esc_html_e( 'Insertion Method', 'zehoro-toolkit' ); ?></th>
                         <td>
                             <label>
                                 <input type="radio" name="lkst_toc_settings[insertion]" value="auto" <?php checked( $s['insertion'], 'auto' ); ?>>
-                                <strong><?php esc_html_e( 'Auto-inject', 'leokoo-site-toolkit' ); ?></strong>
-                                <?php esc_html_e( '(Automatically adds the TOC to the very top of the post content)', 'leokoo-site-toolkit' ); ?>
+                                <strong><?php esc_html_e( 'Auto-inject', 'zehoro-toolkit' ); ?></strong>
+                                <?php esc_html_e( '(Automatically adds the TOC to the very top of the post content)', 'zehoro-toolkit' ); ?>
                             </label><br><br>
                             <label>
                                 <input type="radio" name="lkst_toc_settings[insertion]" value="shortcode" <?php checked( $s['insertion'], 'shortcode' ); ?>>
-                                <strong><?php esc_html_e( 'Shortcode Only', 'leokoo-site-toolkit' ); ?></strong>
-                                <?php esc_html_e( '(Only renders where you place the [lkst_toc] shortcode)', 'leokoo-site-toolkit' ); ?>
+                                <strong><?php esc_html_e( 'Shortcode Only', 'zehoro-toolkit' ); ?></strong>
+                                <?php esc_html_e( '(Only renders where you place the [lkst_toc] shortcode)', 'zehoro-toolkit' ); ?>
                             </label>
                         </td>
                     </tr>
                     <tr>
-                        <th><?php esc_html_e( 'Active Post Types', 'leokoo-site-toolkit' ); ?></th>
+                        <th><?php esc_html_e( 'Active Post Types', 'zehoro-toolkit' ); ?></th>
                         <td>
                             <?php foreach ( $post_types as $slug => $pt ) :
                                 if ( in_array( $slug, $pt_exclude, true ) ) continue; ?>
@@ -241,11 +241,11 @@ class TableOfContents implements \LK\SiteToolkit\Core\ModuleInterface {
                                     <code style="margin-left:4px;"><?php echo esc_html( $slug ); ?></code>
                                 </label>
                             <?php endforeach; ?>
-                            <p class="description"><?php esc_html_e( 'Select which post types the TOC should be generated for.', 'leokoo-site-toolkit' ); ?></p>
+                            <p class="description"><?php esc_html_e( 'Select which post types the TOC should be generated for.', 'zehoro-toolkit' ); ?></p>
                         </td>
                     </tr>
                 </table>
-                <?php submit_button( __( 'Save Settings', 'leokoo-site-toolkit' ) ); ?>
+                <?php submit_button( __( 'Save Settings', 'zehoro-toolkit' ) ); ?>
             </form>
         </div>
         <?php

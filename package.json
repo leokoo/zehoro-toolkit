@@ -1,7 +1,7 @@
 {
-  "name": "leokoo-site-toolkit",
+  "name": "zehoro-toolkit",
   "version": "1.5.2",
-  "description": "Gutenberg block build pipeline for Leokoo Site Toolkit free plugin",
+  "description": "Gutenberg block build pipeline for Zehoro Toolkit free plugin",
   "private": true,
   "scripts": {
     "build": "wp-scripts build --webpack-src-dir=src/blocks --output-path=build --config webpack.config.js",

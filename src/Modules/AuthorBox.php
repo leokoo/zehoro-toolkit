@@ -1,8 +1,8 @@
 <?php
-namespace LK\SiteToolkit\Modules;
-use LK\SiteToolkit\Core\Plugin;
+namespace Zehoro\Modules;
+use Zehoro\Core\Plugin;
 
-use LK\SiteToolkit\Core\ModuleInterface;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * get_the_author_meta(\'ID\') returns 0; we fall back to get_queried_object_id().
  * Usage: [lkst_author_box author_id=""] or [lkst_author_socials author_id=""]
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
-class AuthorBox implements \LK\SiteToolkit\Core\ModuleInterface {
+class AuthorBox implements \Zehoro\Core\ModuleInterface {
 
     public static function register(): void {
         Plugin::register_module( 'author_box', self::class, [

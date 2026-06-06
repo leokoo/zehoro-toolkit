@@ -7,31 +7,31 @@
  * Plugin::register_module() invocations) works end-to-end. If this fails,
  * nothing else can.
  *
- * @package LK\SiteToolkit\Tests\Integration
+ * @package Zehoro\Tests\Integration
  */
 
 class SmokeTest extends WP_UnitTestCase {
 
     public function test_plugin_main_constant_is_defined() {
         $this->assertTrue(
-            defined( 'LKST_VERSION' ),
-            'LKST_VERSION constant should be defined when the plugin is loaded'
+            defined( 'ZEHORO_VERSION' ),
+            'ZEHORO_VERSION constant should be defined when the plugin is loaded'
         );
     }
 
     public function test_plugin_class_loaded() {
         $this->assertTrue(
-            class_exists( '\\LK\\SiteToolkit\\Core\\Plugin' ),
+            class_exists( '\\Zehoro\\Core\\Plugin' ),
             'Plugin class should be autoloaded'
         );
         $this->assertTrue(
-            interface_exists( '\\LK\\SiteToolkit\\Core\\ModuleInterface' ),
+            interface_exists( '\\Zehoro\\Core\\ModuleInterface' ),
             'ModuleInterface should be autoloaded'
         );
     }
 
     public function test_at_least_one_module_registered() {
-        $registered = \LK\SiteToolkit\Core\Plugin::get_registered_modules();
+        $registered = \Zehoro\Core\Plugin::get_registered_modules();
         $this->assertIsArray( $registered );
         $this->assertNotEmpty(
             $registered,
@@ -40,12 +40,12 @@ class SmokeTest extends WP_UnitTestCase {
     }
 
     public function test_known_module_appears_in_registry() {
-        $registered = \LK\SiteToolkit\Core\Plugin::get_registered_modules();
+        $registered = \Zehoro\Core\Plugin::get_registered_modules();
         $this->assertArrayHasKey(
-            'reading_time',
+            'table_of_contents',
             $registered,
-            'ReadingTime module should be in the registry (it defaults to active)'
+            'TableOfContents module should be in the registry (it defaults to active)'
         );
-        $this->assertSame( 'Reading Time', $registered['reading_time']['title'] );
+        $this->assertSame( 'Table of Contents', $registered['table_of_contents']['title'] );
     }
 }

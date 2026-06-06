@@ -1,5 +1,5 @@
 <?php
-namespace LK\SiteToolkit\Core;
+namespace Zehoro\Core;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Implements a Module Registry Pattern. Modules self-register their meta
  * and the plugin uses this registry to power the dashboard and frontend.
  *
- * @package LK\SiteToolkit\Core
+ * @package Zehoro\Core
  */
 class Plugin {
 
@@ -37,7 +37,7 @@ class Plugin {
 		// 1. Auto-discover and register all modules
 		$dir = __DIR__ . '/../Modules/';
 		foreach ( glob( $dir . '*.php' ) as $file ) {
-			$class = '\\LK\\SiteToolkit\\Modules\\' . basename( $file, '.php' );
+			$class = '\\Zehoro\\Modules\\' . basename( $file, '.php' );
 			if ( method_exists( $class, 'register' ) ) {
 				$class::register();
 			}
@@ -49,7 +49,7 @@ class Plugin {
 
 		// Admin: init dashboard
 		if ( is_admin() ) {
-			$admin = new \LK\SiteToolkit\Admin\Dashboard( $active );
+			$admin = new \Zehoro\Admin\Dashboard( $active );
 			$admin->init();
 		}
 
@@ -76,8 +76,8 @@ class Plugin {
 		return array_merge(
 			[
 				[
-					'slug'  => 'leokoo-site-toolkit',
-					'title' => __( 'Leokoo Site Toolkit', 'leokoo-site-toolkit' ),
+					'slug'  => 'zehoro-toolkit',
+					'title' => __( 'Zehoro Toolkit', 'zehoro-toolkit' ),
 					'icon'  => 'admin-tools',
 				],
 			],
@@ -96,7 +96,7 @@ class Plugin {
 		// Do not load on page-builder canvas previews.
 		if ( isset( $_GET['bricks'] ) || isset( $_GET['etchwp'] ) || isset( $_GET['elementor-preview'] ) ) return;
 
-		wp_enqueue_style( 'leokoo-site-toolkit', LKST_URL . 'assets/style.css', [], LKST_VERSION );
+		wp_enqueue_style( 'zehoro-toolkit', ZEHORO_URL . 'assets/style.css', [], ZEHORO_VERSION );
 
 		// Always inject CSS custom properties via wp_add_inline_style.
 		$primary   = get_option( 'lkst_color_primary',          '#E8A020' );
@@ -104,14 +104,14 @@ class Plugin {
 		$secondary = get_option( 'lkst_color_secondary',        '#1ECFC4' );
 		$bg_dark   = get_option( 'lkst_color_bg_dark',          '#0F1A2E' );
 		$bg_light  = get_option( 'lkst_color_bg_light',         '#F5F0E8' );
-		wp_add_inline_style( 'leokoo-site-toolkit', sprintf(
+		wp_add_inline_style( 'zehoro-toolkit', sprintf(
 			':root{--lkst-primary-color:%s;--lkst-primary-contrast:%s;--lkst-secondary-color:%s;--lkst-bg-dark:%s;--lkst-bg-light:%s;}',
 			esc_attr( $primary ), esc_attr( $contrast ), esc_attr( $secondary ),
 			esc_attr( $bg_dark ), esc_attr( $bg_light )
 		) );
 
 		if ( isset( $this->modules['table_of_contents'] ) ) {
-			wp_enqueue_script( 'lkst-toc', LKST_URL . 'assets/toc.js', [], LKST_VERSION, true );
+			wp_enqueue_script( 'lkst-toc', ZEHORO_URL . 'assets/toc.js', [], ZEHORO_VERSION, true );
 		}
 	}
 
@@ -119,7 +119,7 @@ class Plugin {
 		// Initialize to scan default modules on activation
 		$dir = __DIR__ . '/../Modules/';
 		foreach ( glob( $dir . '*.php' ) as $file ) {
-			$class = '\\LK\\SiteToolkit\\Modules\\' . basename( $file, '.php' );
+			$class = '\\Zehoro\\Modules\\' . basename( $file, '.php' );
 			if ( method_exists( $class, 'register' ) ) {
 				$class::register();
 			}

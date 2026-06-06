@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "lkst/inline-product",
   "title": "Inline Product Mention",
-  "category": "leokoo-site-toolkit",
+  "category": "zehoro-toolkit",
   "icon": "cart",
   "description": "Compact horizontal product card for mid-content references.",
   "keywords": ["product", "affiliate", "mention", "card", "inline"],
@@ -42,5 +42,5 @@
     "align": ["wide"]
   },
   "editorScript": "file:./index.js",
-  "textdomain": "leokoo-site-toolkit"
+  "textdomain": "zehoro-toolkit"
 }

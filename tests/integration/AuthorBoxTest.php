@@ -10,7 +10,7 @@
  * v1.5.2 changed CTA URL defaults from "/blog/" and "#newsletter" to empty
  * strings so unconfigured installs don't render broken links.
  *
- * @package LK\SiteToolkit\Tests\Integration
+ * @package Zehoro\Tests\Integration
  */
 
 class AuthorBoxTest extends WP_UnitTestCase {

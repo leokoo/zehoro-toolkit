@@ -1,5 +1,5 @@
 /* =============================================================================
-   Leokoo Site Toolkit — frontend styles
+   Zehoro Toolkit — frontend styles
    CSS custom properties are injected dynamically via wp_add_inline_style()
    in Plugin::enqueue_assets(), so they always appear after this stylesheet
    and win the cascade. Edit colors in WP Admin → Site Toolkit → Visual Styles.

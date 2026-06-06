@@ -18,27 +18,27 @@ function Edit( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Stat Callout Settings', 'leokoo-site-toolkit' ) }
+					title={ __( 'Stat Callout Settings', 'zehoro-toolkit' ) }
 					initialOpen={ true }
 				>
 					<SelectControl
-						label={ __( 'Layout', 'leokoo-site-toolkit' ) }
+						label={ __( 'Layout', 'zehoro-toolkit' ) }
 						value={ layout }
 						options={ [
-							{ label: __( 'Centred', 'leokoo-site-toolkit' ),        value: 'centered' },
-							{ label: __( 'Left-aligned', 'leokoo-site-toolkit' ),   value: 'left' },
-							{ label: __( 'Highlighted box', 'leokoo-site-toolkit' ), value: 'boxed' },
+							{ label: __( 'Centred', 'zehoro-toolkit' ),        value: 'centered' },
+							{ label: __( 'Left-aligned', 'zehoro-toolkit' ),   value: 'left' },
+							{ label: __( 'Highlighted box', 'zehoro-toolkit' ), value: 'boxed' },
 						] }
 						onChange={ set( 'layout' ) }
 					/>
 					<TextControl
-						label={ __( 'Source label', 'leokoo-site-toolkit' ) }
-						help={ __( 'e.g. "Statista, 2024"', 'leokoo-site-toolkit' ) }
+						label={ __( 'Source label', 'zehoro-toolkit' ) }
+						help={ __( 'e.g. "Statista, 2024"', 'zehoro-toolkit' ) }
 						value={ source }
 						onChange={ set( 'source' ) }
 					/>
 					<TextControl
-						label={ __( 'Source URL (optional)', 'leokoo-site-toolkit' ) }
+						label={ __( 'Source URL (optional)', 'zehoro-toolkit' ) }
 						value={ sourceUrl }
 						onChange={ set( 'sourceUrl' ) }
 					/>
@@ -46,22 +46,22 @@ function Edit( { attributes, setAttributes } ) {
 			</InspectorControls>
 
 			<div { ...blockProps }>
-				<p className="lkst-editor-label">{ __( 'Stat Callout', 'leokoo-site-toolkit' ) }</p>
+				<p className="lkst-editor-label">{ __( 'Stat Callout', 'zehoro-toolkit' ) }</p>
 				<TextControl
-					label={ __( 'Stat / Number', 'leokoo-site-toolkit' ) }
-					placeholder={ __( '10,000+', 'leokoo-site-toolkit' ) }
+					label={ __( 'Stat / Number', 'zehoro-toolkit' ) }
+					placeholder={ __( '10,000+', 'zehoro-toolkit' ) }
 					value={ stat }
 					onChange={ set( 'stat' ) }
 				/>
 				<TextControl
-					label={ __( 'Label', 'leokoo-site-toolkit' ) }
-					placeholder={ __( 'users trust our platform', 'leokoo-site-toolkit' ) }
+					label={ __( 'Label', 'zehoro-toolkit' ) }
+					placeholder={ __( 'users trust our platform', 'zehoro-toolkit' ) }
 					value={ label }
 					onChange={ set( 'label' ) }
 				/>
 				<TextControl
-					label={ __( 'Description (optional)', 'leokoo-site-toolkit' ) }
-					placeholder={ __( 'Additional context…', 'leokoo-site-toolkit' ) }
+					label={ __( 'Description (optional)', 'zehoro-toolkit' ) }
+					placeholder={ __( 'Additional context…', 'zehoro-toolkit' ) }
 					value={ desc }
 					onChange={ set( 'desc' ) }
 				/>

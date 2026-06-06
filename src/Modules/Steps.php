@@ -1,8 +1,8 @@
 <?php
-namespace LK\SiteToolkit\Modules;
+namespace Zehoro\Modules;
 
-use LK\SiteToolkit\Core\Plugin;
-use LK\SiteToolkit\Core\ModuleInterface;
+use Zehoro\Core\Plugin;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Outputs numbered how-to steps and emits HowTo JSON-LD schema when
  * no SEO plugin is active.
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
 class Steps implements ModuleInterface {
 
@@ -33,7 +33,7 @@ class Steps implements ModuleInterface {
         // block.json declares editorScript: "file:./index.js"; register_block_type
         // auto-enqueues build/steps/index.js with deps from index.asset.php.
         register_block_type(
-            LKST_DIR . 'build/steps',
+            ZEHORO_DIR . 'build/steps',
             [ 'render_callback' => [ $this, 'render' ] ]
         );
     }

@@ -26,43 +26,43 @@ function Edit( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Product Link', 'leokoo-site-toolkit' ) }
+					title={ __( 'Product Link', 'zehoro-toolkit' ) }
 					initialOpen={ true }
 				>
 					<TextControl
-						label={ __( 'Button text', 'leokoo-site-toolkit' ) }
+						label={ __( 'Button text', 'zehoro-toolkit' ) }
 						value={ btnText }
 						onChange={ set( 'btnText' ) }
 					/>
 					<TextControl
-						label={ __( 'Button URL', 'leokoo-site-toolkit' ) }
-						help={ __( 'Affiliate link or product page.', 'leokoo-site-toolkit' ) }
+						label={ __( 'Button URL', 'zehoro-toolkit' ) }
+						help={ __( 'Affiliate link or product page.', 'zehoro-toolkit' ) }
 						value={ btnUrl }
 						onChange={ set( 'btnUrl' ) }
 					/>
 					<SelectControl
-						label={ __( 'Link rel', 'leokoo-site-toolkit' ) }
+						label={ __( 'Link rel', 'zehoro-toolkit' ) }
 						value={ btnRel }
 						options={ [
-							{ label: __( 'nofollow sponsored (affiliate)',  'leokoo-site-toolkit' ), value: 'nofollow sponsored' },
-							{ label: __( 'nofollow (non-affiliate)',         'leokoo-site-toolkit' ), value: 'nofollow' },
-							{ label: __( 'none (internal / editorial)',      'leokoo-site-toolkit' ), value: '' },
+							{ label: __( 'nofollow sponsored (affiliate)',  'zehoro-toolkit' ), value: 'nofollow sponsored' },
+							{ label: __( 'nofollow (non-affiliate)',         'zehoro-toolkit' ), value: 'nofollow' },
+							{ label: __( 'none (internal / editorial)',      'zehoro-toolkit' ), value: '' },
 						] }
 						onChange={ set( 'btnRel' ) }
 					/>
 				</PanelBody>
 				<PanelBody
-					title={ __( 'Image', 'leokoo-site-toolkit' ) }
+					title={ __( 'Image', 'zehoro-toolkit' ) }
 					initialOpen={ false }
 				>
 					<TextControl
-						label={ __( 'Image URL', 'leokoo-site-toolkit' ) }
-						help={ __( 'Upload to media library, then paste the URL.', 'leokoo-site-toolkit' ) }
+						label={ __( 'Image URL', 'zehoro-toolkit' ) }
+						help={ __( 'Upload to media library, then paste the URL.', 'zehoro-toolkit' ) }
 						value={ imageUrl }
 						onChange={ set( 'imageUrl' ) }
 					/>
 					<TextControl
-						label={ __( 'Image alt text', 'leokoo-site-toolkit' ) }
+						label={ __( 'Image alt text', 'zehoro-toolkit' ) }
 						value={ imageAlt }
 						onChange={ set( 'imageAlt' ) }
 					/>
@@ -71,27 +71,27 @@ function Edit( { attributes, setAttributes } ) {
 
 			<div { ...blockProps }>
 				<p className="lkst-editor-label">
-					{ __( 'Inline Product Mention', 'leokoo-site-toolkit' ) }
+					{ __( 'Inline Product Mention', 'zehoro-toolkit' ) }
 				</p>
 				<TextControl
-					label={ __( 'Product name', 'leokoo-site-toolkit' ) }
-					placeholder={ __( 'Logitech MX Master 3…', 'leokoo-site-toolkit' ) }
+					label={ __( 'Product name', 'zehoro-toolkit' ) }
+					placeholder={ __( 'Logitech MX Master 3…', 'zehoro-toolkit' ) }
 					value={ name }
 					onChange={ set( 'name' ) }
 				/>
 				<TextControl
-					label={ __( 'One-liner description', 'leokoo-site-toolkit' ) }
-					placeholder={ __( 'The best ergonomic mouse for power users.', 'leokoo-site-toolkit' ) }
+					label={ __( 'One-liner description', 'zehoro-toolkit' ) }
+					placeholder={ __( 'The best ergonomic mouse for power users.', 'zehoro-toolkit' ) }
 					value={ desc }
 					onChange={ set( 'desc' ) }
 				/>
 				{ ! btnUrl ? (
 					<p style={ { color: '#b45309', fontSize: '12px' } }>
-						{ __( '⚠ Add a Button URL in the sidebar to complete this block.', 'leokoo-site-toolkit' ) }
+						{ __( '⚠ Add a Button URL in the sidebar to complete this block.', 'zehoro-toolkit' ) }
 					</p>
 				) : (
 					<p style={ { fontSize: '12px', color: '#2e7d32' } }>
-						{ __( '✓ Link set: ', 'leokoo-site-toolkit' ) }{ btnUrl }
+						{ __( '✓ Link set: ', 'zehoro-toolkit' ) }{ btnUrl }
 					</p>
 				) }
 			</div>

@@ -15,10 +15,10 @@
  *   - For under-2-headings guard, the module's own comment (Bug 4) says
  *     the [lkst_toc] placeholder must NOT render as visible text. Verify.
  *
- * @package LK\SiteToolkit\Tests\Integration
+ * @package Zehoro\Tests\Integration
  */
 
-use LK\SiteToolkit\Modules\TableOfContents;
+use Zehoro\Modules\TableOfContents;
 
 class TableOfContentsTest extends WP_UnitTestCase {
 

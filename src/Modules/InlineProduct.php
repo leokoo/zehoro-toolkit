@@ -1,8 +1,8 @@
 <?php
-namespace LK\SiteToolkit\Modules;
+namespace Zehoro\Modules;
 
-use LK\SiteToolkit\Core\Plugin;
-use LK\SiteToolkit\Core\ModuleInterface;
+use Zehoro\Core\Plugin;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * thumbnail, name, one-liner, small CTA button.
  * Inspired by Azonpress widget-small template.
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
 class InlineProduct implements ModuleInterface {
 
@@ -34,7 +34,7 @@ class InlineProduct implements ModuleInterface {
         // block.json declares editorScript: "file:./index.js"; register_block_type
         // auto-enqueues build/inline-product/index.js with deps from index.asset.php.
         register_block_type(
-            LKST_DIR . 'build/inline-product',
+            ZEHORO_DIR . 'build/inline-product',
             [ 'render_callback' => [ $this, 'render' ] ]
         );
     }

@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "lkst/steps",
   "title": "Steps / Process",
-  "category": "leokoo-site-toolkit",
+  "category": "zehoro-toolkit",
   "icon": "list-view",
   "description": "Numbered how-to steps with HowTo schema.",
   "keywords": ["steps", "process", "how-to", "tutorial"],
@@ -25,5 +25,5 @@
     "align": ["wide"]
   },
   "editorScript": "file:./index.js",
-  "textdomain": "leokoo-site-toolkit"
+  "textdomain": "zehoro-toolkit"
 }

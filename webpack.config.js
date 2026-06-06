@@ -1,5 +1,5 @@
 /**
- * Custom webpack config for Leokoo Site Toolkit.
+ * Custom webpack config for Zehoro Toolkit.
  *
  * Extends the default @wordpress/scripts config with one change:
  * `output.clean` is disabled so that pre-built legacy block assets

@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "lkst/testimonial",
   "title": "Testimonial",
-  "category": "leokoo-site-toolkit",
+  "category": "zehoro-toolkit",
   "icon": "format-quote",
   "description": "Static testimonial card: photo, name, role/company, and quote.",
   "keywords": [
@@ -45,5 +45,5 @@
     ]
   },
   "editorScript": "file:./index.js",
-  "textdomain": "leokoo-site-toolkit"
+  "textdomain": "zehoro-toolkit"
 }

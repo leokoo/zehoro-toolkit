@@ -38,12 +38,12 @@ function Edit( { attributes, setAttributes } ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'How-To Schema', 'leokoo-site-toolkit' ) }
+					title={ __( 'How-To Schema', 'zehoro-toolkit' ) }
 					initialOpen={ true }
 				>
 					<TextControl
-						label={ __( 'Task / Tutorial name (for HowTo schema)', 'leokoo-site-toolkit' ) }
-						help={ __( 'Defaults to post title if left blank.', 'leokoo-site-toolkit' ) }
+						label={ __( 'Task / Tutorial name (for HowTo schema)', 'zehoro-toolkit' ) }
+						help={ __( 'Defaults to post title if left blank.', 'zehoro-toolkit' ) }
 						value={ taskName }
 						onChange={ ( val ) => setAttributes( { taskName: val } ) }
 					/>
@@ -52,7 +52,7 @@ function Edit( { attributes, setAttributes } ) {
 
 			<div { ...blockProps }>
 				<p className="lkst-steps-editor-label">
-					{ __( 'Steps / Process', 'leokoo-site-toolkit' ) }
+					{ __( 'Steps / Process', 'zehoro-toolkit' ) }
 				</p>
 
 				{ steps.map( ( step, i ) => (
@@ -61,33 +61,33 @@ function Edit( { attributes, setAttributes } ) {
 							<span className="lkst-step-num">{ i + 1 }</span>
 							<Button
 								icon="arrow-up-alt2"
-								label={ __( 'Move up', 'leokoo-site-toolkit' ) }
+								label={ __( 'Move up', 'zehoro-toolkit' ) }
 								isSmall
 								disabled={ i === 0 }
 								onClick={ () => moveStep( i, -1 ) }
 							/>
 							<Button
 								icon="arrow-down-alt2"
-								label={ __( 'Move down', 'leokoo-site-toolkit' ) }
+								label={ __( 'Move down', 'zehoro-toolkit' ) }
 								isSmall
 								disabled={ i === steps.length - 1 }
 								onClick={ () => moveStep( i, 1 ) }
 							/>
 							<Button
 								icon="trash"
-								label={ __( 'Remove step', 'leokoo-site-toolkit' ) }
+								label={ __( 'Remove step', 'zehoro-toolkit' ) }
 								isDestructive
 								isSmall
 								onClick={ () => removeStep( i ) }
 							/>
 						</div>
 						<TextControl
-							placeholder={ __( 'Step title…', 'leokoo-site-toolkit' ) }
+							placeholder={ __( 'Step title…', 'zehoro-toolkit' ) }
 							value={ step.title || '' }
 							onChange={ ( val ) => updateStep( i, 'title', val ) }
 						/>
 						<TextareaControl
-							placeholder={ __( 'Step description (optional)…', 'leokoo-site-toolkit' ) }
+							placeholder={ __( 'Step description (optional)…', 'zehoro-toolkit' ) }
 							value={ step.content || '' }
 							rows={ 2 }
 							onChange={ ( val ) => updateStep( i, 'content', val ) }
@@ -96,7 +96,7 @@ function Edit( { attributes, setAttributes } ) {
 				) ) }
 
 				<Button variant="secondary" icon="plus" onClick={ addStep }>
-					{ __( 'Add step', 'leokoo-site-toolkit' ) }
+					{ __( 'Add step', 'zehoro-toolkit' ) }
 				</Button>
 			</div>
 		</>

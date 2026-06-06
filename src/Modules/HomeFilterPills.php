@@ -1,6 +1,6 @@
 <?php
-namespace LK\SiteToolkit\Modules;
-use LK\SiteToolkit\Core\Plugin;
+namespace Zehoro\Modules;
+use Zehoro\Core\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -29,9 +29,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *   [lkst_home_filter_pills]                  — default dark scheme
  *   [lkst_home_filter_pills scheme="light"]   — light-bg scheme
  *
- * @package LK\SiteToolkit\Modules
+ * @package Zehoro\Modules
  */
-class HomeFilterPills implements \LK\SiteToolkit\Core\ModuleInterface {
+class HomeFilterPills implements \Zehoro\Core\ModuleInterface {
 
 	public static function register(): void {
 		Plugin::register_module( 'home_filter_pills', self::class, [
@@ -59,7 +59,7 @@ class HomeFilterPills implements \LK\SiteToolkit\Core\ModuleInterface {
 		$html = sprintf(
 			'<div class="lkst-cat-pills lkst-cat-pills--%s" role="navigation" aria-label="%s">',
 			esc_attr( $scheme ),
-			esc_attr__( 'Filter by topic', 'leokoo-site-toolkit' )
+			esc_attr__( 'Filter by topic', 'zehoro-toolkit' )
 		);
 
 		foreach ( $items as $item ) {

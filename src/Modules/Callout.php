@@ -1,7 +1,7 @@
 <?php
-namespace LK\SiteToolkit\Modules;
-use LK\SiteToolkit\Core\Plugin;
-use LK\SiteToolkit\Core\ModuleInterface;
+namespace Zehoro\Modules;
+use Zehoro\Core\Plugin;
+use Zehoro\Core\ModuleInterface;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -17,6 +17,6 @@ class Callout implements ModuleInterface {
         add_action( 'init', [ $this, 'register_blocks' ] );
     }
     public function register_blocks(): void {
-        register_block_type( LKST_DIR . 'build/callout' );
+        register_block_type( ZEHORO_DIR . 'build/callout' );
     }
 }
