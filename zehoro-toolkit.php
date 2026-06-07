@@ -52,6 +52,12 @@ if ( ! empty( $gh_token ) ) {
 $lkst_updater->setBranch( 'main' );
 $lkst_updater->getVcsApi()->enableReleaseAssets();
 
+// Rename migrator (lkst_* → zehoro_*) runs idempotently early, so all option
+// reads downstream find the canonical key. Re-fires on activation in case a
+// site was updated via PUC bypassing activation, then re-activated. See
+// specs/db-migration-zehoro-rename.md.
+add_action( 'plugins_loaded', [ '\\Zehoro\\Migration\\ZehoroRenameMigrator', 'run' ], 1 );
+
 // Initialize the core plugin
 add_action( 'plugins_loaded', function() {
     load_plugin_textdomain( 'zehoro-toolkit', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
@@ -60,6 +66,7 @@ add_action( 'plugins_loaded', function() {
 } );
 
 register_activation_hook( __FILE__, function() {
+    \Zehoro\Migration\ZehoroRenameMigrator::run();
     \Zehoro\Core\Plugin::activate();
 } );
 
