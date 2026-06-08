@@ -32,11 +32,11 @@ class ContentBox implements ModuleInterface {
         ] );
 
         // ── One-time migration: basic_cta → content_box ───────────────────
-        $active = (array) get_option( 'lkst_active_modules', [] );
+        $active = (array) \Zehoro\Utils\Option::get( 'zehoro_active_modules', [] );
         if ( in_array( 'basic_cta', $active, true ) && ! in_array( 'content_box', $active, true ) ) {
             $active   = array_values( array_diff( $active, [ 'basic_cta' ] ) );
             $active[] = 'content_box';
-            update_option( 'lkst_active_modules', $active );
+            update_option( 'zehoro_active_modules', $active );
         }
     }
 

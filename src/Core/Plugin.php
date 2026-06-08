@@ -43,9 +43,11 @@ class Plugin {
 			}
 		}
 
-		// 2. Fetch active settings
+		// 2. Fetch active settings — canonical key is zehoro_active_modules
+		// with automatic fallback to legacy lkst_active_modules during the
+		// rename transition window (see src/Migration/ZehoroRenameMigrator).
 		$default_active = array_keys( array_filter( self::$registry, function( $m ) { return ! empty( $m['default'] ); } ) );
-		$active = get_option( 'lkst_active_modules', $default_active );
+		$active = \Zehoro\Utils\Option::get( 'zehoro_active_modules', $default_active );
 
 		// Admin: init dashboard
 		if ( is_admin() ) {
@@ -126,12 +128,18 @@ class Plugin {
 		}
 		$default_active = array_keys( array_filter( self::$registry, function( $m ) { return ! empty( $m['default'] ); } ) );
 		
-		add_option( 'lkst_active_modules', $default_active );
+		// Activation seeds the canonical key. If the site had a legacy
+		// lkst_active_modules, the rename migrator (run earlier in the
+		// activation hook) already copied it across — add_option is a no-op
+		// on the existing-data path.
+		add_option( 'zehoro_active_modules', $default_active );
 	}
 
 	public static function deactivate(): void {
 		global $wpdb;
-		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_lkst_%' OR option_name LIKE '_transient_timeout_lkst_%'" );
+		// Deactivation transient cleanup covers both legacy (lkst_) and
+		// canonical (zehoro_) prefixes during the rename transition.
+		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_lkst_%' OR option_name LIKE '_transient_timeout_lkst_%' OR option_name LIKE '_transient_zehoro_%' OR option_name LIKE '_transient_timeout_zehoro_%'" );
 		flush_rewrite_rules();
 	}
 }

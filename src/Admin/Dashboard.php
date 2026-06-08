@@ -18,7 +18,7 @@ class Dashboard {
 	public function __construct( array $active = [] ) {
 		$registered = Plugin::get_registered_modules();
 		$default_active = array_keys( array_filter( $registered, function($m) { return ! empty( $m['default'] ); } ) );
-		$this->active = $active ?: get_option( 'lkst_active_modules', $default_active );
+		$this->active = $active ?: \Zehoro\Utils\Option::get( 'zehoro_active_modules', $default_active );
 	}
 
 	public function init(): void {
@@ -105,14 +105,14 @@ class Dashboard {
 		// shows a "resubmit form?" warning.
 		if ( isset( $_POST['lkst_save_modules'] ) && check_admin_referer( 'lkst_modules_action', 'lkst_modules_nonce' ) ) {
 			$new_active = isset( $_POST['modules'] ) ? array_keys( $_POST['modules'] ) : [];
-			update_option( 'lkst_active_modules', $new_active );
+			update_option( 'zehoro_active_modules', $new_active );
 			wp_safe_redirect( add_query_arg( [ 'page' => 'lkst-dashboard', 'updated' => '1' ], admin_url( 'admin.php' ) ) );
 			exit;
 		}
 
 		$registered = Plugin::get_registered_modules();
 		$default_active = array_keys( array_filter( $registered, function($m) { return ! empty( $m['default'] ); } ) );
-		$active = get_option( 'lkst_active_modules', $default_active );
+		$active = \Zehoro\Utils\Option::get( 'zehoro_active_modules', $default_active );
 
 		if ( isset( $_GET['updated'] ) ) {
 			echo '<div class="updated notice is-dismissible"><p>' . esc_html__( 'Modules updated successfully.', 'zehoro-toolkit' ) . '</p></div>';
