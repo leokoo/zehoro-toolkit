@@ -36,7 +36,9 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
         }
         add_action( 'wp',          [ $this, 'preparse_toc_headings' ], 10 );
         add_filter( 'the_content', [ $this, 'process_content' ], 15 );
-        add_shortcode( 'lkst_toc', [ $this, 'render_shortcode' ] );
+        // Canonical zehoro_toc + legacy lkst_toc alias (existing posts).
+        add_shortcode( 'zehoro_toc', [ $this, 'render_shortcode' ] );
+        add_shortcode( 'lkst_toc',   [ $this, 'render_shortcode' ] );
     }
 
     public static function get_defaults(): array {

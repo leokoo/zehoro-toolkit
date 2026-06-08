@@ -27,7 +27,9 @@ class CategoryPills implements \Zehoro\Core\ModuleInterface {
 
 
     public function init(): void {
-        add_shortcode( 'lkst_top_category_pills', [ $this, 'render' ] );
+        // Canonical zehoro_top_category_pills + legacy lkst_top_category_pills.
+        add_shortcode( 'zehoro_top_category_pills', [ $this, 'render' ] );
+        add_shortcode( 'lkst_top_category_pills',   [ $this, 'render' ] );
         // Invalidate cache when taxonomy terms change
         add_action( 'created_term',         [ $this, 'clear_cache' ] );
         add_action( 'edited_term_taxonomy',  [ $this, 'clear_cache' ] );
@@ -44,8 +46,16 @@ class CategoryPills implements \Zehoro\Core\ModuleInterface {
         $atts  = shortcode_atts( [ 'limit' => 8 ], $atts );
         $limit = max( 1, (int) $atts['limit'] );
 
-        $post_type = apply_filters( 'lkst/category_pills/post_type', null );
-        $taxonomy  = apply_filters( 'lkst/category_pills/taxonomy',  null );
+        // Canonical zehoro/* hook + legacy lkst/* fallback so existing theme
+        // code listening on the old names keeps getting the call.
+        $post_type = apply_filters( 'zehoro/category_pills/post_type', null );
+        if ( has_filter( 'lkst/category_pills/post_type' ) ) {
+            $post_type = apply_filters_deprecated( 'lkst/category_pills/post_type', [ $post_type ], '1.7.0', 'zehoro/category_pills/post_type' );
+        }
+        $taxonomy = apply_filters( 'zehoro/category_pills/taxonomy', null );
+        if ( has_filter( 'lkst/category_pills/taxonomy' ) ) {
+            $taxonomy = apply_filters_deprecated( 'lkst/category_pills/taxonomy', [ $taxonomy ], '1.7.0', 'zehoro/category_pills/taxonomy' );
+        }
 
         if ( is_category() || is_tag() || is_tax() ) {
             $obj      = get_queried_object();

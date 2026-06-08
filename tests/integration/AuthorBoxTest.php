@@ -71,21 +71,24 @@ class AuthorBoxTest extends WP_UnitTestCase {
     }
 
     public function test_filter_overrides_option() {
-        update_option( 'lkst_cta_primary_url',   '/wrong/' );
-        update_option( 'lkst_cta_primary_label', 'Wrong label' );
+        // Use the canonical zehoro/* hook name. The legacy lkst/* counterpart
+        // still fires via apply_filters_deprecated — covered by
+        // ShortcodeFilterAliasesTest with setExpectedDeprecated().
+        update_option( 'zehoro_cta_primary_url',   '/wrong/' );
+        update_option( 'zehoro_cta_primary_label', 'Wrong label' );
 
         $filter = function () {
             return [ 'label' => 'From filter', 'url' => '/from-filter/' ];
         };
-        add_filter( 'lkst/author_box/cta_primary', $filter );
+        add_filter( 'zehoro/author_box/cta_primary', $filter );
 
-        $output = do_shortcode( '[lkst_author_box author_id="' . $this->author_id . '"]' );
+        $output = do_shortcode( '[zehoro_author_box author_id="' . $this->author_id . '"]' );
 
         $this->assertStringContainsString( '/from-filter/', $output );
         $this->assertStringContainsString( 'From filter', $output );
         $this->assertStringNotContainsString( '/wrong/', $output );
 
-        remove_filter( 'lkst/author_box/cta_primary', $filter );
+        remove_filter( 'zehoro/author_box/cta_primary', $filter );
     }
 
     // -------------------------------------------------------------------------
@@ -110,20 +113,21 @@ class AuthorBoxTest extends WP_UnitTestCase {
     }
 
     public function test_secondary_filter_overrides_option() {
-        update_option( 'lkst_cta_secondary_url',   '/from-option/' );
-        update_option( 'lkst_cta_secondary_label', 'From option' );
+        // Canonical zehoro/* — legacy back-compat covered separately.
+        update_option( 'zehoro_cta_secondary_url',   '/from-option/' );
+        update_option( 'zehoro_cta_secondary_label', 'From option' );
 
         $filter = function () {
             return [ 'label' => 'From filter', 'url' => '/from-filter/' ];
         };
-        add_filter( 'lkst/author_box/cta_secondary', $filter );
+        add_filter( 'zehoro/author_box/cta_secondary', $filter );
 
-        $output = do_shortcode( '[lkst_author_box author_id="' . $this->author_id . '"]' );
+        $output = do_shortcode( '[zehoro_author_box author_id="' . $this->author_id . '"]' );
 
         $this->assertStringContainsString( '/from-filter/', $output );
         $this->assertStringNotContainsString( '/from-option/', $output );
 
-        remove_filter( 'lkst/author_box/cta_secondary', $filter );
+        remove_filter( 'zehoro/author_box/cta_secondary', $filter );
     }
 
     public function test_primary_and_secondary_render_independently() {

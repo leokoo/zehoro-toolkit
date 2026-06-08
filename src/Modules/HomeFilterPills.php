@@ -42,7 +42,9 @@ class HomeFilterPills implements \Zehoro\Core\ModuleInterface {
 	}
 
 	public function init(): void {
-		add_shortcode( 'lkst_home_filter_pills', [ $this, 'render' ] );
+		// Canonical zehoro_home_filter_pills + legacy lkst_home_filter_pills.
+		add_shortcode( 'zehoro_home_filter_pills', [ $this, 'render' ] );
+		add_shortcode( 'lkst_home_filter_pills',   [ $this, 'render' ] );
 	}
 
 	public function render( $atts ): string {
@@ -50,7 +52,11 @@ class HomeFilterPills implements \Zehoro\Core\ModuleInterface {
 			'scheme' => 'dark',
 		], $atts );
 
-		$items = apply_filters( 'lkst/home_filter_pills/items', [] );
+		// Canonical zehoro/* hook + legacy lkst/* fallback.
+		$items = apply_filters( 'zehoro/home_filter_pills/items', [] );
+		if ( has_filter( 'lkst/home_filter_pills/items' ) ) {
+			$items = apply_filters_deprecated( 'lkst/home_filter_pills/items', [ $items ], '1.7.0', 'zehoro/home_filter_pills/items' );
+		}
 		if ( empty( $items ) || ! is_array( $items ) ) return '';
 
 		$scheme       = in_array( $atts['scheme'], [ 'light', 'dark' ], true ) ? $atts['scheme'] : 'dark';

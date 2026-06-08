@@ -32,8 +32,13 @@ class AuthorBox implements \Zehoro\Core\ModuleInterface {
     public function init(): void {
         add_filter( 'user_contactmethods', [ $this, 'add_contact_methods' ] );
         add_action( 'wp_enqueue_scripts',  [ $this, 'enqueue_dashicons' ] );
-        add_shortcode( 'lkst_author_box',    [ $this, 'render_box' ] );
-        add_shortcode( 'lkst_author_socials', [ $this, 'render_socials' ] );
+        // Shortcodes — register canonical `zehoro_*` names + legacy `lkst_*`
+        // aliases (so existing posts with `[lkst_author_box]` keep rendering
+        // through v1.x; cleanup in v2.0).
+        add_shortcode( 'zehoro_author_box',    [ $this, 'render_box' ] );
+        add_shortcode( 'zehoro_author_socials', [ $this, 'render_socials' ] );
+        add_shortcode( 'lkst_author_box',      [ $this, 'render_box' ] );
+        add_shortcode( 'lkst_author_socials',  [ $this, 'render_socials' ] );
     }
 
     public function add_contact_methods( array $methods ): array {
@@ -116,14 +121,23 @@ class AuthorBox implements \Zehoro\Core\ModuleInterface {
         // wp_options keys when canonical is unset.) Previous defaults
         // ('/blog/' and '#newsletter') silently rendered broken links on
         // most sites; better to hide than to mislead.
-        $cta_primary = apply_filters( 'lkst/author_box/cta_primary', [
+        // Canonical hook is zehoro/* ; legacy lkst/* fires too via
+        // apply_filters_deprecated so any custom theme code listening on the
+        // old name still gets the call.
+        $cta_primary = apply_filters( 'zehoro/author_box/cta_primary', [
             'label' => \Zehoro\Utils\Option::get( 'zehoro_cta_primary_label', 'Read more articles' ),
             'url'   => \Zehoro\Utils\Option::get( 'zehoro_cta_primary_url',   '' ),
         ] );
-        $cta_secondary = apply_filters( 'lkst/author_box/cta_secondary', [
+        if ( has_filter( 'lkst/author_box/cta_primary' ) ) {
+            $cta_primary = apply_filters_deprecated( 'lkst/author_box/cta_primary', [ $cta_primary ], '1.7.0', 'zehoro/author_box/cta_primary' );
+        }
+        $cta_secondary = apply_filters( 'zehoro/author_box/cta_secondary', [
             'label' => \Zehoro\Utils\Option::get( 'zehoro_cta_secondary_label', 'Get the newsletter' ),
             'url'   => \Zehoro\Utils\Option::get( 'zehoro_cta_secondary_url',   '' ),
         ] );
+        if ( has_filter( 'lkst/author_box/cta_secondary' ) ) {
+            $cta_secondary = apply_filters_deprecated( 'lkst/author_box/cta_secondary', [ $cta_secondary ], '1.7.0', 'zehoro/author_box/cta_secondary' );
+        }
 
         $html  = '<div class="lkst-author-box">';
         $html .= '<div class="lkst-ab-header">';

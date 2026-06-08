@@ -43,11 +43,16 @@ class ContentBox implements ModuleInterface {
     // ── Hooks ────────────────────────────────────────────────────────────────
 
     public function init(): void {
-        add_shortcode( 'lkst_box', [ $this, 'render_shortcode' ] );
+        // Canonical zehoro_box + legacy lkst_box alias (existing posts).
+        add_shortcode( 'zehoro_box', [ $this, 'render_shortcode' ] );
+        add_shortcode( 'lkst_box',   [ $this, 'render_shortcode' ] );
 
-        // AJAX: email-capture form submission
-        add_action( 'wp_ajax_lkst_box_submit',        [ $this, 'handle_submission' ] );
-        add_action( 'wp_ajax_nopriv_lkst_box_submit', [ $this, 'handle_submission' ] );
+        // AJAX: email-capture form submission. Both action names registered
+        // for back-compat with v1.x form embeds; canonical is zehoro_box_submit.
+        add_action( 'wp_ajax_zehoro_box_submit',        [ $this, 'handle_submission' ] );
+        add_action( 'wp_ajax_nopriv_zehoro_box_submit', [ $this, 'handle_submission' ] );
+        add_action( 'wp_ajax_lkst_box_submit',          [ $this, 'handle_submission' ] );
+        add_action( 'wp_ajax_nopriv_lkst_box_submit',   [ $this, 'handle_submission' ] );
 
         if ( is_admin() ) {
             add_action( 'admin_init', [ $this, 'register_settings' ] );

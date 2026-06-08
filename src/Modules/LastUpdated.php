@@ -15,7 +15,9 @@ class LastUpdated implements ModuleInterface {
         ] );
     }
     public function init(): void {
-        add_shortcode( 'lkst_last_updated', [ $this, 'render_shortcode' ] );
+        // Canonical zehoro_last_updated + legacy lkst_last_updated alias.
+        add_shortcode( 'zehoro_last_updated', [ $this, 'render_shortcode' ] );
+        add_shortcode( 'lkst_last_updated',   [ $this, 'render_shortcode' ] );
         add_action( 'wp_head', [ $this, 'output_schema' ] );
         add_filter( 'the_content', [ $this, 'auto_inject' ] );
 

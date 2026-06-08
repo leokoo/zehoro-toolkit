@@ -28,7 +28,9 @@ class FAQ implements ModuleInterface {
     }
 
     public function init(): void {
-        add_shortcode( 'lkst_faq', [ $this, 'render_shortcode' ] );
+        // Canonical zehoro_faq + legacy lkst_faq alias (existing posts).
+        add_shortcode( 'zehoro_faq', [ $this, 'render_shortcode' ] );
+        add_shortcode( 'lkst_faq',   [ $this, 'render_shortcode' ] );
         add_action( 'wp_footer', [ $this, 'output_schema' ], 20 );
 
         if ( is_admin() ) {
