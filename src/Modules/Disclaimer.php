@@ -30,10 +30,10 @@ class Disclaimer implements ModuleInterface {
     }
 
     public function register_settings(): void {
-        register_setting( 'lkst_disclaimer_group', 'lkst_disclaimer_preset', [ 'default' => 'off', 'sanitize_callback' => 'sanitize_text_field' ] );
-        register_setting( 'lkst_disclaimer_group', 'lkst_disclaimer_custom_text', [ 'default' => '', 'sanitize_callback' => 'wp_kses_post' ] );
-        
-        register_setting( 'lkst_disclaimer_group', 'lkst_disclaimer_post_types', [
+        register_setting( 'zehoro_disclaimer_group', 'zehoro_disclaimer_preset', [ 'default' => 'off', 'sanitize_callback' => 'sanitize_text_field' ] );
+        register_setting( 'zehoro_disclaimer_group', 'zehoro_disclaimer_custom_text', [ 'default' => '', 'sanitize_callback' => 'wp_kses_post' ] );
+
+        register_setting( 'zehoro_disclaimer_group', 'zehoro_disclaimer_post_types', [
             'default'           => [ 'post' ],
             'sanitize_callback' => function ( $input ) {
                 if ( ! is_array( $input ) ) return [];
@@ -48,7 +48,7 @@ class Disclaimer implements ModuleInterface {
     }
 
     public function get_disclaimer_text(): string {
-        $preset = get_option( 'lkst_disclaimer_preset', 'off' );
+        $preset = \Zehoro\Utils\Option::get( 'zehoro_disclaimer_preset', 'off' );
         if ( $preset === 'off' ) return '';
 
         if ( $preset === 'medical' ) {
@@ -57,7 +57,8 @@ class Disclaimer implements ModuleInterface {
             return __( 'This article provides general legal information, not legal advice. For advice specific to your situation, consult a qualified Malaysian lawyer.', 'zehoro-toolkit' );
         } elseif ( $preset === 'custom' ) {
             // Fallback for migration: if custom is empty, check old lkst_disc_text
-            $custom = get_option( 'lkst_disclaimer_custom_text', '' );
+            // (legacy v1.x pre-Disclaimer-module key, not in the rename map).
+            $custom = \Zehoro\Utils\Option::get( 'zehoro_disclaimer_custom_text', '' );
             if ( empty( $custom ) ) {
                 $custom = get_option( 'lkst_disc_text', '' );
             }
@@ -70,13 +71,13 @@ class Disclaimer implements ModuleInterface {
         if ( ! is_single() || ! in_the_loop() || ! is_main_query() ) return $content;
 
         $post_type = get_post_type();
-        $active_pts = get_option( 'lkst_disclaimer_post_types', [ 'post' ] );
+        $active_pts = \Zehoro\Utils\Option::get( 'zehoro_disclaimer_post_types', [ 'post' ] );
         if ( ! in_array( $post_type, $active_pts, true ) ) return $content;
 
         $text = $this->get_disclaimer_text();
         if ( empty( $text ) ) return $content;
 
-        $bg_color = esc_attr( get_option( 'lkst_color_bg_light', '#F5F0E8' ) );
+        $bg_color = esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_bg_light', '#F5F0E8' ) );
 
         $html = sprintf(
             '<div class="lkst-disclaimer" style="margin-top: 2em; padding: 1.5em; background-color: %s; font-size: 0.9em; font-style: italic; border-radius: 4px;">
@@ -93,17 +94,17 @@ class Disclaimer implements ModuleInterface {
         if ( ! current_user_can( 'manage_options' ) ) return;
         $post_types = get_post_types( [ 'public' => true ], 'objects' );
         $exclude    = [ 'attachment', 'page', 'bricks_template', 'etch_template', 'elementor_library' ];
-        $preset     = get_option( 'lkst_disclaimer_preset', 'off' );
+        $preset     = \Zehoro\Utils\Option::get( 'zehoro_disclaimer_preset', 'off' );
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'Disclaimer Settings', 'zehoro-toolkit' ); ?></h1>
             <form method="post" action="options.php">
-                <?php settings_fields( 'lkst_disclaimer_group' ); ?>
+                <?php settings_fields( 'zehoro_disclaimer_group' ); ?>
                 <table class="form-table">
                     <tr>
                         <th><?php esc_html_e( 'Disclaimer Type', 'zehoro-toolkit' ); ?></th>
                         <td>
-                            <select name="lkst_disclaimer_preset" id="lkst_disclaimer_preset">
+                            <select name="zehoro_disclaimer_preset" id="zehoro_disclaimer_preset">
                                 <option value="off" <?php selected( $preset, 'off' ); ?>><?php esc_html_e( 'Off', 'zehoro-toolkit' ); ?></option>
                                 <option value="medical" <?php selected( $preset, 'medical' ); ?>><?php esc_html_e( 'Medical (Standard)', 'zehoro-toolkit' ); ?></option>
                                 <option value="legal" <?php selected( $preset, 'legal' ); ?>><?php esc_html_e( 'Legal (Standard)', 'zehoro-toolkit' ); ?></option>
@@ -115,12 +116,12 @@ class Disclaimer implements ModuleInterface {
                         <th><?php esc_html_e( 'Custom Text', 'zehoro-toolkit' ); ?></th>
                         <td>
                             <?php
-                            $custom_text = get_option( 'lkst_disclaimer_custom_text', '' );
+                            $custom_text = \Zehoro\Utils\Option::get( 'zehoro_disclaimer_custom_text', '' );
                             if ( empty($custom_text) && get_option('lkst_disc_text', '') ) {
-                                $custom_text = get_option('lkst_disc_text'); // legacy migration
+                                $custom_text = get_option('lkst_disc_text'); // pre-rename legacy migration
                             }
                             ?>
-                            <textarea name="lkst_disclaimer_custom_text" rows="4" class="large-text"><?php echo esc_textarea( $custom_text ); ?></textarea>
+                            <textarea name="zehoro_disclaimer_custom_text" rows="4" class="large-text"><?php echo esc_textarea( $custom_text ); ?></textarea>
                             <p class="description"><?php esc_html_e( 'Only used if "Custom" is selected above.', 'zehoro-toolkit' ); ?></p>
                         </td>
                     </tr>
@@ -128,11 +129,11 @@ class Disclaimer implements ModuleInterface {
                         <th><?php esc_html_e( 'Active Post Types', 'zehoro-toolkit' ); ?></th>
                         <td>
                             <?php 
-                            $active = get_option( 'lkst_disclaimer_post_types', [ 'post' ] );
+                            $active = \Zehoro\Utils\Option::get( 'zehoro_disclaimer_post_types', [ 'post' ] );
                             foreach ( $post_types as $slug => $pt ) :
                                 if ( in_array( $slug, $exclude, true ) ) continue; ?>
                                 <label style="display:block;margin-bottom:6px;">
-                                    <input type="checkbox" name="lkst_disclaimer_post_types[]" value="<?php echo esc_attr( $slug ); ?>" <?php checked( in_array( $slug, $active, true ) ); ?>>
+                                    <input type="checkbox" name="zehoro_disclaimer_post_types[]" value="<?php echo esc_attr( $slug ); ?>" <?php checked( in_array( $slug, $active, true ) ); ?>>
                                     <?php echo esc_html( $pt->label ); ?>
                                     <code style="margin-left:4px;"><?php echo esc_html( $slug ); ?></code>
                                 </label>

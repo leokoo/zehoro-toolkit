@@ -29,9 +29,9 @@ class LastUpdated implements ModuleInterface {
     }
 
     public function register_settings(): void {
-        register_setting( 'lkst_last_updated_group', 'lkst_lu_auto_inject', [ 'default' => '0', 'sanitize_callback' => 'absint' ] );
-        register_setting( 'lkst_last_updated_group', 'lkst_lu_threshold_days', [ 'default' => '30', 'sanitize_callback' => 'absint' ] );
-        register_setting( 'lkst_last_updated_group', 'lkst_lu_schema', [ 'default' => '1', 'sanitize_callback' => 'absint' ] );
+        register_setting( 'zehoro_last_updated_group', 'zehoro_lu_auto_inject', [ 'default' => '0', 'sanitize_callback' => 'absint' ] );
+        register_setting( 'zehoro_last_updated_group', 'zehoro_lu_threshold_days', [ 'default' => '30', 'sanitize_callback' => 'absint' ] );
+        register_setting( 'zehoro_last_updated_group', 'zehoro_lu_schema', [ 'default' => '1', 'sanitize_callback' => 'absint' ] );
     }
     public function register_settings_page(): void {
         add_submenu_page( null, 'Last Updated', 'Last Updated', 'manage_options', 'lkst-last-updated', [ $this, 'render_page' ] );
@@ -42,23 +42,23 @@ class LastUpdated implements ModuleInterface {
         <div class="wrap">
             <h1><?php esc_html_e( 'Last Updated Badge', 'zehoro-toolkit' ); ?></h1>
             <form method="post" action="options.php">
-                <?php settings_fields( 'lkst_last_updated_group' ); ?>
+                <?php settings_fields( 'zehoro_last_updated_group' ); ?>
                 <table class="form-table">
                     <tr>
-                        <th><label for="lkst_lu_auto_inject"><?php esc_html_e( 'Auto Inject (Top of content)', 'zehoro-toolkit' ); ?></label></th>
-                        <td><input type="checkbox" id="lkst_lu_auto_inject" name="lkst_lu_auto_inject" value="1" <?php checked(get_option('lkst_lu_auto_inject', '0')); ?>></td>
+                        <th><label for="zehoro_lu_auto_inject"><?php esc_html_e( 'Auto Inject (Top of content)', 'zehoro-toolkit' ); ?></label></th>
+                        <td><input type="checkbox" id="zehoro_lu_auto_inject" name="zehoro_lu_auto_inject" value="1" <?php checked( \Zehoro\Utils\Option::get('zehoro_lu_auto_inject', '0') ); ?>></td>
                     </tr>
                     <tr>
-                        <th><label for="lkst_lu_threshold_days"><?php esc_html_e( 'Threshold (Days)', 'zehoro-toolkit' ); ?></label></th>
+                        <th><label for="zehoro_lu_threshold_days"><?php esc_html_e( 'Threshold (Days)', 'zehoro-toolkit' ); ?></label></th>
                         <td>
-                            <input type="number" id="lkst_lu_threshold_days" name="lkst_lu_threshold_days" value="<?php echo esc_attr(get_option('lkst_lu_threshold_days', '30')); ?>" class="small-text">
+                            <input type="number" id="zehoro_lu_threshold_days" name="zehoro_lu_threshold_days" value="<?php echo esc_attr( \Zehoro\Utils\Option::get('zehoro_lu_threshold_days', '30') ); ?>" class="small-text">
                             <p class="description"><?php esc_html_e('Only show the badge if the post was updated more than X days after it was published.', 'zehoro-toolkit'); ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <th><label for="lkst_lu_schema"><?php esc_html_e( 'Output dateModified Schema', 'zehoro-toolkit' ); ?></label></th>
+                        <th><label for="zehoro_lu_schema"><?php esc_html_e( 'Output dateModified Schema', 'zehoro-toolkit' ); ?></label></th>
                         <td>
-                            <input type="checkbox" id="lkst_lu_schema" name="lkst_lu_schema" value="1" <?php checked(get_option('lkst_lu_schema', '1')); ?>>
+                            <input type="checkbox" id="zehoro_lu_schema" name="zehoro_lu_schema" value="1" <?php checked( \Zehoro\Utils\Option::get('zehoro_lu_schema', '1') ); ?>>
                             <p class="description"><?php esc_html_e('Injects structured data into the <head> to alert Google to the fresh content.', 'zehoro-toolkit'); ?></p>
                         </td>
                     </tr>
@@ -99,7 +99,7 @@ class LastUpdated implements ModuleInterface {
 
         $pub_time  = get_post_time( 'U', true, $post_id );
         $mod_time  = get_post_modified_time( 'U', true, $post_id );
-        $threshold = (int) get_option( 'lkst_lu_threshold_days', '30' ) * DAY_IN_SECONDS;
+        $threshold = (int) \Zehoro\Utils\Option::get( 'zehoro_lu_threshold_days', '30' ) * DAY_IN_SECONDS;
 
         if ( ( $mod_time - $pub_time ) < $threshold ) return '';
 
@@ -121,7 +121,7 @@ class LastUpdated implements ModuleInterface {
         );
     }
     public function auto_inject( $content ) {
-        if ( is_single() && in_the_loop() && is_main_query() && get_option( 'lkst_lu_auto_inject', '0' ) ) {
+        if ( is_single() && in_the_loop() && is_main_query() && \Zehoro\Utils\Option::get( 'zehoro_lu_auto_inject', '0' ) ) {
             // Auto-inject uses the default unstyled variant. Site owners who want
             // the pill look should disable auto-inject and place the shortcode
             // with [lkst_last_updated variant="pill"] manually.
@@ -133,11 +133,11 @@ class LastUpdated implements ModuleInterface {
         return $content;
     }
     public function output_schema(): void {
-        if ( ! is_single() || ! get_option( 'lkst_lu_schema', '1' ) ) return;
+        if ( ! is_single() || ! \Zehoro\Utils\Option::get( 'zehoro_lu_schema', '1' ) ) return;
         $post_id = get_the_ID();
         $pub_time = get_post_time( 'U', true, $post_id );
         $mod_time = get_post_modified_time( 'U', true, $post_id );
-        $threshold = (int) get_option( 'lkst_lu_threshold_days', '30' ) * DAY_IN_SECONDS;
+        $threshold = (int) \Zehoro\Utils\Option::get( 'zehoro_lu_threshold_days', '30' ) * DAY_IN_SECONDS;
         
         if ( ( $mod_time - $pub_time ) < $threshold ) return;
 

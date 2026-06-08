@@ -109,17 +109,20 @@ class AuthorBox implements \Zehoro\Core\ModuleInterface {
         }
 
         // CTA URL defaults are intentionally EMPTY — buttons hide unless the
-        // site owner configures them via wp_options (lkst_cta_primary_url,
-        // lkst_cta_secondary_url) or the lkst/author_box/cta_* filters.
-        // Previous defaults ('/blog/' and '#newsletter') silently rendered
-        // broken links on most sites; better to hide than to mislead.
+        // site owner configures them via wp_options (zehoro_cta_primary_url,
+        // zehoro_cta_secondary_url) or the lkst/author_box/cta_* filters.
+        // (The lkst/* filter names continue firing during Phase 2's
+        // backward-compat window; Option::get falls back to lkst_* legacy
+        // wp_options keys when canonical is unset.) Previous defaults
+        // ('/blog/' and '#newsletter') silently rendered broken links on
+        // most sites; better to hide than to mislead.
         $cta_primary = apply_filters( 'lkst/author_box/cta_primary', [
-            'label' => get_option( 'lkst_cta_primary_label', 'Read more articles' ),
-            'url'   => get_option( 'lkst_cta_primary_url',   '' ),
+            'label' => \Zehoro\Utils\Option::get( 'zehoro_cta_primary_label', 'Read more articles' ),
+            'url'   => \Zehoro\Utils\Option::get( 'zehoro_cta_primary_url',   '' ),
         ] );
         $cta_secondary = apply_filters( 'lkst/author_box/cta_secondary', [
-            'label' => get_option( 'lkst_cta_secondary_label', 'Get the newsletter' ),
-            'url'   => get_option( 'lkst_cta_secondary_url',   '' ),
+            'label' => \Zehoro\Utils\Option::get( 'zehoro_cta_secondary_label', 'Get the newsletter' ),
+            'url'   => \Zehoro\Utils\Option::get( 'zehoro_cta_secondary_url',   '' ),
         ] );
 
         $html  = '<div class="lkst-author-box">';

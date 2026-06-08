@@ -28,11 +28,11 @@ class Dashboard {
 	}
 
 	public function register_settings(): void {
-		register_setting( 'lkst_author_box_group', 'lkst_cta_primary_label',   [ 'default' => 'Read the articles',   'sanitize_callback' => 'sanitize_text_field' ] );
-		register_setting( 'lkst_author_box_group', 'lkst_cta_primary_url',     [ 'default' => '/blog/',              'sanitize_callback' => 'esc_url_raw' ] );
-		register_setting( 'lkst_author_box_group', 'lkst_cta_secondary_label', [ 'default' => 'Get the newsletter',  'sanitize_callback' => 'sanitize_text_field' ] );
-		register_setting( 'lkst_author_box_group', 'lkst_cta_secondary_url',   [ 'default' => '#newsletter',         'sanitize_callback' => 'esc_url_raw' ] );
-		register_setting( 'lkst_rss_group', 'lkst_rss_post_types', [
+		register_setting( 'zehoro_author_box_group', 'zehoro_cta_primary_label',   [ 'default' => 'Read the articles',   'sanitize_callback' => 'sanitize_text_field' ] );
+		register_setting( 'zehoro_author_box_group', 'zehoro_cta_primary_url',     [ 'default' => '/blog/',              'sanitize_callback' => 'esc_url_raw' ] );
+		register_setting( 'zehoro_author_box_group', 'zehoro_cta_secondary_label', [ 'default' => 'Get the newsletter',  'sanitize_callback' => 'sanitize_text_field' ] );
+		register_setting( 'zehoro_author_box_group', 'zehoro_cta_secondary_url',   [ 'default' => '#newsletter',         'sanitize_callback' => 'esc_url_raw' ] );
+		register_setting( 'zehoro_rss_group', 'zehoro_rss_post_types', [
 			'default'           => [ 'post' ],
 			'sanitize_callback' => function ( $input ) {
 				if ( ! is_array( $input ) ) return [ 'post' ];
@@ -42,11 +42,11 @@ class Dashboard {
 		] );
 
 		$sanitize_hex = fn( $value, $default ) => preg_match( '/^#[0-9a-fA-F]{3,8}$/', sanitize_text_field( $value ) ) ? sanitize_text_field( $value ) : $default;
-		register_setting( 'lkst_styles_group', 'lkst_color_primary',          [ 'default' => '#E8A020', 'sanitize_callback' => fn( $v ) => $sanitize_hex( $v, '#E8A020' ) ] );
-		register_setting( 'lkst_styles_group', 'lkst_color_primary_contrast', [ 'default' => '#0F1A2E', 'sanitize_callback' => fn( $v ) => $sanitize_hex( $v, '#0F1A2E' ) ] );
-		register_setting( 'lkst_styles_group', 'lkst_color_secondary',        [ 'default' => '#1ECFC4', 'sanitize_callback' => fn( $v ) => $sanitize_hex( $v, '#1ECFC4' ) ] );
-		register_setting( 'lkst_styles_group', 'lkst_color_bg_dark',          [ 'default' => '#0F1A2E', 'sanitize_callback' => fn( $v ) => $sanitize_hex( $v, '#0F1A2E' ) ] );
-		register_setting( 'lkst_styles_group', 'lkst_color_bg_light',         [ 'default' => '#F5F0E8', 'sanitize_callback' => fn( $v ) => $sanitize_hex( $v, '#F5F0E8' ) ] );
+		register_setting( 'zehoro_styles_group', 'zehoro_color_primary',          [ 'default' => '#E8A020', 'sanitize_callback' => fn( $v ) => $sanitize_hex( $v, '#E8A020' ) ] );
+		register_setting( 'zehoro_styles_group', 'zehoro_color_primary_contrast', [ 'default' => '#0F1A2E', 'sanitize_callback' => fn( $v ) => $sanitize_hex( $v, '#0F1A2E' ) ] );
+		register_setting( 'zehoro_styles_group', 'zehoro_color_secondary',        [ 'default' => '#1ECFC4', 'sanitize_callback' => fn( $v ) => $sanitize_hex( $v, '#1ECFC4' ) ] );
+		register_setting( 'zehoro_styles_group', 'zehoro_color_bg_dark',          [ 'default' => '#0F1A2E', 'sanitize_callback' => fn( $v ) => $sanitize_hex( $v, '#0F1A2E' ) ] );
+		register_setting( 'zehoro_styles_group', 'zehoro_color_bg_light',         [ 'default' => '#F5F0E8', 'sanitize_callback' => fn( $v ) => $sanitize_hex( $v, '#F5F0E8' ) ] );
 	}
 
 	public function register_menus(): void {
@@ -171,18 +171,18 @@ class Dashboard {
 			<h1><?php esc_html_e( 'Visual Styles', 'zehoro-toolkit' ); ?></h1>
 			<p><?php esc_html_e( 'Customize the colors used across all toolkit modules.', 'zehoro-toolkit' ); ?></p>
 			<form method="post" action="options.php">
-				<?php settings_fields( 'lkst_styles_group' ); ?>
+				<?php settings_fields( 'zehoro_styles_group' ); ?>
 				<table class="form-table">
-					<tr><th><label for="lkst_color_primary"><?php esc_html_e( 'Primary Brand Color', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="lkst_color_primary" name="lkst_color_primary" value="<?php echo esc_attr( get_option( 'lkst_color_primary', '#E8A020' ) ); ?>" class="lkst-color-picker"></td></tr>
-					<tr><th><label for="lkst_color_primary_contrast"><?php esc_html_e( 'Primary Contrast Color', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="lkst_color_primary_contrast" name="lkst_color_primary_contrast" value="<?php echo esc_attr( get_option( 'lkst_color_primary_contrast', '#0F1A2E' ) ); ?>" class="lkst-color-picker"></td></tr>
-					<tr><th><label for="lkst_color_secondary"><?php esc_html_e( 'Secondary Brand Color', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="lkst_color_secondary" name="lkst_color_secondary" value="<?php echo esc_attr( get_option( 'lkst_color_secondary', '#1ECFC4' ) ); ?>" class="lkst-color-picker"></td></tr>
-					<tr><th><label for="lkst_color_bg_dark"><?php esc_html_e( 'Dark Background', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="lkst_color_bg_dark" name="lkst_color_bg_dark" value="<?php echo esc_attr( get_option( 'lkst_color_bg_dark', '#0F1A2E' ) ); ?>" class="lkst-color-picker"></td></tr>
-					<tr><th><label for="lkst_color_bg_light"><?php esc_html_e( 'Light Background', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="lkst_color_bg_light" name="lkst_color_bg_light" value="<?php echo esc_attr( get_option( 'lkst_color_bg_light', '#F5F0E8' ) ); ?>" class="lkst-color-picker"></td></tr>
+					<tr><th><label for="zehoro_color_primary"><?php esc_html_e( 'Primary Brand Color', 'zehoro-toolkit' ); ?></label></th>
+						<td><input type="text" id="zehoro_color_primary" name="zehoro_color_primary" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_primary', '#E8A020' ) ); ?>" class="lkst-color-picker"></td></tr>
+					<tr><th><label for="zehoro_color_primary_contrast"><?php esc_html_e( 'Primary Contrast Color', 'zehoro-toolkit' ); ?></label></th>
+						<td><input type="text" id="zehoro_color_primary_contrast" name="zehoro_color_primary_contrast" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_primary_contrast', '#0F1A2E' ) ); ?>" class="lkst-color-picker"></td></tr>
+					<tr><th><label for="zehoro_color_secondary"><?php esc_html_e( 'Secondary Brand Color', 'zehoro-toolkit' ); ?></label></th>
+						<td><input type="text" id="zehoro_color_secondary" name="zehoro_color_secondary" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_secondary', '#1ECFC4' ) ); ?>" class="lkst-color-picker"></td></tr>
+					<tr><th><label for="zehoro_color_bg_dark"><?php esc_html_e( 'Dark Background', 'zehoro-toolkit' ); ?></label></th>
+						<td><input type="text" id="zehoro_color_bg_dark" name="zehoro_color_bg_dark" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_bg_dark', '#0F1A2E' ) ); ?>" class="lkst-color-picker"></td></tr>
+					<tr><th><label for="zehoro_color_bg_light"><?php esc_html_e( 'Light Background', 'zehoro-toolkit' ); ?></label></th>
+						<td><input type="text" id="zehoro_color_bg_light" name="zehoro_color_bg_light" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_bg_light', '#F5F0E8' ) ); ?>" class="lkst-color-picker"></td></tr>
 				</table>
 				<?php submit_button(); ?>
 			</form>
@@ -197,16 +197,16 @@ class Dashboard {
 		<div class="wrap">
 			<h1><?php esc_html_e( 'RSS Feed Support', 'zehoro-toolkit' ); ?></h1>
 			<form method="post" action="options.php">
-				<?php settings_fields( 'lkst_rss_group' ); ?>
+				<?php settings_fields( 'zehoro_rss_group' ); ?>
 				<table class="form-table">
 					<tr><th><?php esc_html_e( 'Include Post Types', 'zehoro-toolkit' ); ?></th>
 						<td><?php
-							$selected = get_option( 'lkst_rss_post_types', [ 'post' ] );
+							$selected = \Zehoro\Utils\Option::get( 'zehoro_rss_post_types', [ 'post' ] );
 							foreach ( $post_types as $slug => $pt ) :
 								if ( in_array( $slug, $exclude, true ) ) continue;
 								?>
 								<label style="display:block;margin-bottom:5px;">
-									<input type="checkbox" name="lkst_rss_post_types[]" value="<?php echo esc_attr( $slug ); ?>" <?php checked( in_array( $slug, $selected, true ) ); ?>>
+									<input type="checkbox" name="zehoro_rss_post_types[]" value="<?php echo esc_attr( $slug ); ?>" <?php checked( in_array( $slug, $selected, true ) ); ?>>
 									<?php echo esc_html( $pt->label ); ?> (<code><?php echo esc_html( $slug ); ?></code>)
 								</label>
 							<?php endforeach; ?>
@@ -224,17 +224,17 @@ class Dashboard {
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Author Box Settings', 'zehoro-toolkit' ); ?></h1>
 			<form method="post" action="options.php">
-				<?php settings_fields( 'lkst_author_box_group' ); ?>
+				<?php settings_fields( 'zehoro_author_box_group' ); ?>
 				<h2><?php esc_html_e( 'CTA Buttons', 'zehoro-toolkit' ); ?></h2>
 				<table class="form-table">
-					<tr><th><label for="lkst_cta_p_label"><?php esc_html_e( 'Primary button label', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="lkst_cta_p_label" name="lkst_cta_primary_label" value="<?php echo esc_attr( get_option( 'lkst_cta_primary_label', 'Read the articles' ) ); ?>" class="regular-text"></td></tr>
-					<tr><th><label for="lkst_cta_p_url"><?php esc_html_e( 'Primary button URL', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="lkst_cta_p_url" name="lkst_cta_primary_url" value="<?php echo esc_attr( get_option( 'lkst_cta_primary_url', '/blog/' ) ); ?>" class="regular-text"></td></tr>
-					<tr><th><label for="lkst_cta_s_label"><?php esc_html_e( 'Secondary button label', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="lkst_cta_s_label" name="lkst_cta_secondary_label" value="<?php echo esc_attr( get_option( 'lkst_cta_secondary_label', 'Get the newsletter' ) ); ?>" class="regular-text"></td></tr>
-					<tr><th><label for="lkst_cta_s_url"><?php esc_html_e( 'Secondary button URL', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="lkst_cta_s_url" name="lkst_cta_secondary_url" value="<?php echo esc_attr( get_option( 'lkst_cta_secondary_url', '#newsletter' ) ); ?>" class="regular-text"></td></tr>
+					<tr><th><label for="zehoro_cta_p_label"><?php esc_html_e( 'Primary button label', 'zehoro-toolkit' ); ?></label></th>
+						<td><input type="text" id="zehoro_cta_p_label" name="zehoro_cta_primary_label" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_cta_primary_label', 'Read the articles' ) ); ?>" class="regular-text"></td></tr>
+					<tr><th><label for="zehoro_cta_p_url"><?php esc_html_e( 'Primary button URL', 'zehoro-toolkit' ); ?></label></th>
+						<td><input type="text" id="zehoro_cta_p_url" name="zehoro_cta_primary_url" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_cta_primary_url', '/blog/' ) ); ?>" class="regular-text"></td></tr>
+					<tr><th><label for="zehoro_cta_s_label"><?php esc_html_e( 'Secondary button label', 'zehoro-toolkit' ); ?></label></th>
+						<td><input type="text" id="zehoro_cta_s_label" name="zehoro_cta_secondary_label" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_cta_secondary_label', 'Get the newsletter' ) ); ?>" class="regular-text"></td></tr>
+					<tr><th><label for="zehoro_cta_s_url"><?php esc_html_e( 'Secondary button URL', 'zehoro-toolkit' ); ?></label></th>
+						<td><input type="text" id="zehoro_cta_s_url" name="zehoro_cta_secondary_url" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_cta_secondary_url', '#newsletter' ) ); ?>" class="regular-text"></td></tr>
 				</table>
 				<?php submit_button(); ?>
 			</form>

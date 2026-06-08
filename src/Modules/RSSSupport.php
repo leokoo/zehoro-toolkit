@@ -18,7 +18,7 @@ class RSSSupport implements ModuleInterface {
     public function init(): void {
         add_filter( 'request', function ( $qv ) {
             if ( ! isset( $qv['feed'] ) || isset( $qv['post_type'] ) ) return $qv;
-            $selected = get_option( 'lkst_rss_post_types', [ 'post' ] );
+            $selected = \Zehoro\Utils\Option::get( 'zehoro_rss_post_types', [ 'post' ] );
             if ( empty( $selected ) ) $selected = [ 'post' ];
             $qv['post_type'] = $selected;
             return $qv;

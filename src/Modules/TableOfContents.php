@@ -47,7 +47,7 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
     }
 
     public function register_settings(): void {
-        register_setting( 'lkst_toc_group', 'lkst_toc_settings', [
+        register_setting( 'zehoro_toc_group', 'zehoro_toc_settings', [
             'sanitize_callback' => [ $this, 'sanitize_settings' ],
             'default'           => static::get_defaults(),
         ] );
@@ -81,7 +81,7 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
      */
     public function preparse_toc_headings(): void {
         if ( ! is_singular() ) return;
-        $settings = get_option( 'lkst_toc_settings', static::get_defaults() );
+        $settings = \Zehoro\Utils\Option::get( 'zehoro_toc_settings', static::get_defaults() );
         if ( ! in_array( get_post_type(), $settings['post_types'], true ) ) return;
 
         global $lkst_toc_items;
@@ -127,7 +127,7 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
         global $lkst_toc_processing, $lkst_toc_items;
         if ( $lkst_toc_processing ) return $content;
 
-        $settings  = get_option( 'lkst_toc_settings', static::get_defaults() );
+        $settings  = \Zehoro\Utils\Option::get( 'zehoro_toc_settings', static::get_defaults() );
         $post_type = get_post_type();
         if ( ! in_array( $post_type, $settings['post_types'], true ) ) return $content;
 
@@ -203,25 +203,25 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
     }
 
     public function render_page(): void {
-        $s          = get_option( 'lkst_toc_settings', static::get_defaults() );
+        $s          = \Zehoro\Utils\Option::get( 'zehoro_toc_settings', static::get_defaults() );
         $post_types = get_post_types( [ 'public' => true ], 'objects' );
         $pt_exclude = [ 'attachment', 'bricks_template', 'etch_template', 'elementor_library', 'ifso_triggers' ];
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'Table of Contents Settings', 'zehoro-toolkit' ); ?></h1>
             <form method="post" action="options.php">
-                <?php settings_fields( 'lkst_toc_group' ); ?>
+                <?php settings_fields( 'zehoro_toc_group' ); ?>
                 <table class="form-table">
                     <tr>
                         <th><?php esc_html_e( 'Insertion Method', 'zehoro-toolkit' ); ?></th>
                         <td>
                             <label>
-                                <input type="radio" name="lkst_toc_settings[insertion]" value="auto" <?php checked( $s['insertion'], 'auto' ); ?>>
+                                <input type="radio" name="zehoro_toc_settings[insertion]" value="auto" <?php checked( $s['insertion'], 'auto' ); ?>>
                                 <strong><?php esc_html_e( 'Auto-inject', 'zehoro-toolkit' ); ?></strong>
                                 <?php esc_html_e( '(Automatically adds the TOC to the very top of the post content)', 'zehoro-toolkit' ); ?>
                             </label><br><br>
                             <label>
-                                <input type="radio" name="lkst_toc_settings[insertion]" value="shortcode" <?php checked( $s['insertion'], 'shortcode' ); ?>>
+                                <input type="radio" name="zehoro_toc_settings[insertion]" value="shortcode" <?php checked( $s['insertion'], 'shortcode' ); ?>>
                                 <strong><?php esc_html_e( 'Shortcode Only', 'zehoro-toolkit' ); ?></strong>
                                 <?php esc_html_e( '(Only renders where you place the [lkst_toc] shortcode)', 'zehoro-toolkit' ); ?>
                             </label>
@@ -234,7 +234,7 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
                                 if ( in_array( $slug, $pt_exclude, true ) ) continue; ?>
                                 <label style="display:block;margin-bottom:6px;">
                                     <input type="checkbox"
-                                           name="lkst_toc_settings[post_types][]"
+                                           name="zehoro_toc_settings[post_types][]"
                                            value="<?php echo esc_attr( $slug ); ?>"
                                            <?php checked( in_array( $slug, $s['post_types'], true ) ); ?>>
                                     <?php echo esc_html( $pt->label ); ?>

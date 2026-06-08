@@ -81,6 +81,23 @@ class ZehoroRenameMigrator {
 		'lkst_disclaimer_preset'      => 'zehoro_disclaimer_preset',
 		'lkst_disclaimer_custom_text' => 'zehoro_disclaimer_custom_text',
 		'lkst_disclaimer_post_types'  => 'zehoro_disclaimer_post_types',
+
+		// ContentBox module (CTA box settings)
+		'lkst_box_type'               => 'zehoro_box_type',
+		'lkst_box_layout'             => 'zehoro_box_layout',
+		'lkst_box_eyebrow'            => 'zehoro_box_eyebrow',
+		'lkst_box_heading'            => 'zehoro_box_heading',
+		'lkst_box_desc'               => 'zehoro_box_desc',
+		'lkst_box_image_url'          => 'zehoro_box_image_url',
+		'lkst_box_button_text'        => 'zehoro_box_button_text',
+		'lkst_box_form'               => 'zehoro_box_form',
+		'lkst_box_webhook_url'        => 'zehoro_box_webhook_url',
+		'lkst_box_email'              => 'zehoro_box_email',
+		'lkst_box_name'               => 'zehoro_box_name',
+		'lkst_box_hp'                 => 'zehoro_box_hp',
+
+		// TableOfContents module (composite settings array)
+		'lkst_toc_settings'           => 'zehoro_toc_settings',
 	];
 
 	/**

@@ -58,22 +58,22 @@ class ContentBox implements ModuleInterface {
     // ── Settings ─────────────────────────────────────────────────────────────
 
     public function register_settings(): void {
-        $g = 'lkst_content_box_group';
+        $g = 'zehoro_content_box_group';
 
         $valid_type   = fn( $v ) => in_array( $v, [ 'cta', 'email' ], true ) ? $v : 'cta';
         $valid_layout = fn( $v ) => in_array( $v, [ 'text', 'image-left', 'image-right', 'image-top' ], true ) ? $v : 'text';
 
-        register_setting( $g, 'lkst_box_type',        [ 'default' => 'cta',                                    'sanitize_callback' => $valid_type ] );
-        register_setting( $g, 'lkst_box_eyebrow',     [ 'default' => '',                                        'sanitize_callback' => 'sanitize_text_field' ] );
-        register_setting( $g, 'lkst_box_heading',     [ 'default' => 'Enjoying this? Join the newsletter.',     'sanitize_callback' => 'sanitize_text_field' ] );
-        register_setting( $g, 'lkst_box_desc',        [ 'default' => '',                                        'sanitize_callback' => 'wp_kses_post' ] );
-        register_setting( $g, 'lkst_box_layout',      [ 'default' => 'text',                                    'sanitize_callback' => $valid_layout ] );
-        register_setting( $g, 'lkst_box_image_url',   [ 'default' => '',                                        'sanitize_callback' => 'esc_url_raw' ] );
+        register_setting( $g, 'zehoro_box_type',        [ 'default' => 'cta',                                    'sanitize_callback' => $valid_type ] );
+        register_setting( $g, 'zehoro_box_eyebrow',     [ 'default' => '',                                        'sanitize_callback' => 'sanitize_text_field' ] );
+        register_setting( $g, 'zehoro_box_heading',     [ 'default' => 'Enjoying this? Join the newsletter.',     'sanitize_callback' => 'sanitize_text_field' ] );
+        register_setting( $g, 'zehoro_box_desc',        [ 'default' => '',                                        'sanitize_callback' => 'wp_kses_post' ] );
+        register_setting( $g, 'zehoro_box_layout',      [ 'default' => 'text',                                    'sanitize_callback' => $valid_layout ] );
+        register_setting( $g, 'zehoro_box_image_url',   [ 'default' => '',                                        'sanitize_callback' => 'esc_url_raw' ] );
         // CTA-specific
-        register_setting( $g, 'lkst_box_form',        [ 'default' => '',                                        'sanitize_callback' => 'sanitize_text_field' ] );
+        register_setting( $g, 'zehoro_box_form',        [ 'default' => '',                                        'sanitize_callback' => 'sanitize_text_field' ] );
         // Email-capture-specific
-        register_setting( $g, 'lkst_box_webhook_url', [ 'default' => '',                                        'sanitize_callback' => 'esc_url_raw' ] );
-        register_setting( $g, 'lkst_box_button_text', [ 'default' => 'Get Free Download →',                     'sanitize_callback' => 'sanitize_text_field' ] );
+        register_setting( $g, 'zehoro_box_webhook_url', [ 'default' => '',                                        'sanitize_callback' => 'esc_url_raw' ] );
+        register_setting( $g, 'zehoro_box_button_text', [ 'default' => 'Get Free Download →',                     'sanitize_callback' => 'sanitize_text_field' ] );
     }
 
     public function register_settings_page(): void {
@@ -92,11 +92,11 @@ class ContentBox implements ModuleInterface {
     public function render_page(): void {
         if ( ! current_user_can( 'manage_options' ) ) return;
 
-        $type        = get_option( 'lkst_box_type',        'cta' );
-        $layout      = get_option( 'lkst_box_layout',      'text' );
-        $webhook     = get_option( 'lkst_box_webhook_url', '' );
-        $button_text = get_option( 'lkst_box_button_text', 'Get Free Download →' );
-        $form        = get_option( 'lkst_box_form',        '' );
+        $type        = \Zehoro\Utils\Option::get( 'zehoro_box_type',        'cta' );
+        $layout      = \Zehoro\Utils\Option::get( 'zehoro_box_layout',      'text' );
+        $webhook     = \Zehoro\Utils\Option::get( 'zehoro_box_webhook_url', '' );
+        $button_text = \Zehoro\Utils\Option::get( 'zehoro_box_button_text', 'Get Free Download →' );
+        $form        = \Zehoro\Utils\Option::get( 'zehoro_box_form',        '' );
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'Content Box Settings', 'zehoro-toolkit' ); ?></h1>
@@ -104,14 +104,14 @@ class ContentBox implements ModuleInterface {
                <code>[lkst_box type="email" heading="Download the Guide" file_url="https://..."]</code></p>
 
             <form method="post" action="options.php">
-                <?php settings_fields( 'lkst_content_box_group' ); ?>
+                <?php settings_fields( 'zehoro_content_box_group' ); ?>
 
                 <table class="form-table">
 
                     <tr>
                         <th><?php esc_html_e( 'Box Type', 'zehoro-toolkit' ); ?></th>
                         <td>
-                            <select name="lkst_box_type" id="lkst_box_type">
+                            <select name="zehoro_box_type" id="zehoro_box_type">
                                 <option value="cta"   <?php selected( $type, 'cta' ); ?>><?php esc_html_e( 'Newsletter CTA (external form)', 'zehoro-toolkit' ); ?></option>
                                 <option value="email" <?php selected( $type, 'email' ); ?>><?php esc_html_e( 'File Download (built-in form + webhook)', 'zehoro-toolkit' ); ?></option>
                             </select>
@@ -121,23 +121,23 @@ class ContentBox implements ModuleInterface {
 
                     <tr>
                         <th><label for="lkst_box_eyebrow"><?php esc_html_e( 'Eyebrow', 'zehoro-toolkit' ); ?></label></th>
-                        <td><input type="text" id="lkst_box_eyebrow" name="lkst_box_eyebrow" value="<?php echo esc_attr( get_option( 'lkst_box_eyebrow', '' ) ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'e.g. Free Resource', 'zehoro-toolkit' ); ?>"></td>
+                        <td><input type="text" id="zehoro_box_eyebrow" name="zehoro_box_eyebrow" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_box_eyebrow', '' ) ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'e.g. Free Resource', 'zehoro-toolkit' ); ?>"></td>
                     </tr>
 
                     <tr>
                         <th><label for="lkst_box_heading"><?php esc_html_e( 'Heading', 'zehoro-toolkit' ); ?></label></th>
-                        <td><input type="text" id="lkst_box_heading" name="lkst_box_heading" value="<?php echo esc_attr( get_option( 'lkst_box_heading', 'Enjoying this? Join the newsletter.' ) ); ?>" class="regular-text"></td>
+                        <td><input type="text" id="zehoro_box_heading" name="zehoro_box_heading" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_box_heading', 'Enjoying this? Join the newsletter.' ) ); ?>" class="regular-text"></td>
                     </tr>
 
                     <tr>
                         <th><label for="lkst_box_desc"><?php esc_html_e( 'Description', 'zehoro-toolkit' ); ?></label></th>
-                        <td><textarea id="lkst_box_desc" name="lkst_box_desc" rows="3" class="large-text"><?php echo esc_textarea( get_option( 'lkst_box_desc', '' ) ); ?></textarea></td>
+                        <td><textarea id="zehoro_box_desc" name="zehoro_box_desc" rows="3" class="large-text"><?php echo esc_textarea( \Zehoro\Utils\Option::get( 'zehoro_box_desc', '' ) ); ?></textarea></td>
                     </tr>
 
                     <tr>
                         <th><label for="lkst_box_layout"><?php esc_html_e( 'Layout', 'zehoro-toolkit' ); ?></label></th>
                         <td>
-                            <select name="lkst_box_layout" id="lkst_box_layout">
+                            <select name="zehoro_box_layout" id="zehoro_box_layout">
                                 <option value="text"        <?php selected( $layout, 'text' ); ?>><?php esc_html_e( 'Text Only', 'zehoro-toolkit' ); ?></option>
                                 <option value="image-left"  <?php selected( $layout, 'image-left' ); ?>><?php esc_html_e( 'Image Left', 'zehoro-toolkit' ); ?></option>
                                 <option value="image-right" <?php selected( $layout, 'image-right' ); ?>><?php esc_html_e( 'Image Right', 'zehoro-toolkit' ); ?></option>
@@ -148,14 +148,14 @@ class ContentBox implements ModuleInterface {
 
                     <tr>
                         <th><label for="lkst_box_image_url"><?php esc_html_e( 'Image URL', 'zehoro-toolkit' ); ?></label></th>
-                        <td><input type="url" id="lkst_box_image_url" name="lkst_box_image_url" value="<?php echo esc_attr( get_option( 'lkst_box_image_url', '' ) ); ?>" class="regular-text" placeholder="https://"></td>
+                        <td><input type="url" id="zehoro_box_image_url" name="zehoro_box_image_url" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_box_image_url', '' ) ); ?>" class="regular-text" placeholder="https://"></td>
                     </tr>
 
                     <!-- CTA: external form shortcode -->
                     <tr class="lkst-box-row-cta" <?php if ( $type !== 'cta' ) echo 'style="display:none"'; ?>>
                         <th><label for="lkst_box_form"><?php esc_html_e( 'Form Shortcode', 'zehoro-toolkit' ); ?></label></th>
                         <td>
-                            <input type="text" id="lkst_box_form" name="lkst_box_form" value="<?php echo esc_attr( $form ); ?>" class="regular-text" placeholder='[fluentform id="1"]'>
+                            <input type="text" id="zehoro_box_form" name="zehoro_box_form" value="<?php echo esc_attr( $form ); ?>" class="regular-text" placeholder='[fluentform id="1"]'>
                             <p class="description"><?php esc_html_e( 'Paste your opt-in form shortcode. Accepts any shortcode-based form plugin.', 'zehoro-toolkit' ); ?></p>
                         </td>
                     </tr>
@@ -164,13 +164,13 @@ class ContentBox implements ModuleInterface {
                     <tr class="lkst-box-row-email" <?php if ( $type !== 'email' ) echo 'style="display:none"'; ?>>
                         <th><label for="lkst_box_webhook_url"><?php esc_html_e( 'Webhook URL', 'zehoro-toolkit' ); ?></label></th>
                         <td>
-                            <input type="url" id="lkst_box_webhook_url" name="lkst_box_webhook_url" value="<?php echo esc_attr( $webhook ); ?>" class="regular-text" placeholder="https://hook.make.com/...">
+                            <input type="url" id="zehoro_box_webhook_url" name="zehoro_box_webhook_url" value="<?php echo esc_attr( $webhook ); ?>" class="regular-text" placeholder="https://hook.make.com/...">
                             <p class="description"><?php esc_html_e( 'POSTs name, email, file_url, post_id, and source to this URL. Works with Make.com, Zapier, or n8n.', 'zehoro-toolkit' ); ?></p>
                         </td>
                     </tr>
                     <tr class="lkst-box-row-email" <?php if ( $type !== 'email' ) echo 'style="display:none"'; ?>>
                         <th><label for="lkst_box_button_text"><?php esc_html_e( 'Button Text', 'zehoro-toolkit' ); ?></label></th>
-                        <td><input type="text" id="lkst_box_button_text" name="lkst_box_button_text" value="<?php echo esc_attr( $button_text ); ?>" class="regular-text"></td>
+                        <td><input type="text" id="zehoro_box_button_text" name="zehoro_box_button_text" value="<?php echo esc_attr( $button_text ); ?>" class="regular-text"></td>
                     </tr>
 
                 </table>
@@ -199,7 +199,7 @@ class ContentBox implements ModuleInterface {
 
         <script>
         (function() {
-            var sel = document.getElementById('lkst_box_type');
+            var sel = document.getElementById('zehoro_box_type');
             if (!sel) return;
             function toggle() {
                 var v = sel.value;
@@ -217,18 +217,18 @@ class ContentBox implements ModuleInterface {
 
     public function render_shortcode( $atts ): string {
         $atts = shortcode_atts( [
-            'type'        => get_option( 'lkst_box_type',        'cta' ),
-            'eyebrow'     => get_option( 'lkst_box_eyebrow',     '' ),
-            'heading'     => get_option( 'lkst_box_heading',     'Enjoying this? Join the newsletter.' ),
-            'desc'        => get_option( 'lkst_box_desc',        '' ),
-            'layout'      => get_option( 'lkst_box_layout',      'text' ),
-            'image'       => get_option( 'lkst_box_image_url',   '' ),
+            'type'        => \Zehoro\Utils\Option::get( 'zehoro_box_type',        'cta' ),
+            'eyebrow'     => \Zehoro\Utils\Option::get( 'zehoro_box_eyebrow',     '' ),
+            'heading'     => \Zehoro\Utils\Option::get( 'zehoro_box_heading',     'Enjoying this? Join the newsletter.' ),
+            'desc'        => \Zehoro\Utils\Option::get( 'zehoro_box_desc',        '' ),
+            'layout'      => \Zehoro\Utils\Option::get( 'zehoro_box_layout',      'text' ),
+            'image'       => \Zehoro\Utils\Option::get( 'zehoro_box_image_url',   '' ),
             // CTA-specific
-            'form'        => get_option( 'lkst_box_form',        '' ),
+            'form'        => \Zehoro\Utils\Option::get( 'zehoro_box_form',        '' ),
             // Email-specific
             'file_url'    => '',
-            'webhook'     => get_option( 'lkst_box_webhook_url', '' ),
-            'button_text' => get_option( 'lkst_box_button_text', 'Get Free Download →' ),
+            'webhook'     => \Zehoro\Utils\Option::get( 'zehoro_box_webhook_url', '' ),
+            'button_text' => \Zehoro\Utils\Option::get( 'zehoro_box_button_text', 'Get Free Download →' ),
         ], $atts, 'lkst_box' );
 
         return $atts['type'] === 'email'
@@ -287,9 +287,9 @@ class ContentBox implements ModuleInterface {
     // ── Email-capture box (built-in form + webhook) ───────────────────────────
 
     private function render_email_box( array $atts ): string {
-        $primary  = esc_attr( get_option( 'lkst_color_primary',          '#E8A020' ) );
-        $contrast = esc_attr( get_option( 'lkst_color_primary_contrast', '#0F1A2E' ) );
-        $bg_light = esc_attr( get_option( 'lkst_color_bg_light',         '#F5F0E8' ) );
+        $primary  = esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_primary',          '#E8A020' ) );
+        $contrast = esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_primary_contrast', '#0F1A2E' ) );
+        $bg_light = esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_bg_light',         '#F5F0E8' ) );
 
         $layout  = $atts['layout'];
         $img_url = $atts['image'];
@@ -325,21 +325,21 @@ class ContentBox implements ModuleInterface {
 
             <form class="lkst-box-email-form" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
                 <input type="text"
-                       name="lkst_box_name"
+                       name="zehoro_box_name"
                        placeholder="<?php esc_attr_e( 'Your Name', 'zehoro-toolkit' ); ?>"
                        required
                        style="flex:1; min-width:130px; padding:10px; border:1px solid #ccc; border-radius:4px; font-size:14px;">
                 <input type="email"
-                       name="lkst_box_email"
+                       name="zehoro_box_email"
                        placeholder="<?php esc_attr_e( 'Your Email', 'zehoro-toolkit' ); ?>"
                        required
                        style="flex:2; min-width:180px; padding:10px; border:1px solid #ccc; border-radius:4px; font-size:14px;">
-                <input type="hidden" name="lkst_box_file_url"  value="<?php echo esc_url( $atts['file_url'] ); ?>">
-                <input type="hidden" name="lkst_box_webhook"   value="<?php echo esc_url( $atts['webhook'] ); ?>">
+                <input type="hidden" name="zehoro_box_file_url"  value="<?php echo esc_url( $atts['file_url'] ); ?>">
+                <input type="hidden" name="zehoro_box_webhook"   value="<?php echo esc_url( $atts['webhook'] ); ?>">
                 <input type="hidden" name="action"             value="lkst_box_submit">
                 <?php wp_nonce_field( 'lkst_box_nonce', 'lkst_box_security' ); ?>
                 <!-- Honeypot: bots fill this, humans don't -->
-                <input type="text" name="lkst_box_hp" style="display:none!important" tabindex="-1" autocomplete="off">
+                <input type="text" name="zehoro_box_hp" style="display:none!important" tabindex="-1" autocomplete="off">
                 <button type="submit"
                         style="background-color:<?php echo $primary; ?>; color:#fff; border:none; padding:10px 20px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:14px; white-space:nowrap;">
                     <?php echo esc_html( $atts['button_text'] ); ?>
@@ -422,18 +422,18 @@ class ContentBox implements ModuleInterface {
         check_ajax_referer( 'lkst_box_nonce', 'lkst_box_security' );
 
         // Honeypot: silent success so bots don't know they were discarded
-        if ( ! empty( $_POST['lkst_box_hp'] ) ) {
+        if ( ! empty( $_POST['zehoro_box_hp'] ) ) {
             wp_send_json_success( 'Subscribed.' );
         }
 
-        $email   = sanitize_email( $_POST['lkst_box_email']   ?? '' );
-        $name    = sanitize_text_field( $_POST['lkst_box_name']    ?? '' );
+        $email   = sanitize_email( $_POST['zehoro_box_email']   ?? '' );
+        $name    = sanitize_text_field( $_POST['zehoro_box_name']    ?? '' );
         $file    = esc_url_raw( $_POST['lkst_box_file_url']   ?? '' );
 
         // Per-shortcode webhook overrides global setting
         $webhook = esc_url_raw( $_POST['lkst_box_webhook'] ?? '' );
         if ( empty( $webhook ) ) {
-            $webhook = get_option( 'lkst_box_webhook_url', '' );
+            $webhook = \Zehoro\Utils\Option::get( 'zehoro_box_webhook_url', '' );
         }
 
         if ( empty( $email ) ) {

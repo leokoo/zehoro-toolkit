@@ -42,7 +42,7 @@ class FAQ implements ModuleInterface {
     }
 
     public function register_settings(): void {
-        register_setting( 'lkst_faq_group', 'lkst_faq_schema_mode', [ 'default' => 'auto', 'sanitize_callback' => 'sanitize_text_field' ] );
+        register_setting( 'zehoro_faq_group', 'zehoro_faq_schema_mode', [ 'default' => 'auto', 'sanitize_callback' => 'sanitize_text_field' ] );
     }
 
     public function register_settings_page(): void {
@@ -58,20 +58,20 @@ class FAQ implements ModuleInterface {
 
     public function render_page(): void {
         if ( ! current_user_can( 'manage_options' ) ) return;
-        $mode = get_option( 'lkst_faq_schema_mode', 'auto' );
+        $mode = \Zehoro\Utils\Option::get( 'zehoro_faq_schema_mode', 'auto' );
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'FAQ Accordion Settings', 'zehoro-toolkit' ); ?></h1>
             <p><?php esc_html_e( 'Use the shortcode to output styled FAQs in your content:', 'zehoro-toolkit' ); ?><br>
             <code>[lkst_faq question="Your question?"]Your answer.[/lkst_faq]</code></p>
-            
+
             <form method="post" action="options.php">
-                <?php settings_fields( 'lkst_faq_group' ); ?>
+                <?php settings_fields( 'zehoro_faq_group' ); ?>
                 <table class="form-table">
                     <tr>
-                        <th><label for="lkst_faq_schema_mode"><?php esc_html_e( 'FAQPage Schema (JSON-LD)', 'zehoro-toolkit' ); ?></label></th>
+                        <th><label for="zehoro_faq_schema_mode"><?php esc_html_e( 'FAQPage Schema (JSON-LD)', 'zehoro-toolkit' ); ?></label></th>
                         <td>
-                            <select name="lkst_faq_schema_mode" id="lkst_faq_schema_mode">
+                            <select name="zehoro_faq_schema_mode" id="zehoro_faq_schema_mode">
                                 <option value="auto" <?php selected($mode, 'auto'); ?>><?php esc_html_e('Auto (Disable if SEO plugin detected)', 'zehoro-toolkit'); ?></option>
                                 <option value="force" <?php selected($mode, 'force'); ?>><?php esc_html_e('Always Output Schema', 'zehoro-toolkit'); ?></option>
                                 <option value="off" <?php selected($mode, 'off'); ?>><?php esc_html_e('Never Output Schema', 'zehoro-toolkit'); ?></option>
@@ -114,8 +114,8 @@ class FAQ implements ModuleInterface {
     public function output_schema(): void {
         if ( empty( $this->faqs ) ) return;
 
-        $mode = get_option( 'lkst_faq_schema_mode', 'auto' );
-        
+        $mode = \Zehoro\Utils\Option::get( 'zehoro_faq_schema_mode', 'auto' );
+
         if ( $mode === 'off' ) return;
         
         if ( $mode === 'auto' ) {
