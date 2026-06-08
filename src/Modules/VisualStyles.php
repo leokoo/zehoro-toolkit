@@ -21,7 +21,7 @@ class VisualStyles implements ModuleInterface {
             'title'         => 'Visual Styles',
             'desc'          => 'Customize brand colors for Author Box, CTAs, and Category Pills.',
             'default'       => true,
-            'settings_page' => 'lkst-styles',
+            'settings_page' => 'zehoro-styles',
         ] );
     }
 

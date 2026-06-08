@@ -23,7 +23,7 @@ class FAQ implements ModuleInterface {
             'title'         => 'FAQ Accordions',
             'desc'          => 'Beautiful FAQ accordions that automatically generate FAQPage JSON-LD schema. Use [lkst_faq question="..."]Answer[/lkst_faq].',
             'default'       => true,
-            'settings_page' => 'lkst-faq'
+            'settings_page' => 'zehoro-faq'
         ] );
     }
 
@@ -51,7 +51,7 @@ class FAQ implements ModuleInterface {
             __( 'FAQ Settings', 'zehoro-toolkit' ),
             __( 'FAQ Settings', 'zehoro-toolkit' ),
             'manage_options',
-            'lkst-faq',
+            'zehoro-faq',
             [ $this, 'render_page' ]
         );
     }

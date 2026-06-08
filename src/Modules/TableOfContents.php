@@ -25,7 +25,7 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
             'title'   => 'Table of Contents',
             'desc'    => 'Wirecutter-style TOC. Auto-injects at the top of posts, or use [lkst_toc].',
             'default' => true,
-            'settings_page' => 'lkst-toc-settings'
+            'settings_page' => 'zehoro-toc-settings'
         ] );
     }
 

@@ -113,7 +113,7 @@ class Plugin {
 		) );
 
 		if ( isset( $this->modules['table_of_contents'] ) ) {
-			wp_enqueue_script( 'lkst-toc', ZEHORO_URL . 'assets/toc.js', [], ZEHORO_VERSION, true );
+			wp_enqueue_script( 'zehoro-toc', ZEHORO_URL . 'assets/toc.js', [], ZEHORO_VERSION, true );
 		}
 	}
 

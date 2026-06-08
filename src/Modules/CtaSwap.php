@@ -57,14 +57,14 @@ class CtaSwap implements \Zehoro\Core\ModuleInterface {
 	 */
 	public function enqueue(): void {
 		wp_enqueue_script(
-			'lkst-cta-swap',
+			'zehoro-cta-swap',
 			ZEHORO_URL . 'assets/cta-swap.js',
 			[],
 			ZEHORO_VERSION,
 			true
 		);
 		wp_enqueue_style(
-			'lkst-cta-swap',
+			'zehoro-cta-swap',
 			ZEHORO_URL . 'assets/cta-swap.css',
 			[],
 			ZEHORO_VERSION

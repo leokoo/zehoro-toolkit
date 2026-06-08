@@ -54,46 +54,46 @@ class Dashboard {
 			__( 'Zehoro Toolkit', 'zehoro-toolkit' ),
 			__( 'Site Toolkit', 'zehoro-toolkit' ),
 			'manage_options',
-			'lkst-dashboard',
+			'zehoro-dashboard',
 			[ $this, 'render_dashboard_page' ],
 			'dashicons-admin-generic',
 			80
 		);
 
 		add_submenu_page(
-			'lkst-dashboard',
+			'zehoro-dashboard',
 			__( 'Modules', 'zehoro-toolkit' ),
 			__( 'Modules', 'zehoro-toolkit' ),
 			'manage_options',
-			'lkst-dashboard',
+			'zehoro-dashboard',
 			[ $this, 'render_dashboard_page' ]
 		);
 
 		if ( in_array( 'author_box', $this->active, true ) ) {
-			add_submenu_page( 'lkst-dashboard', __( 'Author Box Settings', 'zehoro-toolkit' ), __( 'Author Box', 'zehoro-toolkit' ), 'manage_options', 'lkst-author-box', [ $this, 'render_author_box_settings_page' ] );
+			add_submenu_page( 'zehoro-dashboard', __( 'Author Box Settings', 'zehoro-toolkit' ), __( 'Author Box', 'zehoro-toolkit' ), 'manage_options', 'zehoro-author-box', [ $this, 'render_author_box_settings_page' ] );
 		}
 
 		if ( in_array( 'table_of_contents', $this->active, true ) ) {
-			add_submenu_page( 'lkst-dashboard', __( 'Table of Contents', 'zehoro-toolkit' ), __( 'Table of Contents', 'zehoro-toolkit' ), 'manage_options', 'lkst-toc-settings',
+			add_submenu_page( 'zehoro-dashboard', __( 'Table of Contents', 'zehoro-toolkit' ), __( 'Table of Contents', 'zehoro-toolkit' ), 'manage_options', 'zehoro-toc-settings',
 				[ new \Zehoro\Modules\TableOfContents(), 'render_page' ]
 			);
 		}
 
 		if ( in_array( 'rss_support', $this->active, true ) ) {
-			add_submenu_page( 'lkst-dashboard', __( 'RSS Feed Settings', 'zehoro-toolkit' ), __( 'RSS Feed', 'zehoro-toolkit' ), 'manage_options', 'lkst-rss-feed', [ $this, 'render_rss_feed_settings_page' ] );
+			add_submenu_page( 'zehoro-dashboard', __( 'RSS Feed Settings', 'zehoro-toolkit' ), __( 'RSS Feed', 'zehoro-toolkit' ), 'manage_options', 'zehoro-rss-feed', [ $this, 'render_rss_feed_settings_page' ] );
 		}
 
 		if ( in_array( 'styles', $this->active, true ) ) {
-			add_submenu_page( 'lkst-dashboard', __( 'Visual Styles', 'zehoro-toolkit' ), __( 'Visual Styles', 'zehoro-toolkit' ), 'manage_options', 'lkst-styles', [ $this, 'render_styles_settings_page' ] );
+			add_submenu_page( 'zehoro-dashboard', __( 'Visual Styles', 'zehoro-toolkit' ), __( 'Visual Styles', 'zehoro-toolkit' ), 'manage_options', 'zehoro-styles', [ $this, 'render_styles_settings_page' ] );
 		}
 	}
 
 	public function enqueue_assets( string $hook ): void {
-		if ( strpos( $hook, 'lkst-' ) === false ) return;
-		wp_enqueue_style( 'lkst-admin-css', ZEHORO_URL . 'assets/admin.css', [], ZEHORO_VERSION );
-		if ( strpos( $hook, 'lkst-styles' ) !== false ) {
+		if ( strpos( $hook, 'zehoro-' ) === false ) return;
+		wp_enqueue_style( 'zehoro-admin-css', ZEHORO_URL . 'assets/admin.css', [], ZEHORO_VERSION );
+		if ( strpos( $hook, 'zehoro-styles' ) !== false ) {
 			wp_enqueue_style( 'wp-color-picker' );
-			wp_enqueue_script( 'lkst-admin-js', ZEHORO_URL . 'assets/admin.js', [ 'wp-color-picker', 'jquery' ], ZEHORO_VERSION, true );
+			wp_enqueue_script( 'zehoro-admin-js', ZEHORO_URL . 'assets/admin.js', [ 'wp-color-picker', 'jquery' ], ZEHORO_VERSION, true );
 		}
 	}
 
@@ -103,10 +103,10 @@ class Dashboard {
 		// POST handler: save modules, then redirect (POST-Redirect-GET pattern).
 		// Without a redirect the user can re-submit by refreshing, and the browser
 		// shows a "resubmit form?" warning.
-		if ( isset( $_POST['lkst_save_modules'] ) && check_admin_referer( 'lkst_modules_action', 'lkst_modules_nonce' ) ) {
+		if ( isset( $_POST['zehoro_save_modules'] ) && check_admin_referer( 'zehoro_modules_action', 'zehoro_modules_nonce' ) ) {
 			$new_active = isset( $_POST['modules'] ) ? array_keys( $_POST['modules'] ) : [];
 			update_option( 'zehoro_active_modules', $new_active );
-			wp_safe_redirect( add_query_arg( [ 'page' => 'lkst-dashboard', 'updated' => '1' ], admin_url( 'admin.php' ) ) );
+			wp_safe_redirect( add_query_arg( [ 'page' => 'zehoro-dashboard', 'updated' => '1' ], admin_url( 'admin.php' ) ) );
 			exit;
 		}
 
@@ -131,7 +131,7 @@ class Dashboard {
 			<h1><?php esc_html_e( 'Zehoro Toolkit — Modules', 'zehoro-toolkit' ); ?></h1>
 			<p><?php esc_html_e( 'Enable or disable specific features of the toolkit. Only active modules load their code.', 'zehoro-toolkit' ); ?></p>
 			<form method="post" action="">
-				<?php wp_nonce_field( 'lkst_modules_action', 'lkst_modules_nonce' ); ?>
+				<?php wp_nonce_field( 'zehoro_modules_action', 'zehoro_modules_nonce' ); ?>
 				<div class="lkst-modules-grid">
 					<?php foreach ( $modules as $slug => $data ) :
 						$is_active = in_array( $slug, $active, true );
@@ -158,7 +158,7 @@ class Dashboard {
 					<?php endforeach; ?>
 				</div>
 				<p class="submit">
-					<input type="submit" name="lkst_save_modules" class="button button-primary" value="<?php esc_attr_e( 'Save Module Settings', 'zehoro-toolkit' ); ?>">
+					<input type="submit" name="zehoro_save_modules" class="button button-primary" value="<?php esc_attr_e( 'Save Module Settings', 'zehoro-toolkit' ); ?>">
 				</p>
 			</form>
 		</div>

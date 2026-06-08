@@ -75,7 +75,7 @@ register_deactivation_hook( __FILE__, function() {
 } );
 // Add Settings link on the plugin page
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), function( $links ) {
-    $settings_link = '<a href="admin.php?page=lkst-dashboard">' . __( 'Settings', 'zehoro-toolkit' ) . '</a>';
+    $settings_link = '<a href="admin.php?page=zehoro-dashboard">' . __( 'Settings', 'zehoro-toolkit' ) . '</a>';
     array_unshift( $links, $settings_link );
     return $links;
 } );

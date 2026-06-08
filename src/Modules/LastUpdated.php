@@ -11,7 +11,7 @@ class LastUpdated implements ModuleInterface {
             'title' => 'Last Updated Badge',
             'desc'  => 'Outputs a freshness signal. Use [lkst_last_updated] or enable auto-inject via settings.',
             'default' => true,
-            'settings_page' => 'lkst-last-updated'
+            'settings_page' => 'zehoro-last-updated'
         ] );
     }
     public function init(): void {
@@ -34,7 +34,7 @@ class LastUpdated implements ModuleInterface {
         register_setting( 'zehoro_last_updated_group', 'zehoro_lu_schema', [ 'default' => '1', 'sanitize_callback' => 'absint' ] );
     }
     public function register_settings_page(): void {
-        add_submenu_page( null, 'Last Updated', 'Last Updated', 'manage_options', 'lkst-last-updated', [ $this, 'render_page' ] );
+        add_submenu_page( null, 'Last Updated', 'Last Updated', 'manage_options', 'zehoro-last-updated', [ $this, 'render_page' ] );
     }
     public function render_page(): void {
         if ( ! current_user_can( 'manage_options' ) ) return;

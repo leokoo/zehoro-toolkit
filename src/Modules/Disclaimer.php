@@ -12,7 +12,7 @@ class Disclaimer implements ModuleInterface {
             'title' => 'Disclaimer',
             'desc'  => 'Automated legal/medical/custom disclaimer compliance notice. Outputs a styled box at the bottom of content.',
             'default' => true,
-            'settings_page' => 'lkst-disclaimer'
+            'settings_page' => 'zehoro-disclaimer'
         ] );
     }
 
@@ -44,7 +44,7 @@ class Disclaimer implements ModuleInterface {
     }
 
     public function register_settings_page(): void {
-        add_submenu_page( 'lkst-dashboard', 'Disclaimer Settings', 'Disclaimer', 'manage_options', 'lkst-disclaimer', [ $this, 'render_page' ] );
+        add_submenu_page( 'zehoro-dashboard', 'Disclaimer Settings', 'Disclaimer', 'manage_options', 'zehoro-disclaimer', [ $this, 'render_page' ] );
     }
 
     public function get_disclaimer_text(): string {

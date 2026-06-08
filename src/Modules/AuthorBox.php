@@ -24,7 +24,7 @@ class AuthorBox implements \Zehoro\Core\ModuleInterface {
             'title'   => 'Author Box',
             'desc'    => 'Display a full author card with biography, social icons, and call-to-action buttons. Use [lkst_author_box].',
             'default' => true,
-            'settings_page' => 'lkst-author-box'
+            'settings_page' => 'zehoro-author-box'
         ] );
     }
 

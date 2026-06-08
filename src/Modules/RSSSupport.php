@@ -11,7 +11,7 @@ class RSSSupport implements ModuleInterface {
             'title'   => 'RSS CPT Support',
             'desc'    => 'Include custom post types in your main site RSS feed.',
             'default' => true,
-            'settings_page' => 'lkst-rss-feed',
+            'settings_page' => 'zehoro-rss-feed',
         ] );
     }
 

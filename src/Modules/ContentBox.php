@@ -28,7 +28,7 @@ class ContentBox implements ModuleInterface {
             'title'         => 'Content Box',
             'desc'          => 'Place a styled CTA or email-capture box anywhere with [lkst_box]. Choose a newsletter form shortcode or a built-in file-download form with webhook delivery.',
             'default'       => true,
-            'settings_page' => 'lkst-content-box',
+            'settings_page' => 'zehoro-content-box',
         ] );
 
         // ── One-time migration: basic_cta → content_box ───────────────────
@@ -78,11 +78,11 @@ class ContentBox implements ModuleInterface {
 
     public function register_settings_page(): void {
         add_submenu_page(
-            'lkst-dashboard',
+            'zehoro-dashboard',
             __( 'Content Box Settings', 'zehoro-toolkit' ),
             __( 'Content Box', 'zehoro-toolkit' ),
             'manage_options',
-            'lkst-content-box',
+            'zehoro-content-box',
             [ $this, 'render_page' ]
         );
     }
@@ -252,7 +252,7 @@ class ContentBox implements ModuleInterface {
             $layout = 'text';
         }
 
-        $classes = [ 'lkst-midpost-cta', esc_attr( $layout ) ];
+        $classes = [ 'zehoro-midpost-cta', esc_attr( $layout ) ];
         if ( $extra_class ) $classes[] = esc_attr( $extra_class );
         if ( strpos( $layout, 'image-' ) !== false ) {
             $classes[] = 'has-image hide-image-mobile';
@@ -297,7 +297,7 @@ class ContentBox implements ModuleInterface {
             $layout = 'text';
         }
 
-        $classes = [ 'lkst-midpost-cta', 'email-capture', esc_attr( $layout ) ];
+        $classes = [ 'zehoro-midpost-cta', 'email-capture', esc_attr( $layout ) ];
         if ( strpos( $layout, 'image-' ) !== false ) {
             $classes[] = 'has-image hide-image-mobile';
         }
@@ -349,14 +349,14 @@ class ContentBox implements ModuleInterface {
             <div class="lkst-box-message" style="margin-top:8px; font-size:0.88em; display:none;"></div>
         </div>
 
-        <?php if ( ! wp_script_is( 'lkst-box-email', 'done' ) ) : ?>
+        <?php if ( ! wp_script_is( 'zehoro-box-email', 'done' ) ) : ?>
         <script id="lkst-box-email-js">
         (function() {
             if (typeof window.lkstBoxEmailInit !== 'undefined') return;
             window.lkstBoxEmailInit = true;
 
             document.addEventListener('submit', function(e) {
-                if (!e.target.classList.contains('lkst-box-email-form')) return;
+                if (!e.target.classList.contains('zehoro-box-email-form')) return;
                 e.preventDefault();
 
                 var form = e.target;
@@ -409,8 +409,8 @@ class ContentBox implements ModuleInterface {
         <?php
         // Mark as printed so we don't emit the script block twice on a page
         // with multiple email-type boxes.
-        wp_scripts()->add( 'lkst-box-email', '', [], false );
-        wp_scripts()->done[] = 'lkst-box-email';
+        wp_scripts()->add( 'zehoro-box-email', '', [], false );
+        wp_scripts()->done[] = 'zehoro-box-email';
         endif;
 
         return ob_get_clean();
