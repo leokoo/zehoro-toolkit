@@ -21,9 +21,50 @@ class Plugin {
 
 	/**
 	 * Register a module into the toolkit registry.
+	 *
+	 * Modules pass minimum `title`, `desc`, `default`; everything else
+	 * (tier, group, docs, keywords, order, has_settings) is auto-derived
+	 * from the class namespace, the slug map, and the settings_page
+	 * presence. Modules CAN override any of these via $meta and the
+	 * explicit value wins.
+	 *
+	 * @param string $slug  Module slug (e.g. 'table_of_contents').
+	 * @param string $class Fully-qualified class name.
+	 * @param array  $meta  Registration metadata.
+	 *
+	 * Accepted keys (any can be left out — sensible defaults apply):
+	 *   title         (string)  Display label. Falls back to slug.
+	 *   desc          (string)  One-sentence card body.
+	 *   default       (bool)    Active on fresh install.
+	 *   settings_page (string)  WP page slug for this module's settings.
+	 *   tier          (string)  'free' | 'pro' — auto: namespace check.
+	 *   group         (string)  Group slug (see GROUPS const). Auto: slug map.
+	 *   docs          (string)  External docs URL.
+	 *   keywords      (string[]) Search index terms.
+	 *   order         (int)     Sort within group. Default 100.
+	 *   has_settings  (bool)    Auto-derived from non-empty settings_page.
 	 */
 	public static function register_module( string $slug, string $class, array $meta ): void {
-		self::$registry[ $slug ] = array_merge( $meta, [ 'class' => $class ] );
+		$enriched = array_merge( $meta, [ 'class' => $class ] );
+
+		// Auto-derived fields — explicit $meta values win.
+		if ( ! isset( $enriched['tier'] ) ) {
+			$enriched['tier'] = self::detect_tier( $class );
+		}
+		if ( ! isset( $enriched['group'] ) ) {
+			$enriched['group'] = self::detect_group( $slug );
+		}
+		if ( ! isset( $enriched['order'] ) ) {
+			$enriched['order'] = 100;
+		}
+		if ( ! isset( $enriched['has_settings'] ) ) {
+			$enriched['has_settings'] = ! empty( $enriched['settings_page'] );
+		}
+		if ( ! isset( $enriched['keywords'] ) || ! is_array( $enriched['keywords'] ) ) {
+			$enriched['keywords'] = [];
+		}
+
+		self::$registry[ $slug ] = $enriched;
 	}
 
 	/**
@@ -31,6 +72,100 @@ class Plugin {
 	 */
 	public static function get_registered_modules(): array {
 		return self::$registry;
+	}
+
+	// ── Group taxonomy + tier/group detection ────────────────────────────────
+
+	/**
+	 * Canonical group taxonomy. Slug → display label.
+	 * Stable order — drives the sidebar nav.
+	 *
+	 * Source: `~/Code/Zorasi/roadmaps/specs/phase-0-module-filtering.md`
+	 * (WPExtended-pattern adaptation for Zehoro Toolkit).
+	 */
+	public const GROUPS = [
+		'editorial_blocks' => 'Editorial Blocks',
+		'schema'           => 'Schema',
+		'reading_ux'       => 'Reading & UX',
+		'seo'              => 'SEO',
+		'conversion'       => 'Conversion',
+		'ai'               => 'AI Assistance',
+		'workflow'         => 'Workflow',
+		'admin'            => 'Admin & Plumbing',
+		'other'            => 'Other',
+	];
+
+	/**
+	 * Auto-detect tier from class namespace.
+	 *   Zehoro\Modules\*       → free
+	 *   Zehoro\Pro\Modules\*   → pro
+	 *
+	 * Modules can override by passing 'tier' explicitly to register_module().
+	 */
+	private static function detect_tier( string $class ): string {
+		return ( strpos( $class, '\\Zehoro\\Pro\\' ) === 0 || strpos( $class, 'Zehoro\\Pro\\' ) === 0 )
+			? 'pro'
+			: 'free';
+	}
+
+	/**
+	 * Map a module slug to its group. Hardcoded — modules can override
+	 * by passing 'group' to register_module(). Unknown slugs map to 'other'.
+	 */
+	private static function detect_group( string $slug ): string {
+		static $map = [
+			// Editorial Blocks — content the author drops into posts.
+			'tldr'              => 'editorial_blocks',
+			'faq'               => 'editorial_blocks',
+			'steps'             => 'editorial_blocks',
+			'pros_cons'         => 'editorial_blocks',
+			'callout'           => 'editorial_blocks',
+			'testimonial'       => 'editorial_blocks',
+			'author_box'        => 'editorial_blocks',
+			'content_box'       => 'editorial_blocks',
+			'stat_callout'      => 'editorial_blocks',
+			'inline_product'    => 'editorial_blocks',
+			'product_box'       => 'editorial_blocks',
+			'review_box'        => 'editorial_blocks',
+			'comparison_table'  => 'editorial_blocks',
+			'versus_box'        => 'editorial_blocks',
+			'product_roundup'   => 'editorial_blocks',
+			'product_verdict'   => 'editorial_blocks',
+			'coupon_box'        => 'editorial_blocks',
+
+			// Schema — JSON-LD emitters.
+			'article_schema'    => 'schema',
+			'pros_cons_schema'  => 'schema',
+			'faq_schema'        => 'schema',
+			'steps_schema'      => 'schema',
+
+			// Reading & UX — reader-facing freshness/trust + navigation.
+			'table_of_contents' => 'reading_ux',
+			'last_updated'      => 'reading_ux',
+			'freshness_log'     => 'reading_ux',
+			'disclosure'        => 'reading_ux',
+			'disclaimer'        => 'reading_ux',
+
+			// SEO — data + intelligence engines.
+			'entity_map'             => 'seo',
+			'google_search_console'  => 'seo',
+			'ctr_rescue'             => 'seo',
+			'category_pills'         => 'seo',
+			'home_filter_pills'      => 'seo',
+
+			// Conversion — CTA / lead capture.
+			'content_stream'    => 'conversion',
+			'inline_subscribe'  => 'conversion',
+			'sticky_bar'        => 'conversion',
+			'cta_swap'          => 'conversion',
+
+			// Admin & Plumbing — operational.
+			'css_auditor'       => 'admin',
+			'archive_cleanup'   => 'admin',
+			'rss_support'       => 'admin',
+			'styles'            => 'admin',
+		];
+		return $map[ $slug ] ?? 'other';
 	}
 
 	public function init(): void {

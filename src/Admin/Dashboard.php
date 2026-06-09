@@ -98,75 +98,15 @@ class Dashboard {
 	}
 
 	/**
-	 * Map a module slug to its display category. Hardcoded in Free so we don't
-	 * have to touch every module file to add a `category` field to its
-	 * register() metadata. Modules CAN override by passing `'category' => '…'`
-	 * to Plugin::register_module(); the explicit value wins.
+	 * Deprecated. Group categorisation lives in Plugin::register_module() now
+	 * — modules are tagged with a 'group' field at registration time via the
+	 * auto-detection map in Plugin::detect_group(). Kept here only as a
+	 * pass-through so any callers we missed in the refactor don't break.
 	 *
-	 * Categories rendered (and ordered) in render_dashboard_page():
-	 *   editorial, reader, schema, site, affiliate, conversion, data_seo,
-	 *   admin_tools, other
-	 *
-	 * @return string Category slug. Unknown slugs map to 'other'.
+	 * @deprecated Since v1.10.0 — read $module['group'] off the registry instead.
 	 */
 	public static function infer_category( string $slug ): string {
-		static $map = [
-			// Editorial blocks the author drops into posts.
-			'tldr'                => 'editorial',
-			'faq'                 => 'editorial',
-			'steps'               => 'editorial',
-			'pros_cons'           => 'editorial',
-			'callout'             => 'editorial',
-			'testimonial'         => 'editorial',
-			'author_box'          => 'editorial',
-			'table_of_contents'   => 'editorial',
-			'content_box'         => 'editorial',
-			'stat_callout'        => 'editorial',
-			'inline_product'      => 'editorial',
-
-			// Reader-visible freshness/trust signals.
-			'last_updated'        => 'reader',
-			'freshness_log'       => 'reader',
-			'disclosure'          => 'reader',
-			'disclaimer'          => 'reader',
-
-			// JSON-LD schema emitters.
-			'article_schema'      => 'schema',
-			'pros_cons_schema'    => 'schema',
-			'faq_schema'          => 'schema',
-			'steps_schema'        => 'schema',
-
-			// Whole-site UX features (not block-shaped).
-			'category_pills'      => 'site',
-			'home_filter_pills'   => 'site',
-			'archive_cleanup'     => 'site',
-			'rss_support'         => 'site',
-			'styles'              => 'site',
-
-			// Affiliate / product review (Pro).
-			'product_box'         => 'affiliate',
-			'review_box'          => 'affiliate',
-			'comparison_table'    => 'affiliate',
-			'versus_box'          => 'affiliate',
-			'product_roundup'     => 'affiliate',
-			'product_verdict'     => 'affiliate',
-			'coupon_box'          => 'affiliate',
-
-			// Lead capture / CTA (Pro).
-			'content_stream'      => 'conversion',
-			'inline_subscribe'    => 'conversion',
-			'sticky_bar'          => 'conversion',
-			'cta_swap'            => 'conversion',
-
-			// Data / SEO engine surfaces (Pro).
-			'entity_map'              => 'data_seo',
-			'google_search_console'   => 'data_seo',
-			'ctr_rescue'              => 'data_seo',
-
-			// Operational admin tools.
-			'css_auditor'         => 'admin_tools',
-		];
-		return $map[ $slug ] ?? 'other';
+		return Plugin::get_registered_modules()[ $slug ]['group'] ?? 'other';
 	}
 
 	public function render_dashboard_page(): void {
@@ -192,36 +132,44 @@ class Dashboard {
 
 		$modules = [];
 		$active_count = 0;
+		$pro_count    = 0;
 		foreach ( $registered as $slug => $data ) {
+			$is_active = in_array( $slug, $active, true );
+			$tier      = $data['tier'] ?? 'free';
 			$modules[ $slug ] = [
-				'title' => $data['title'] ?? $slug,
-				'desc'  => $data['desc'] ?? '',
+				'title'         => $data['title'] ?? $slug,
+				'desc'          => $data['desc'] ?? '',
 				'settings_link' => ! empty( $data['settings_page'] ) ? admin_url( 'admin.php?page=' . $data['settings_page'] ) : '',
-				'is_active' => in_array( $slug, $active, true ),
-				'category'  => $data['category'] ?? self::infer_category( $slug ),
+				'is_active'     => $is_active,
+				'group'         => $data['group'] ?? 'other',
+				'tier'          => $tier,
+				'docs'          => $data['docs'] ?? '',
+				'keywords'      => $data['keywords'] ?? [],
+				'order'         => (int) ( $data['order'] ?? 100 ),
 			];
-			if ( $modules[ $slug ]['is_active'] ) $active_count++;
+			if ( $is_active ) $active_count++;
+			if ( $tier === 'pro' ) $pro_count++;
 		}
 		$total = count( $modules );
 
-		// Stable category order in the rendered groups. Anything we haven't
-		// categorised goes into "Other" at the end.
-		$category_order = [
-			'editorial'    => __( 'Editorial blocks',  'zehoro-toolkit' ),
-			'reader'       => __( 'Reader signals',    'zehoro-toolkit' ),
-			'schema'       => __( 'Schema',            'zehoro-toolkit' ),
-			'site'         => __( 'Site features',     'zehoro-toolkit' ),
-			'affiliate'    => __( 'Affiliate blocks',  'zehoro-toolkit' ),
-			'conversion'   => __( 'Conversion',        'zehoro-toolkit' ),
-			'data_seo'     => __( 'Data & SEO',        'zehoro-toolkit' ),
-			'admin_tools'  => __( 'Admin tools',       'zehoro-toolkit' ),
-			'other'        => __( 'Other',             'zehoro-toolkit' ),
-		];
+		// Sort within each group by 'order' (lower first), then by title.
+		uasort( $modules, function( $a, $b ) {
+			$cmp = $a['order'] <=> $b['order'];
+			return $cmp !== 0 ? $cmp : strcasecmp( $a['title'], $b['title'] );
+		} );
 
-		// Bucket modules by category, preserving registration order within each.
+		// Canonical group order + display labels — source of truth is in
+		// Plugin::GROUPS so the modules registry, dashboard, and (eventually)
+		// the REST API all agree on the taxonomy.
+		$category_order = Plugin::GROUPS;
+		foreach ( $category_order as $k => $label ) {
+			$category_order[ $k ] = __( $label, 'zehoro-toolkit' );
+		}
+
+		// Bucket modules by group, preserving sort order within each.
 		$grouped = array_fill_keys( array_keys( $category_order ), [] );
 		foreach ( $modules as $slug => $data ) {
-			$cat = isset( $grouped[ $data['category'] ] ) ? $data['category'] : 'other';
+			$cat = isset( $grouped[ $data['group'] ] ) ? $data['group'] : 'other';
 			$grouped[ $cat ][ $slug ] = $data;
 		}
 		// Drop empty groups so the headings only render where there's content.
@@ -243,7 +191,7 @@ class Dashboard {
 					>
 				</div>
 				<div role="tablist" aria-label="<?php esc_attr_e( 'Filter by status', 'zehoro-toolkit' ); ?>" style="display:inline-flex;border:1px solid #dcdcde;border-radius:4px;overflow:hidden;">
-					<button type="button" class="zehoro-status-pill zehoro-status-active-filter" data-status="all" aria-pressed="true" style="padding:6px 12px;background:#2271b1;color:#fff;border:none;cursor:pointer;font-size:12px;">
+					<button type="button" class="zehoro-status-pill" data-status="all" aria-pressed="true" style="padding:6px 12px;background:#2271b1;color:#fff;border:none;cursor:pointer;font-size:12px;">
 						<?php esc_html_e( 'All', 'zehoro-toolkit' ); ?>
 						<span style="opacity:0.75;margin-left:4px;">(<?php echo (int) $total; ?>)</span>
 					</button>
@@ -254,6 +202,14 @@ class Dashboard {
 					<button type="button" class="zehoro-status-pill" data-status="inactive" aria-pressed="false" style="padding:6px 12px;background:#fff;color:#1d2327;border:none;border-left:1px solid #dcdcde;cursor:pointer;font-size:12px;">
 						<?php esc_html_e( 'Inactive', 'zehoro-toolkit' ); ?>
 						<span style="opacity:0.6;margin-left:4px;">(<?php echo (int) ( $total - $active_count ); ?>)</span>
+					</button>
+					<button type="button" class="zehoro-status-pill" data-status="free" aria-pressed="false" style="padding:6px 12px;background:#fff;color:#1d2327;border:none;border-left:1px solid #dcdcde;cursor:pointer;font-size:12px;">
+						<?php esc_html_e( 'Free', 'zehoro-toolkit' ); ?>
+						<span style="opacity:0.6;margin-left:4px;">(<?php echo (int) ( $total - $pro_count ); ?>)</span>
+					</button>
+					<button type="button" class="zehoro-status-pill" data-status="pro" aria-pressed="false" style="padding:6px 12px;background:#fff;color:#1d2327;border:none;border-left:1px solid #dcdcde;cursor:pointer;font-size:12px;">
+						<?php esc_html_e( 'Pro', 'zehoro-toolkit' ); ?>
+						<span style="opacity:0.6;margin-left:4px;">(<?php echo (int) $pro_count; ?>)</span>
 					</button>
 				</div>
 				<div id="zehoro-modules-result" style="color:#646970;font-size:12px;white-space:nowrap;">
@@ -284,16 +240,28 @@ class Dashboard {
 						<div class="lkst-modules-grid">
 						<?php foreach ( $cat_modules as $slug => $data ) :
 							$is_active = $data['is_active'];
-							$haystack = strtolower( $slug . ' ' . $data['title'] . ' ' . $data['desc'] );
+							$tier      = $data['tier'];
+							// Search haystack = slug + title + description + keywords.
+							// Keywords give modules a per-author "make this findable" surface.
+							$haystack  = strtolower(
+								$slug . ' ' . $data['title'] . ' ' . $data['desc'] . ' ' . implode( ' ', $data['keywords'] )
+							);
 						?>
 							<div
-								class="lkst-module-card <?php echo $is_active ? 'active' : 'inactive'; ?>"
+								class="lkst-module-card <?php echo $is_active ? 'active' : 'inactive'; ?> tier-<?php echo esc_attr( $tier ); ?>"
 								data-module-slug="<?php echo esc_attr( $slug ); ?>"
 								data-module-haystack="<?php echo esc_attr( $haystack ); ?>"
 								data-module-active="<?php echo $is_active ? '1' : '0'; ?>"
+								data-module-tier="<?php echo esc_attr( $tier ); ?>"
+								data-module-group="<?php echo esc_attr( $data['group'] ); ?>"
 							>
 								<div class="lkst-module-header">
-									<h3 class="lkst-module-title"><?php echo esc_html( $data['title'] ); ?></h3>
+									<h3 class="lkst-module-title">
+										<?php echo esc_html( $data['title'] ); ?>
+										<?php if ( $tier === 'pro' ) : ?>
+											<span class="lkst-tier-badge lkst-tier-badge--pro" style="display:inline-block;font-size:9px;font-weight:700;color:#fff;background:#8a1f2b;padding:1px 6px;border-radius:8px;margin-left:6px;text-transform:uppercase;letter-spacing:0.5px;vertical-align:1px;">PRO</span>
+										<?php endif; ?>
+									</h3>
 									<label class="lkst-switch">
 										<input type="checkbox" name="modules[<?php echo esc_attr( $slug ); ?>]" value="1" <?php checked( $is_active ); ?>>
 										<span class="lkst-slider"></span>
@@ -307,6 +275,11 @@ class Dashboard {
 										</a>
 									<?php else : ?>
 										<span style="color:#a7aaad;font-style:italic;font-size:12px;"><?php esc_html_e( 'No settings needed', 'zehoro-toolkit' ); ?></span>
+									<?php endif; ?>
+									<?php if ( ! empty( $data['docs'] ) ) : ?>
+										<a href="<?php echo esc_url( $data['docs'] ); ?>" target="_blank" rel="noopener" style="margin-left:auto;font-size:12px;color:#646970;text-decoration:none;" title="<?php esc_attr_e( 'Documentation', 'zehoro-toolkit' ); ?>">
+											<span class="dashicons dashicons-external" style="font-size:14px;width:14px;height:14px;"></span>
+										</a>
 									<?php endif; ?>
 								</div>
 							</div>
@@ -346,15 +319,21 @@ class Dashboard {
 
 			function applyFilter() {
 				var q = ( search.value || '' ).trim().toLowerCase();
+				// Multi-token AND match — every whitespace-separated token must
+				// appear in the haystack. Matches the WPExtended search pattern.
+				var tokens = q ? q.split( /\s+/ ).filter( Boolean ) : [];
 				var visible = 0;
 				var cards = grid.querySelectorAll( '.lkst-module-card' );
 				cards.forEach( function ( card ) {
 					var hay = ( card.dataset.moduleHaystack || '' ).toLowerCase();
 					var isActive = card.dataset.moduleActive === '1';
-					var matchesSearch = q === '' || hay.indexOf( q ) !== -1;
+					var tier     = card.dataset.moduleTier || 'free';
+					var matchesSearch = tokens.length === 0 || tokens.every( function ( t ) { return hay.indexOf( t ) !== -1; } );
 					var matchesStatus = statusFilter === 'all'
-						|| ( statusFilter === 'active' && isActive )
-						|| ( statusFilter === 'inactive' && ! isActive );
+						|| ( statusFilter === 'active'   && isActive )
+						|| ( statusFilter === 'inactive' && ! isActive )
+						|| ( statusFilter === 'free'     && tier === 'free' )
+						|| ( statusFilter === 'pro'      && tier === 'pro' );
 					var show = matchesSearch && matchesStatus;
 					card.style.display = show ? '' : 'none';
 					if ( show ) visible++;
