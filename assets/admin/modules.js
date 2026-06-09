@@ -190,15 +190,6 @@
 			}
 		} );
 
-		// Hide category sections that have no visible cards after filtering.
-		els.root.querySelectorAll( '.zehoro-module-category' ).forEach( function ( section ) {
-			var anyVisible = Array.prototype.some.call(
-				section.querySelectorAll( '.lkst-module-card' ),
-				function ( c ) { return c.style.display !== 'none'; }
-			);
-			section.style.display = anyVisible ? '' : 'none';
-		} );
-
 		if ( els.totalCounter ) els.totalCounter.textContent = String( visible );
 		if ( els.empty ) els.empty.style.display = visible === 0 ? 'block' : 'none';
 		if ( els.root  ) els.root.style.display  = visible === 0 ? 'none'  : '';

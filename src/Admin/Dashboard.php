@@ -180,28 +180,25 @@ class Dashboard {
 		}
 		$total = count( $modules );
 
-		// Sort within each group by 'order' (lower first), then by title.
-		uasort( $modules, function( $a, $b ) {
-			$cmp = $a['order'] <=> $b['order'];
-			return $cmp !== 0 ? $cmp : strcasecmp( $a['title'], $b['title'] );
-		} );
+		// Flat alphabetical sort. Categories used to be section headings in
+		// the grid as well as left-sidebar entries — that was redundant.
+		// Left sidebar nav is now the sole grouping surface; the right
+		// column is one flat alphabetised list that the JS filter narrows.
+		uasort( $modules, fn( $a, $b ) => strcasecmp( $a['title'], $b['title'] ) );
 
-		// Canonical group order + display labels — source of truth is in
-		// Plugin::GROUPS so the modules registry, dashboard, and (eventually)
-		// the REST API all agree on the taxonomy.
+		// Group taxonomy still needed for the left sidebar nav. Per-group
+		// counts are computed off the unfiltered set so the sidebar shows
+		// stable totals regardless of the active filter.
 		$category_order = Plugin::GROUPS;
 		foreach ( $category_order as $k => $label ) {
 			$category_order[ $k ] = __( $label, 'zehoro-toolkit' );
 		}
-
-		// Bucket modules by group, preserving sort order within each.
-		$grouped = array_fill_keys( array_keys( $category_order ), [] );
-		foreach ( $modules as $slug => $data ) {
-			$cat = isset( $grouped[ $data['group'] ] ) ? $data['group'] : 'other';
-			$grouped[ $cat ][ $slug ] = $data;
+		$group_counts = array_fill_keys( array_keys( $category_order ), 0 );
+		foreach ( $modules as $data ) {
+			$g = isset( $group_counts[ $data['group'] ] ) ? $data['group'] : 'other';
+			$group_counts[ $g ]++;
 		}
-		// Drop empty groups so the headings only render where there's content.
-		$grouped = array_filter( $grouped, fn( $g ) => ! empty( $g ) );
+		$group_counts = array_filter( $group_counts ); // drop empty groups
 		?>
 		<div class="wrap lkst-dashboard">
 			<h1><?php esc_html_e( 'Zehoro Toolkit — Modules', 'zehoro-toolkit' ); ?></h1>
@@ -216,11 +213,11 @@ class Dashboard {
 							<span class="zehoro-module-nav__count">(<?php echo (int) $total; ?>)</span>
 						</a>
 					</li>
-					<?php foreach ( $grouped as $cat_slug => $cat_modules ) : ?>
+					<?php foreach ( $group_counts as $cat_slug => $count ) : ?>
 						<li>
 							<a href="#" class="zehoro-module-nav__link" data-group="<?php echo esc_attr( $cat_slug ); ?>" aria-current="false">
 								<?php echo esc_html( $category_order[ $cat_slug ] ?? ucfirst( $cat_slug ) ); ?>
-								<span class="zehoro-module-nav__count">(<?php echo (int) count( $cat_modules ); ?>)</span>
+								<span class="zehoro-module-nav__count">(<?php echo (int) $count; ?>)</span>
 							</a>
 						</li>
 					<?php endforeach; ?>
@@ -270,65 +267,52 @@ class Dashboard {
 
 			<form method="post" action="">
 				<?php wp_nonce_field( 'zehoro_modules_action', 'zehoro_modules_nonce' ); ?>
-				<div id="zehoro-modules-grid">
-				<?php foreach ( $grouped as $cat_slug => $cat_modules ) : ?>
-					<section
-						class="zehoro-module-category"
-						data-category-slug="<?php echo esc_attr( $cat_slug ); ?>"
+				<div id="zehoro-modules-grid" class="zehoro-modules--grid">
+				<?php foreach ( $modules as $slug => $data ) :
+					$is_active = $data['is_active'];
+					$tier      = $data['tier'];
+					// Search haystack = slug + title + description + keywords.
+					// Keywords give modules a per-author "make this findable" surface.
+					$haystack  = strtolower(
+						$slug . ' ' . $data['title'] . ' ' . $data['desc'] . ' ' . implode( ' ', $data['keywords'] )
+					);
+				?>
+					<div
+						class="lkst-module-card <?php echo $is_active ? 'active' : 'inactive'; ?> tier-<?php echo esc_attr( $tier ); ?>"
+						data-module-slug="<?php echo esc_attr( $slug ); ?>"
+						data-module-haystack="<?php echo esc_attr( $haystack ); ?>"
+						data-module-active="<?php echo $is_active ? '1' : '0'; ?>"
+						data-module-tier="<?php echo esc_attr( $tier ); ?>"
+						data-module-group="<?php echo esc_attr( $data['group'] ); ?>"
 					>
-						<h2 class="zehoro-module-category__title">
-							<?php echo esc_html( $category_order[ $cat_slug ] ?? ucfirst( $cat_slug ) ); ?>
-							<span class="zehoro-module-category__count">· <?php echo (int) count( $cat_modules ); ?></span>
-						</h2>
-						<div class="lkst-modules-grid zehoro-modules--grid">
-						<?php foreach ( $cat_modules as $slug => $data ) :
-							$is_active = $data['is_active'];
-							$tier      = $data['tier'];
-							// Search haystack = slug + title + description + keywords.
-							// Keywords give modules a per-author "make this findable" surface.
-							$haystack  = strtolower(
-								$slug . ' ' . $data['title'] . ' ' . $data['desc'] . ' ' . implode( ' ', $data['keywords'] )
-							);
-						?>
-							<div
-								class="lkst-module-card <?php echo $is_active ? 'active' : 'inactive'; ?> tier-<?php echo esc_attr( $tier ); ?>"
-								data-module-slug="<?php echo esc_attr( $slug ); ?>"
-								data-module-haystack="<?php echo esc_attr( $haystack ); ?>"
-								data-module-active="<?php echo $is_active ? '1' : '0'; ?>"
-								data-module-tier="<?php echo esc_attr( $tier ); ?>"
-								data-module-group="<?php echo esc_attr( $data['group'] ); ?>"
-							>
-								<div class="lkst-module-header">
-									<h3 class="lkst-module-title">
-										<?php echo esc_html( $data['title'] ); ?>
-										<?php if ( $tier === 'pro' ) : ?>
-											<span class="lkst-tier-badge lkst-tier-badge--pro" style="display:inline-block;font-size:9px;font-weight:700;color:#fff;background:#8a1f2b;padding:1px 6px;border-radius:8px;margin-left:6px;text-transform:uppercase;letter-spacing:0.5px;vertical-align:1px;">PRO</span>
-										<?php endif; ?>
-									</h3>
-									<label class="lkst-switch">
-										<input type="checkbox" name="modules[<?php echo esc_attr( $slug ); ?>]" value="1" <?php checked( $is_active ); ?>>
-										<span class="lkst-slider"></span>
-									</label>
-								</div>
-								<p class="lkst-module-desc"><?php echo esc_html( $data['desc'] ); ?></p>
-								<div class="lkst-module-footer">
-									<?php if ( ! empty( $data['settings_link'] ) ) : ?>
-										<a href="<?php echo esc_url( $data['settings_link'] ); ?>" class="lkst-configure-link">
-											<span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e( 'Configure', 'zehoro-toolkit' ); ?>
-										</a>
-									<?php else : ?>
-										<span style="color:#a7aaad;font-style:italic;font-size:12px;"><?php esc_html_e( 'No settings needed', 'zehoro-toolkit' ); ?></span>
-									<?php endif; ?>
-									<?php if ( ! empty( $data['docs'] ) ) : ?>
-										<a href="<?php echo esc_url( $data['docs'] ); ?>" target="_blank" rel="noopener" style="margin-left:auto;font-size:12px;color:#646970;text-decoration:none;" title="<?php esc_attr_e( 'Documentation', 'zehoro-toolkit' ); ?>">
-											<span class="dashicons dashicons-external" style="font-size:14px;width:14px;height:14px;"></span>
-										</a>
-									<?php endif; ?>
-								</div>
-							</div>
-						<?php endforeach; ?>
+						<div class="lkst-module-header">
+							<h3 class="lkst-module-title">
+								<?php echo esc_html( $data['title'] ); ?>
+								<?php if ( $tier === 'pro' ) : ?>
+									<span class="lkst-tier-badge lkst-tier-badge--pro">PRO</span>
+								<?php endif; ?>
+							</h3>
+							<label class="lkst-switch">
+								<input type="checkbox" name="modules[<?php echo esc_attr( $slug ); ?>]" value="1" <?php checked( $is_active ); ?>>
+								<span class="lkst-slider"></span>
+							</label>
 						</div>
-					</section>
+						<p class="lkst-module-desc"><?php echo esc_html( $data['desc'] ); ?></p>
+						<div class="lkst-module-footer">
+							<?php if ( ! empty( $data['settings_link'] ) ) : ?>
+								<a href="<?php echo esc_url( $data['settings_link'] ); ?>" class="lkst-configure-link">
+									<span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e( 'Configure', 'zehoro-toolkit' ); ?>
+								</a>
+							<?php else : ?>
+								<span class="lkst-module-footer__hint"><?php esc_html_e( 'No settings needed', 'zehoro-toolkit' ); ?></span>
+							<?php endif; ?>
+							<?php if ( ! empty( $data['docs'] ) ) : ?>
+								<a href="<?php echo esc_url( $data['docs'] ); ?>" target="_blank" rel="noopener" class="lkst-module-footer__docs" title="<?php esc_attr_e( 'Documentation', 'zehoro-toolkit' ); ?>">
+									<span class="dashicons dashicons-external"></span>
+								</a>
+							<?php endif; ?>
+						</div>
+					</div>
 				<?php endforeach; ?>
 				</div>
 				<div id="zehoro-modules-empty" class="zehoro-no-modules">

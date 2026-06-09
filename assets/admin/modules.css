@@ -206,34 +206,26 @@
 	height: 16px;
 }
 
-/* ── Category section headings ─────────────────────────────────────────── */
-
-.zehoro-module-category {
-	margin-bottom: 24px;
-}
-
-.zehoro-module-category__title {
-	margin: 14px 0 8px;
-	font-size: 13px;
-	font-weight: 600;
-	color: #646970;
-	text-transform: uppercase;
-	letter-spacing: 0.6px;
-}
-
-.zehoro-module-category__count {
-	color: #a7aaad;
-	font-weight: 500;
-	text-transform: none;
-	letter-spacing: normal;
-}
-
 /* ── Card grid / list layouts ───────────────────────────────────────────── */
 
-.zehoro-modules--grid {
+/* Applied to #zehoro-modules-grid directly — cards are flat children, no
+   per-category section wrappers. Left sidebar nav is the only category
+   surface; cards sort alphabetically and JS narrows them on filter. */
+#zehoro-modules-grid.zehoro-modules--grid {
 	display: grid;
 	grid-template-columns: repeat( auto-fill, minmax( 280px, 1fr ) );
 	gap: 14px;
+}
+
+#zehoro-modules-grid.zehoro-modules--list {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+/* Override admin.css's wider .lkst-modules-grid min when our class wins. */
+.zehoro-modules--grid {
+	grid-template-columns: repeat( auto-fill, minmax( 280px, 1fr ) ) !important;
 }
 
 .zehoro-modules--list {
@@ -292,6 +284,27 @@
 
 .lkst-tier-badge--pro {
 	background: #8a1f2b;
+}
+
+/* ── Card footer atoms ─────────────────────────────────────────────────── */
+
+.lkst-module-footer__hint {
+	color: #a7aaad;
+	font-style: italic;
+	font-size: 12px;
+}
+
+.lkst-module-footer__docs {
+	margin-left: auto;
+	font-size: 12px;
+	color: #646970;
+	text-decoration: none;
+}
+
+.lkst-module-footer__docs .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
 }
 
 /* ── Live region (visually hidden, screen-reader only) ─────────────────── */
