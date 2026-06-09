@@ -106,6 +106,7 @@ class Dashboard {
 					'search' => '',
 					'status' => 'all',
 					'layout' => 'grid',
+					'group'  => 'all',
 				],
 				'rest'       => [
 					'root'        => esc_url_raw( rest_url( 'zehoro/v1/' ) ),
@@ -206,6 +207,26 @@ class Dashboard {
 			<h1><?php esc_html_e( 'Zehoro Toolkit — Modules', 'zehoro-toolkit' ); ?></h1>
 			<p><?php esc_html_e( 'Enable or disable specific features of the toolkit. Only active modules load their code.', 'zehoro-toolkit' ); ?></p>
 
+			<div class="zehoro-modules-layout">
+			<aside class="zehoro-module-nav" aria-label="<?php esc_attr_e( 'Module groups', 'zehoro-toolkit' ); ?>">
+				<ul class="zehoro-module-nav__list">
+					<li>
+						<a href="#" class="zehoro-module-nav__link" data-group="all" aria-current="true">
+							<?php esc_html_e( 'All modules', 'zehoro-toolkit' ); ?>
+							<span class="zehoro-module-nav__count">(<?php echo (int) $total; ?>)</span>
+						</a>
+					</li>
+					<?php foreach ( $grouped as $cat_slug => $cat_modules ) : ?>
+						<li>
+							<a href="#" class="zehoro-module-nav__link" data-group="<?php echo esc_attr( $cat_slug ); ?>" aria-current="false">
+								<?php echo esc_html( $category_order[ $cat_slug ] ?? ucfirst( $cat_slug ) ); ?>
+								<span class="zehoro-module-nav__count">(<?php echo (int) count( $cat_modules ); ?>)</span>
+							</a>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			</aside>
+			<div class="zehoro-modules-main">
 			<div class="zehoro-module-filters">
 				<div class="zehoro-module-filters__search">
 					<span class="dashicons dashicons-search"></span>
@@ -319,6 +340,8 @@ class Dashboard {
 					</p>
 				</noscript>
 			</form>
+			</div><!-- /.zehoro-modules-main -->
+			</div><!-- /.zehoro-modules-layout -->
 		</div>
 
 		<?php /* Filter UX JS lives in assets/admin/modules.js — enqueued by enqueue_assets(). */ ?>

@@ -16,7 +16,7 @@
 	'use strict';
 
 	var STORAGE_KEY = data.storageKey || 'zehoroModuleSettings';
-	var DEFAULTS    = data.defaults || { search: '', status: 'all', layout: 'grid' };
+	var DEFAULTS    = data.defaults || { search: '', status: 'all', layout: 'grid', group: 'all' };
 	var DEBOUNCE_MS = 300;
 	var STAGGER_MS  = 30; // 30ms per card — feels tactile without being slow
 
@@ -31,6 +31,7 @@
 		els.searchClear   = document.querySelector( '.zehoro-module-filters__search-clear' );
 		els.pills         = document.querySelectorAll( '.zehoro-status-pill' );
 		els.layoutBtns    = document.querySelectorAll( '.zehoro-module-filters__layout-button' );
+		els.navLinks      = document.querySelectorAll( '.zehoro-module-nav__link' );
 		els.empty         = document.querySelector( '#zehoro-modules-empty' );
 		els.totalCounter  = document.querySelector( '#zehoro-modules-result-visible' );
 		els.liveRegion    = document.querySelector( '.zehoro-live-region' );
@@ -41,6 +42,7 @@
 		els.search.value = state.search;
 		setActivePill( state.status );
 		setActiveLayout( state.layout );
+		setActiveGroup( state.group );
 		updateSearchClearVisibility();
 
 		bindEvents();
@@ -134,12 +136,23 @@
 				applyLayout();
 			} );
 		} );
+
+		els.navLinks.forEach( function ( link ) {
+			link.addEventListener( 'click', function ( e ) {
+				e.preventDefault();
+				state.group = link.dataset.group || 'all';
+				setActiveGroup( state.group );
+				persistState();
+				applyFilter();
+			} );
+		} );
 	}
 
 	function applyFilter( skipAnimation ) {
 		var q       = state.search;
 		var tokens  = q ? q.split( /\s+/ ).filter( Boolean ) : [];
 		var status  = state.status;
+		var group   = state.group;
 		var cards   = els.root.querySelectorAll( '.lkst-module-card' );
 		var visible = 0;
 
@@ -147,6 +160,7 @@
 			var hay      = ( card.dataset.moduleHaystack || '' ).toLowerCase();
 			var isActive = card.dataset.moduleActive === '1';
 			var tier     = card.dataset.moduleTier || 'free';
+			var cardGroup = card.dataset.moduleGroup || 'other';
 
 			var matchesSearch = tokens.length === 0
 				|| tokens.every( function ( t ) { return hay.indexOf( t ) !== -1; } );
@@ -155,8 +169,9 @@
 				|| ( status === 'inactive' && ! isActive )
 				|| ( status === 'free'     && tier === 'free' )
 				|| ( status === 'pro'      && tier === 'pro' );
+			var matchesGroup = group === 'all' || cardGroup === group;
 
-			var show = matchesSearch && matchesStatus;
+			var show = matchesSearch && matchesStatus && matchesGroup;
 
 			if ( show ) {
 				visible++;
@@ -210,6 +225,23 @@
 		applyLayout();
 	}
 
+	function setActiveGroup( group ) {
+		var matched = false;
+		els.navLinks.forEach( function ( link ) {
+			var isMatch = link.dataset.group === group;
+			link.setAttribute( 'aria-current', isMatch ? 'true' : 'false' );
+			link.classList.toggle( 'is-active', isMatch );
+			if ( isMatch ) matched = true;
+		} );
+		// Saved group no longer exists (e.g. module that owned the only entry
+		// in that group got deactivated) — fall back to "all" instead of
+		// silently hiding everything.
+		if ( ! matched && group !== 'all' ) {
+			state.group = 'all';
+			setActiveGroup( 'all' );
+		}
+	}
+
 	function updateSearchClearVisibility() {
 		if ( ! els.searchClear ) return;
 		els.searchClear.style.display = els.search.value ? 'inline-flex' : 'none';
@@ -230,6 +262,7 @@
 		return {
 			search: url.get( 'search' ) || stored.search || DEFAULTS.search,
 			status: url.get( 'status' ) || stored.status || DEFAULTS.status,
+			group:  url.get( 'group' )  || stored.group  || DEFAULTS.group,
 			layout: stored.layout       || DEFAULTS.layout,
 		};
 	}
@@ -244,6 +277,7 @@
 		var url = new URL( window.location.href );
 		if ( state.search )                     url.searchParams.set( 'search', state.search ); else url.searchParams.delete( 'search' );
 		if ( state.status && state.status !== 'all' ) url.searchParams.set( 'status', state.status ); else url.searchParams.delete( 'status' );
+		if ( state.group  && state.group  !== 'all' ) url.searchParams.set( 'group',  state.group  ); else url.searchParams.delete( 'group' );
 		window.history.replaceState( {}, '', url.toString() );
 	}
 } )( window.zehoroModulesAdmin || {} );

@@ -5,6 +5,83 @@
  * Single asset, no SCSS — direct edit + CDN-cacheable through PUC releases.
  */
 
+/* ── 2-column layout: sidebar nav + main content ───────────────────────── */
+
+.zehoro-modules-layout {
+	display: grid;
+	grid-template-columns: 200px 1fr;
+	gap: 20px;
+	margin-top: 12px;
+}
+
+@media (max-width: 782px) {
+	.zehoro-modules-layout {
+		grid-template-columns: 1fr;
+	}
+}
+
+.zehoro-modules-main {
+	min-width: 0; /* allow flex children to shrink below intrinsic width */
+}
+
+/* ── Sidebar group nav ──────────────────────────────────────────────────── */
+
+.zehoro-module-nav {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 6px;
+	padding: 8px 0;
+	position: sticky;
+	top: 46px; /* clear WP admin bar */
+	align-self: start;
+	max-height: calc( 100vh - 60px );
+	overflow-y: auto;
+}
+
+.zehoro-module-nav__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.zehoro-module-nav__link {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 14px;
+	color: #1d2327;
+	text-decoration: none;
+	font-size: 13px;
+	border-left: 3px solid transparent;
+	transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.zehoro-module-nav__link:hover,
+.zehoro-module-nav__link:focus {
+	background: #f6f7f7;
+	color: #2271b1;
+	box-shadow: none;
+}
+
+.zehoro-module-nav__link.is-active {
+	background: #f0f6fc;
+	color: #2271b1;
+	border-left-color: #2271b1;
+	font-weight: 600;
+}
+
+.zehoro-module-nav__count {
+	color: #a7aaad;
+	font-weight: 400;
+	font-size: 12px;
+}
+
+.zehoro-module-nav__link.is-active .zehoro-module-nav__count {
+	color: #2271b1;
+	opacity: 0.7;
+}
+
 /* ── Filter bar ─────────────────────────────────────────────────────────── */
 
 .zehoro-module-filters {
