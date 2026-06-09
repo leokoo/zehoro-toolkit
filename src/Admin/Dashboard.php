@@ -119,24 +119,72 @@ class Dashboard {
 		}
 
 		$modules = [];
+		$active_count = 0;
 		foreach ( $registered as $slug => $data ) {
 			$modules[ $slug ] = [
 				'title' => $data['title'] ?? $slug,
 				'desc'  => $data['desc'] ?? '',
 				'settings_link' => ! empty( $data['settings_page'] ) ? admin_url( 'admin.php?page=' . $data['settings_page'] ) : '',
+				'is_active' => in_array( $slug, $active, true ),
 			];
+			if ( $modules[ $slug ]['is_active'] ) $active_count++;
 		}
+		$total = count( $modules );
 		?>
 		<div class="wrap lkst-dashboard">
 			<h1><?php esc_html_e( 'Zehoro Toolkit — Modules', 'zehoro-toolkit' ); ?></h1>
 			<p><?php esc_html_e( 'Enable or disable specific features of the toolkit. Only active modules load their code.', 'zehoro-toolkit' ); ?></p>
+
+			<div class="zehoro-modules-filter-bar" style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:16px 0;padding:12px 14px;background:#fff;border:1px solid #c3c4c7;border-radius:6px;">
+				<div style="flex:1;min-width:220px;display:flex;align-items:center;gap:8px;">
+					<span class="dashicons dashicons-search" style="color:#646970;"></span>
+					<input
+						type="search"
+						id="zehoro-modules-search"
+						placeholder="<?php esc_attr_e( 'Search modules…', 'zehoro-toolkit' ); ?>"
+						style="flex:1;border:1px solid #dcdcde;border-radius:4px;padding:6px 10px;font-size:13px;"
+						autocomplete="off"
+					>
+				</div>
+				<div role="tablist" aria-label="<?php esc_attr_e( 'Filter by status', 'zehoro-toolkit' ); ?>" style="display:inline-flex;border:1px solid #dcdcde;border-radius:4px;overflow:hidden;">
+					<button type="button" class="zehoro-status-pill zehoro-status-active-filter" data-status="all" aria-pressed="true" style="padding:6px 12px;background:#2271b1;color:#fff;border:none;cursor:pointer;font-size:12px;">
+						<?php esc_html_e( 'All', 'zehoro-toolkit' ); ?>
+						<span style="opacity:0.75;margin-left:4px;">(<?php echo (int) $total; ?>)</span>
+					</button>
+					<button type="button" class="zehoro-status-pill" data-status="active" aria-pressed="false" style="padding:6px 12px;background:#fff;color:#1d2327;border:none;border-left:1px solid #dcdcde;cursor:pointer;font-size:12px;">
+						<?php esc_html_e( 'Active', 'zehoro-toolkit' ); ?>
+						<span style="opacity:0.6;margin-left:4px;">(<?php echo (int) $active_count; ?>)</span>
+					</button>
+					<button type="button" class="zehoro-status-pill" data-status="inactive" aria-pressed="false" style="padding:6px 12px;background:#fff;color:#1d2327;border:none;border-left:1px solid #dcdcde;cursor:pointer;font-size:12px;">
+						<?php esc_html_e( 'Inactive', 'zehoro-toolkit' ); ?>
+						<span style="opacity:0.6;margin-left:4px;">(<?php echo (int) ( $total - $active_count ); ?>)</span>
+					</button>
+				</div>
+				<div id="zehoro-modules-result" style="color:#646970;font-size:12px;white-space:nowrap;">
+					<?php
+					printf(
+						/* translators: 1: visible count 2: total count */
+						esc_html__( 'Showing %1$s of %2$s', 'zehoro-toolkit' ),
+						'<span id="zehoro-modules-result-visible">' . (int) $total . '</span>',
+						(int) $total
+					);
+					?>
+				</div>
+			</div>
+
 			<form method="post" action="">
 				<?php wp_nonce_field( 'zehoro_modules_action', 'zehoro_modules_nonce' ); ?>
-				<div class="lkst-modules-grid">
+				<div class="lkst-modules-grid" id="zehoro-modules-grid">
 					<?php foreach ( $modules as $slug => $data ) :
-						$is_active = in_array( $slug, $active, true );
+						$is_active = $data['is_active'];
+						$haystack = strtolower( $slug . ' ' . $data['title'] . ' ' . $data['desc'] );
 					?>
-					<div class="lkst-module-card <?php echo $is_active ? 'active' : 'inactive'; ?>">
+					<div
+						class="lkst-module-card <?php echo $is_active ? 'active' : 'inactive'; ?>"
+						data-module-slug="<?php echo esc_attr( $slug ); ?>"
+						data-module-haystack="<?php echo esc_attr( $haystack ); ?>"
+						data-module-active="<?php echo $is_active ? '1' : '0'; ?>"
+					>
 						<div class="lkst-module-header">
 							<h3 class="lkst-module-title"><?php echo esc_html( $data['title'] ); ?></h3>
 							<label class="lkst-switch">
@@ -157,11 +205,65 @@ class Dashboard {
 					</div>
 					<?php endforeach; ?>
 				</div>
+				<div id="zehoro-modules-empty" style="display:none;padding:24px;text-align:center;color:#646970;background:#fff;border:1px solid #c3c4c7;border-radius:6px;margin-top:8px;">
+					<?php esc_html_e( 'No modules match the current filter.', 'zehoro-toolkit' ); ?>
+				</div>
 				<p class="submit">
 					<input type="submit" name="zehoro_save_modules" class="button button-primary" value="<?php esc_attr_e( 'Save Module Settings', 'zehoro-toolkit' ); ?>">
 				</p>
 			</form>
 		</div>
+
+		<script>
+		( function () {
+			var search = document.getElementById( 'zehoro-modules-search' );
+			var pills  = document.querySelectorAll( '.zehoro-status-pill' );
+			var grid   = document.getElementById( 'zehoro-modules-grid' );
+			var empty  = document.getElementById( 'zehoro-modules-empty' );
+			var visibleCounter = document.getElementById( 'zehoro-modules-result-visible' );
+			if ( ! search || ! grid || ! visibleCounter ) return;
+
+			var statusFilter = 'all';
+
+			function setActivePill( status ) {
+				pills.forEach( function ( pill ) {
+					var active = pill.dataset.status === status;
+					pill.setAttribute( 'aria-pressed', active ? 'true' : 'false' );
+					pill.style.background = active ? '#2271b1' : '#fff';
+					pill.style.color      = active ? '#fff'    : '#1d2327';
+				} );
+			}
+
+			function applyFilter() {
+				var q = ( search.value || '' ).trim().toLowerCase();
+				var visible = 0;
+				var cards = grid.querySelectorAll( '.lkst-module-card' );
+				cards.forEach( function ( card ) {
+					var hay = ( card.dataset.moduleHaystack || '' ).toLowerCase();
+					var isActive = card.dataset.moduleActive === '1';
+					var matchesSearch = q === '' || hay.indexOf( q ) !== -1;
+					var matchesStatus = statusFilter === 'all'
+						|| ( statusFilter === 'active' && isActive )
+						|| ( statusFilter === 'inactive' && ! isActive );
+					var show = matchesSearch && matchesStatus;
+					card.style.display = show ? '' : 'none';
+					if ( show ) visible++;
+				} );
+				visibleCounter.textContent = String( visible );
+				empty.style.display = visible === 0 ? 'block' : 'none';
+				grid.style.display  = visible === 0 ? 'none'  : '';
+			}
+
+			search.addEventListener( 'input', applyFilter );
+			pills.forEach( function ( pill ) {
+				pill.addEventListener( 'click', function () {
+					statusFilter = pill.dataset.status;
+					setActivePill( statusFilter );
+					applyFilter();
+				} );
+			} );
+		} )();
+		</script>
 		<?php
 	}
 
