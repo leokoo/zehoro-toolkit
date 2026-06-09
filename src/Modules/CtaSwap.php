@@ -52,10 +52,23 @@ class CtaSwap implements \Zehoro\Core\ModuleInterface {
 	}
 
 	/**
-	 * Enqueue the tiny JS + CSS pair. Only loaded when this module is active.
-	 * Vanilla JS, zero deps. JS in footer so it doesn't block render.
+	 * Enqueue the tiny JS + CSS pair (~3 KB total).
+	 *
+	 * Unlike block/shortcode-driven modules, CtaSwap is a data-attribute API
+	 * — the `data-lkst-swap-*` markup can appear anywhere in theme templates,
+	 * Bricks elements, raw HTML, etc. There's no reliable way to detect its
+	 * presence at enqueue time, so we accept the cost on every frontend
+	 * page when the module is active. Users who only use CtaSwap on a few
+	 * specific pages can disable the module and re-enable it on a per-page
+	 * basis via `add_filter( 'zehoro/cta_swap_load', '__return_true' )` in
+	 * a template-conditional block.
+	 *
+	 * @param bool $load Default true (module is active).
 	 */
 	public function enqueue(): void {
+		if ( ! is_singular() ) return;
+		if ( ! apply_filters( 'zehoro/cta_swap_load', true ) ) return;
+
 		wp_enqueue_script(
 			'zehoro-cta-swap',
 			ZEHORO_URL . 'assets/cta-swap.js',

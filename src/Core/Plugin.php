@@ -240,22 +240,46 @@ class Plugin {
 		// Do not load on page-builder canvas previews.
 		if ( isset( $_GET['bricks'] ) || isset( $_GET['etchwp'] ) || isset( $_GET['elementor-preview'] ) ) return;
 
-		wp_enqueue_style( 'zehoro-toolkit', ZEHORO_URL . 'assets/style.css', [], ZEHORO_VERSION );
+		// Gate the 27 KB monolithic stylesheet (+ inline CSS variables) to
+		// singular views that actually reference toolkit content. The CSS
+		// variables target lkst-/zehoro- classed elements only; pages with
+		// none of our blocks/shortcodes/classes get neither the file nor
+		// the variables — and need neither.
+		$load_global = is_singular() && \Zehoro\Utils\PageContent::has_zehoro_content();
 
-		// Always inject CSS custom properties via wp_add_inline_style.
-		$primary   = \Zehoro\Utils\Option::get( 'zehoro_color_primary',          '#E8A020' );
-		$contrast  = \Zehoro\Utils\Option::get( 'zehoro_color_primary_contrast', '#0F1A2E' );
-		$secondary = \Zehoro\Utils\Option::get( 'zehoro_color_secondary',        '#1ECFC4' );
-		$bg_dark   = \Zehoro\Utils\Option::get( 'zehoro_color_bg_dark',          '#0F1A2E' );
-		$bg_light  = \Zehoro\Utils\Option::get( 'zehoro_color_bg_light',         '#F5F0E8' );
-		wp_add_inline_style( 'zehoro-toolkit', sprintf(
-			':root{--lkst-primary-color:%s;--lkst-primary-contrast:%s;--lkst-secondary-color:%s;--lkst-bg-dark:%s;--lkst-bg-light:%s;}',
-			esc_attr( $primary ), esc_attr( $contrast ), esc_attr( $secondary ),
-			esc_attr( $bg_dark ), esc_attr( $bg_light )
-		) );
+		/**
+		 * Force-load the global stylesheet on the current request.
+		 *
+		 * Themes that ship Zehoro-styled HTML outside of post_content
+		 * (e.g. a Bricks header that uses `lkst-` classes) can opt in via
+		 * `add_filter( 'zehoro/load_global_styles', '__return_true' )`.
+		 *
+		 * @param bool $load Default: true iff is_singular() and content references zehoro/lkst.
+		 */
+		$load_global = (bool) apply_filters( 'zehoro/load_global_styles', $load_global );
 
-		if ( isset( $this->modules['table_of_contents'] ) ) {
-			wp_enqueue_script( 'zehoro-toc', ZEHORO_URL . 'assets/toc.js', [], ZEHORO_VERSION, true );
+		if ( $load_global ) {
+			wp_enqueue_style( 'zehoro-toolkit', ZEHORO_URL . 'assets/style.css', [], ZEHORO_VERSION );
+
+			$primary   = \Zehoro\Utils\Option::get( 'zehoro_color_primary',          '#E8A020' );
+			$contrast  = \Zehoro\Utils\Option::get( 'zehoro_color_primary_contrast', '#0F1A2E' );
+			$secondary = \Zehoro\Utils\Option::get( 'zehoro_color_secondary',        '#1ECFC4' );
+			$bg_dark   = \Zehoro\Utils\Option::get( 'zehoro_color_bg_dark',          '#0F1A2E' );
+			$bg_light  = \Zehoro\Utils\Option::get( 'zehoro_color_bg_light',         '#F5F0E8' );
+			wp_add_inline_style( 'zehoro-toolkit', sprintf(
+				':root{--lkst-primary-color:%s;--lkst-primary-contrast:%s;--lkst-secondary-color:%s;--lkst-bg-dark:%s;--lkst-bg-light:%s;}',
+				esc_attr( $primary ), esc_attr( $contrast ), esc_attr( $secondary ),
+				esc_attr( $bg_dark ), esc_attr( $bg_light )
+			) );
+		}
+
+		// TOC is shortcode-only; only load the JS when the shortcode is
+		// actually in the post content.
+		if ( isset( $this->modules['table_of_contents'] ) && is_singular() ) {
+			$post = get_post();
+			if ( $post && ( has_shortcode( $post->post_content, 'zehoro_toc' ) || has_shortcode( $post->post_content, 'lkst_toc' ) ) ) {
+				wp_enqueue_script( 'zehoro-toc', ZEHORO_URL . 'assets/toc.js', [], ZEHORO_VERSION, true );
+			}
 		}
 	}
 

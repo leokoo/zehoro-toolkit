@@ -54,7 +54,16 @@ class AuthorBox implements \Zehoro\Core\ModuleInterface {
     }
 
     public function enqueue_dashicons(): void {
-        wp_enqueue_style( 'dashicons' );
+        if ( ! is_singular() ) return;
+        $post = get_post();
+        if ( ! $post ) return;
+        $content = $post->post_content;
+        if (   has_shortcode( $content, 'zehoro_author_box' )
+            || has_shortcode( $content, 'zehoro_author_socials' )
+            || has_shortcode( $content, 'lkst_author_box' )
+            || has_shortcode( $content, 'lkst_author_socials' ) ) {
+            wp_enqueue_style( 'dashicons' );
+        }
     }
 
     /**
