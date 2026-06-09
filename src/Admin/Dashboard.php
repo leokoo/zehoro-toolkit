@@ -92,7 +92,7 @@ class Dashboard {
 		if ( strpos( $hook, 'zehoro-' ) === false && strpos( $hook, 'lkst-' ) === false ) return;
 		wp_enqueue_style( 'zehoro-admin-css', ZEHORO_URL . 'assets/admin.css', [], ZEHORO_VERSION );
 
-		// Modules-page-only assets (filter UX).
+		// Modules-page-only assets (filter UX + per-card REST toggle).
 		if ( strpos( $hook, 'lkst-dashboard' ) !== false || strpos( $hook, 'zehoro-dashboard' ) !== false ) {
 			wp_enqueue_style( 'zehoro-modules-admin', ZEHORO_URL . 'assets/admin/modules.css', [ 'dashicons' ], ZEHORO_VERSION );
 			wp_enqueue_script( 'zehoro-modules-admin', ZEHORO_URL . 'assets/admin/modules.js', [], ZEHORO_VERSION, true );
@@ -102,6 +102,14 @@ class Dashboard {
 					'search' => '',
 					'status' => 'all',
 					'layout' => 'grid',
+				],
+				'rest'       => [
+					'root'        => esc_url_raw( rest_url( 'zehoro/v1/' ) ),
+					'nonce'       => wp_create_nonce( 'wp_rest' ),
+					'toggleRoute' => 'modules/{slug}/toggle',
+				],
+				'i18n'       => [
+					'toggleFailed' => __( 'Could not save — check your connection and try again.', 'zehoro-toolkit' ),
 				],
 			] );
 		}
@@ -301,9 +309,11 @@ class Dashboard {
 				<div id="zehoro-modules-empty" class="zehoro-no-modules">
 					<?php esc_html_e( 'No modules match the current filter.', 'zehoro-toolkit' ); ?>
 				</div>
-				<p class="submit">
-					<input type="submit" name="zehoro_save_modules" class="button button-primary" value="<?php esc_attr_e( 'Save Module Settings', 'zehoro-toolkit' ); ?>">
-				</p>
+				<noscript>
+					<p class="submit">
+						<input type="submit" name="zehoro_save_modules" class="button button-primary" value="<?php esc_attr_e( 'Save Module Settings', 'zehoro-toolkit' ); ?>">
+					</p>
+				</noscript>
 			</form>
 		</div>
 

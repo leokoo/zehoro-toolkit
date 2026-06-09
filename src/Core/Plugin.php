@@ -190,6 +190,13 @@ class Plugin {
 			$admin->init();
 		}
 
+		// REST endpoints — registered regardless of is_admin since they're
+		// called by JS from the admin UI (which runs server-side in admin,
+		// hits REST as cross-context HTTP).
+		add_action( 'rest_api_init', function() {
+			( new \Zehoro\REST\ModulesController() )->register_routes();
+		} );
+
 		// Frontend assets
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 

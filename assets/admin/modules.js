@@ -44,7 +44,53 @@
 		updateSearchClearVisibility();
 
 		bindEvents();
+		bindToggleEvents();
 		applyFilter( /* skipAnimation = */ true );
+	}
+
+	function bindToggleEvents() {
+		if ( ! data.rest || ! data.rest.root ) return; // no REST config — fall back to Save button
+		var switches = document.querySelectorAll( '.lkst-module-card .lkst-switch input[type="checkbox"]' );
+		switches.forEach( function ( input ) {
+			input.addEventListener( 'change', function () {
+				var card = input.closest( '.lkst-module-card' );
+				if ( ! card ) return;
+				var slug = card.dataset.moduleSlug || '';
+				if ( ! slug ) return;
+
+				input.disabled = true;
+				var prevChecked = ! input.checked; // we just flipped — previous is the inverse
+
+				var url = data.rest.root + data.rest.toggleRoute.replace( '{slug}', encodeURIComponent( slug ) );
+				fetch( url, {
+					method: 'POST',
+					credentials: 'same-origin',
+					headers: {
+						'X-WP-Nonce':   data.rest.nonce,
+						'Content-Type': 'application/json',
+					},
+				} )
+				.then( function ( r ) { return r.json().then( function ( j ) { return { ok: r.ok, json: j }; } ); } )
+				.then( function ( res ) {
+					input.disabled = false;
+					if ( ! res.ok || ! res.json || ! res.json.success ) {
+						input.checked = prevChecked; // rollback UI
+						alert( ( data.i18n && data.i18n.toggleFailed ) || 'Toggle failed.' );
+						return;
+					}
+					// Update card state for the filter logic.
+					var enabled = !! res.json.enabled;
+					card.dataset.moduleActive = enabled ? '1' : '0';
+					card.classList.toggle( 'active',   enabled );
+					card.classList.toggle( 'inactive', ! enabled );
+				} )
+				.catch( function () {
+					input.disabled = false;
+					input.checked = prevChecked;
+					alert( ( data.i18n && data.i18n.toggleFailed ) || 'Toggle failed.' );
+				} );
+			} );
+		} );
 	}
 
 	function bindEvents() {
