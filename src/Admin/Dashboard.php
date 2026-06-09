@@ -97,6 +97,78 @@ class Dashboard {
 		}
 	}
 
+	/**
+	 * Map a module slug to its display category. Hardcoded in Free so we don't
+	 * have to touch every module file to add a `category` field to its
+	 * register() metadata. Modules CAN override by passing `'category' => '…'`
+	 * to Plugin::register_module(); the explicit value wins.
+	 *
+	 * Categories rendered (and ordered) in render_dashboard_page():
+	 *   editorial, reader, schema, site, affiliate, conversion, data_seo,
+	 *   admin_tools, other
+	 *
+	 * @return string Category slug. Unknown slugs map to 'other'.
+	 */
+	public static function infer_category( string $slug ): string {
+		static $map = [
+			// Editorial blocks the author drops into posts.
+			'tldr'                => 'editorial',
+			'faq'                 => 'editorial',
+			'steps'               => 'editorial',
+			'pros_cons'           => 'editorial',
+			'callout'             => 'editorial',
+			'testimonial'         => 'editorial',
+			'author_box'          => 'editorial',
+			'table_of_contents'   => 'editorial',
+			'content_box'         => 'editorial',
+			'stat_callout'        => 'editorial',
+			'inline_product'      => 'editorial',
+
+			// Reader-visible freshness/trust signals.
+			'last_updated'        => 'reader',
+			'freshness_log'       => 'reader',
+			'disclosure'          => 'reader',
+			'disclaimer'          => 'reader',
+
+			// JSON-LD schema emitters.
+			'article_schema'      => 'schema',
+			'pros_cons_schema'    => 'schema',
+			'faq_schema'          => 'schema',
+			'steps_schema'        => 'schema',
+
+			// Whole-site UX features (not block-shaped).
+			'category_pills'      => 'site',
+			'home_filter_pills'   => 'site',
+			'archive_cleanup'     => 'site',
+			'rss_support'         => 'site',
+			'styles'              => 'site',
+
+			// Affiliate / product review (Pro).
+			'product_box'         => 'affiliate',
+			'review_box'          => 'affiliate',
+			'comparison_table'    => 'affiliate',
+			'versus_box'          => 'affiliate',
+			'product_roundup'     => 'affiliate',
+			'product_verdict'     => 'affiliate',
+			'coupon_box'          => 'affiliate',
+
+			// Lead capture / CTA (Pro).
+			'content_stream'      => 'conversion',
+			'inline_subscribe'    => 'conversion',
+			'sticky_bar'          => 'conversion',
+			'cta_swap'            => 'conversion',
+
+			// Data / SEO engine surfaces (Pro).
+			'entity_map'              => 'data_seo',
+			'google_search_console'   => 'data_seo',
+			'ctr_rescue'              => 'data_seo',
+
+			// Operational admin tools.
+			'css_auditor'         => 'admin_tools',
+		];
+		return $map[ $slug ] ?? 'other';
+	}
+
 	public function render_dashboard_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) return;
 
@@ -126,10 +198,34 @@ class Dashboard {
 				'desc'  => $data['desc'] ?? '',
 				'settings_link' => ! empty( $data['settings_page'] ) ? admin_url( 'admin.php?page=' . $data['settings_page'] ) : '',
 				'is_active' => in_array( $slug, $active, true ),
+				'category'  => $data['category'] ?? self::infer_category( $slug ),
 			];
 			if ( $modules[ $slug ]['is_active'] ) $active_count++;
 		}
 		$total = count( $modules );
+
+		// Stable category order in the rendered groups. Anything we haven't
+		// categorised goes into "Other" at the end.
+		$category_order = [
+			'editorial'    => __( 'Editorial blocks',  'zehoro-toolkit' ),
+			'reader'       => __( 'Reader signals',    'zehoro-toolkit' ),
+			'schema'       => __( 'Schema',            'zehoro-toolkit' ),
+			'site'         => __( 'Site features',     'zehoro-toolkit' ),
+			'affiliate'    => __( 'Affiliate blocks',  'zehoro-toolkit' ),
+			'conversion'   => __( 'Conversion',        'zehoro-toolkit' ),
+			'data_seo'     => __( 'Data & SEO',        'zehoro-toolkit' ),
+			'admin_tools'  => __( 'Admin tools',       'zehoro-toolkit' ),
+			'other'        => __( 'Other',             'zehoro-toolkit' ),
+		];
+
+		// Bucket modules by category, preserving registration order within each.
+		$grouped = array_fill_keys( array_keys( $category_order ), [] );
+		foreach ( $modules as $slug => $data ) {
+			$cat = isset( $grouped[ $data['category'] ] ) ? $data['category'] : 'other';
+			$grouped[ $cat ][ $slug ] = $data;
+		}
+		// Drop empty groups so the headings only render where there's content.
+		$grouped = array_filter( $grouped, fn( $g ) => ! empty( $g ) );
 		?>
 		<div class="wrap lkst-dashboard">
 			<h1><?php esc_html_e( 'Zehoro Toolkit — Modules', 'zehoro-toolkit' ); ?></h1>
@@ -174,36 +270,50 @@ class Dashboard {
 
 			<form method="post" action="">
 				<?php wp_nonce_field( 'zehoro_modules_action', 'zehoro_modules_nonce' ); ?>
-				<div class="lkst-modules-grid" id="zehoro-modules-grid">
-					<?php foreach ( $modules as $slug => $data ) :
-						$is_active = $data['is_active'];
-						$haystack = strtolower( $slug . ' ' . $data['title'] . ' ' . $data['desc'] );
-					?>
-					<div
-						class="lkst-module-card <?php echo $is_active ? 'active' : 'inactive'; ?>"
-						data-module-slug="<?php echo esc_attr( $slug ); ?>"
-						data-module-haystack="<?php echo esc_attr( $haystack ); ?>"
-						data-module-active="<?php echo $is_active ? '1' : '0'; ?>"
+				<div id="zehoro-modules-grid">
+				<?php foreach ( $grouped as $cat_slug => $cat_modules ) : ?>
+					<section
+						class="zehoro-module-category"
+						data-category-slug="<?php echo esc_attr( $cat_slug ); ?>"
+						style="margin-bottom:24px;"
 					>
-						<div class="lkst-module-header">
-							<h3 class="lkst-module-title"><?php echo esc_html( $data['title'] ); ?></h3>
-							<label class="lkst-switch">
-								<input type="checkbox" name="modules[<?php echo esc_attr( $slug ); ?>]" value="1" <?php checked( $is_active ); ?>>
-								<span class="lkst-slider"></span>
-							</label>
+						<h2 style="margin:14px 0 8px;font-size:13px;font-weight:600;color:#646970;text-transform:uppercase;letter-spacing:0.6px;">
+							<?php echo esc_html( $category_order[ $cat_slug ] ?? ucfirst( $cat_slug ) ); ?>
+							<span style="color:#a7aaad;font-weight:500;text-transform:none;letter-spacing:normal;">· <?php echo (int) count( $cat_modules ); ?></span>
+						</h2>
+						<div class="lkst-modules-grid">
+						<?php foreach ( $cat_modules as $slug => $data ) :
+							$is_active = $data['is_active'];
+							$haystack = strtolower( $slug . ' ' . $data['title'] . ' ' . $data['desc'] );
+						?>
+							<div
+								class="lkst-module-card <?php echo $is_active ? 'active' : 'inactive'; ?>"
+								data-module-slug="<?php echo esc_attr( $slug ); ?>"
+								data-module-haystack="<?php echo esc_attr( $haystack ); ?>"
+								data-module-active="<?php echo $is_active ? '1' : '0'; ?>"
+							>
+								<div class="lkst-module-header">
+									<h3 class="lkst-module-title"><?php echo esc_html( $data['title'] ); ?></h3>
+									<label class="lkst-switch">
+										<input type="checkbox" name="modules[<?php echo esc_attr( $slug ); ?>]" value="1" <?php checked( $is_active ); ?>>
+										<span class="lkst-slider"></span>
+									</label>
+								</div>
+								<p class="lkst-module-desc"><?php echo esc_html( $data['desc'] ); ?></p>
+								<div class="lkst-module-footer">
+									<?php if ( ! empty( $data['settings_link'] ) ) : ?>
+										<a href="<?php echo esc_url( $data['settings_link'] ); ?>" class="lkst-configure-link">
+											<span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e( 'Configure', 'zehoro-toolkit' ); ?>
+										</a>
+									<?php else : ?>
+										<span style="color:#a7aaad;font-style:italic;font-size:12px;"><?php esc_html_e( 'No settings needed', 'zehoro-toolkit' ); ?></span>
+									<?php endif; ?>
+								</div>
+							</div>
+						<?php endforeach; ?>
 						</div>
-						<p class="lkst-module-desc"><?php echo esc_html( $data['desc'] ); ?></p>
-						<div class="lkst-module-footer">
-							<?php if ( ! empty( $data['settings_link'] ) ) : ?>
-								<a href="<?php echo esc_url( $data['settings_link'] ); ?>" class="lkst-configure-link">
-									<span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e( 'Configure', 'zehoro-toolkit' ); ?>
-								</a>
-							<?php else : ?>
-								<span style="color:#a7aaad;font-style:italic;font-size:12px;"><?php esc_html_e( 'No settings needed', 'zehoro-toolkit' ); ?></span>
-							<?php endif; ?>
-						</div>
-					</div>
-					<?php endforeach; ?>
+					</section>
+				<?php endforeach; ?>
 				</div>
 				<div id="zehoro-modules-empty" style="display:none;padding:24px;text-align:center;color:#646970;background:#fff;border:1px solid #c3c4c7;border-radius:6px;margin-top:8px;">
 					<?php esc_html_e( 'No modules match the current filter.', 'zehoro-toolkit' ); ?>
@@ -248,6 +358,15 @@ class Dashboard {
 					var show = matchesSearch && matchesStatus;
 					card.style.display = show ? '' : 'none';
 					if ( show ) visible++;
+				} );
+				// Hide category sections whose cards are all filtered out, so
+				// the headings don't dangle above empty grids.
+				grid.querySelectorAll( '.zehoro-module-category' ).forEach( function ( section ) {
+					var anyVisible = Array.prototype.some.call(
+						section.querySelectorAll( '.lkst-module-card' ),
+						function ( c ) { return c.style.display !== 'none'; }
+					);
+					section.style.display = anyVisible ? '' : 'none';
 				} );
 				visibleCounter.textContent = String( visible );
 				empty.style.display = visible === 0 ? 'block' : 'none';
