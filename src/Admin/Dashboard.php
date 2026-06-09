@@ -69,22 +69,26 @@ class Dashboard {
 			[ $this, 'render_dashboard_page' ]
 		);
 
+		// Per-module settings pages: registered with parent_slug = null so they
+		// stay accessible at ?page=<slug> but don't clutter the sidebar.
+		// Discovery flows through the Modules grid's "Configure" links.
+		// Phase 0 module refactor — task #36.
 		if ( in_array( 'author_box', $this->active, true ) ) {
-			add_submenu_page( 'zehoro-dashboard', __( 'Author Box Settings', 'zehoro-toolkit' ), __( 'Author Box', 'zehoro-toolkit' ), 'manage_options', 'zehoro-author-box', [ $this, 'render_author_box_settings_page' ] );
+			add_submenu_page( null, __( 'Author Box Settings', 'zehoro-toolkit' ), __( 'Author Box', 'zehoro-toolkit' ), 'manage_options', 'zehoro-author-box', [ $this, 'render_author_box_settings_page' ] );
 		}
 
 		if ( in_array( 'table_of_contents', $this->active, true ) ) {
-			add_submenu_page( 'zehoro-dashboard', __( 'Table of Contents', 'zehoro-toolkit' ), __( 'Table of Contents', 'zehoro-toolkit' ), 'manage_options', 'zehoro-toc-settings',
+			add_submenu_page( null, __( 'Table of Contents', 'zehoro-toolkit' ), __( 'Table of Contents', 'zehoro-toolkit' ), 'manage_options', 'zehoro-toc-settings',
 				[ new \Zehoro\Modules\TableOfContents(), 'render_page' ]
 			);
 		}
 
 		if ( in_array( 'rss_support', $this->active, true ) ) {
-			add_submenu_page( 'zehoro-dashboard', __( 'RSS Feed Settings', 'zehoro-toolkit' ), __( 'RSS Feed', 'zehoro-toolkit' ), 'manage_options', 'zehoro-rss-feed', [ $this, 'render_rss_feed_settings_page' ] );
+			add_submenu_page( null, __( 'RSS Feed Settings', 'zehoro-toolkit' ), __( 'RSS Feed', 'zehoro-toolkit' ), 'manage_options', 'zehoro-rss-feed', [ $this, 'render_rss_feed_settings_page' ] );
 		}
 
 		if ( in_array( 'styles', $this->active, true ) ) {
-			add_submenu_page( 'zehoro-dashboard', __( 'Visual Styles', 'zehoro-toolkit' ), __( 'Visual Styles', 'zehoro-toolkit' ), 'manage_options', 'zehoro-styles', [ $this, 'render_styles_settings_page' ] );
+			add_submenu_page( null, __( 'Visual Styles', 'zehoro-toolkit' ), __( 'Visual Styles', 'zehoro-toolkit' ), 'manage_options', 'zehoro-styles', [ $this, 'render_styles_settings_page' ] );
 		}
 	}
 
