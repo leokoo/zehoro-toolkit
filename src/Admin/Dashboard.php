@@ -89,8 +89,23 @@ class Dashboard {
 	}
 
 	public function enqueue_assets( string $hook ): void {
-		if ( strpos( $hook, 'zehoro-' ) === false ) return;
+		if ( strpos( $hook, 'zehoro-' ) === false && strpos( $hook, 'lkst-' ) === false ) return;
 		wp_enqueue_style( 'zehoro-admin-css', ZEHORO_URL . 'assets/admin.css', [], ZEHORO_VERSION );
+
+		// Modules-page-only assets (filter UX).
+		if ( strpos( $hook, 'lkst-dashboard' ) !== false || strpos( $hook, 'zehoro-dashboard' ) !== false ) {
+			wp_enqueue_style( 'zehoro-modules-admin', ZEHORO_URL . 'assets/admin/modules.css', [ 'dashicons' ], ZEHORO_VERSION );
+			wp_enqueue_script( 'zehoro-modules-admin', ZEHORO_URL . 'assets/admin/modules.js', [], ZEHORO_VERSION, true );
+			wp_localize_script( 'zehoro-modules-admin', 'zehoroModulesAdmin', [
+				'storageKey' => 'zehoroModuleSettings',
+				'defaults'   => [
+					'search' => '',
+					'status' => 'all',
+					'layout' => 'grid',
+				],
+			] );
+		}
+
 		if ( strpos( $hook, 'zehoro-styles' ) !== false ) {
 			wp_enqueue_style( 'wp-color-picker' );
 			wp_enqueue_script( 'zehoro-admin-js', ZEHORO_URL . 'assets/admin.js', [ 'wp-color-picker', 'jquery' ], ZEHORO_VERSION, true );
@@ -179,40 +194,35 @@ class Dashboard {
 			<h1><?php esc_html_e( 'Zehoro Toolkit — Modules', 'zehoro-toolkit' ); ?></h1>
 			<p><?php esc_html_e( 'Enable or disable specific features of the toolkit. Only active modules load their code.', 'zehoro-toolkit' ); ?></p>
 
-			<div class="zehoro-modules-filter-bar" style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:16px 0;padding:12px 14px;background:#fff;border:1px solid #c3c4c7;border-radius:6px;">
-				<div style="flex:1;min-width:220px;display:flex;align-items:center;gap:8px;">
-					<span class="dashicons dashicons-search" style="color:#646970;"></span>
+			<div class="zehoro-module-filters">
+				<div class="zehoro-module-filters__search">
+					<span class="dashicons dashicons-search"></span>
 					<input
 						type="search"
 						id="zehoro-modules-search"
+						class="zehoro-module-filters__search-input"
 						placeholder="<?php esc_attr_e( 'Search modules…', 'zehoro-toolkit' ); ?>"
-						style="flex:1;border:1px solid #dcdcde;border-radius:4px;padding:6px 10px;font-size:13px;"
 						autocomplete="off"
+						aria-label="<?php esc_attr_e( 'Search modules', 'zehoro-toolkit' ); ?>"
 					>
+					<button type="button" class="zehoro-module-filters__search-clear" aria-label="<?php esc_attr_e( 'Clear search', 'zehoro-toolkit' ); ?>">×</button>
 				</div>
-				<div role="tablist" aria-label="<?php esc_attr_e( 'Filter by status', 'zehoro-toolkit' ); ?>" style="display:inline-flex;border:1px solid #dcdcde;border-radius:4px;overflow:hidden;">
-					<button type="button" class="zehoro-status-pill" data-status="all" aria-pressed="true" style="padding:6px 12px;background:#2271b1;color:#fff;border:none;cursor:pointer;font-size:12px;">
-						<?php esc_html_e( 'All', 'zehoro-toolkit' ); ?>
-						<span style="opacity:0.75;margin-left:4px;">(<?php echo (int) $total; ?>)</span>
+				<div class="zehoro-module-filters__status" role="tablist" aria-label="<?php esc_attr_e( 'Filter by status', 'zehoro-toolkit' ); ?>">
+					<button type="button" class="zehoro-status-pill" data-status="all"      aria-pressed="true"><?php  esc_html_e( 'All',      'zehoro-toolkit' ); ?> <span class="zehoro-status-pill__count">(<?php echo (int) $total; ?>)</span></button>
+					<button type="button" class="zehoro-status-pill" data-status="active"   aria-pressed="false"><?php esc_html_e( 'Active',   'zehoro-toolkit' ); ?> <span class="zehoro-status-pill__count">(<?php echo (int) $active_count; ?>)</span></button>
+					<button type="button" class="zehoro-status-pill" data-status="inactive" aria-pressed="false"><?php esc_html_e( 'Inactive', 'zehoro-toolkit' ); ?> <span class="zehoro-status-pill__count">(<?php echo (int) ( $total - $active_count ); ?>)</span></button>
+					<button type="button" class="zehoro-status-pill" data-status="free"     aria-pressed="false"><?php esc_html_e( 'Free',     'zehoro-toolkit' ); ?> <span class="zehoro-status-pill__count">(<?php echo (int) ( $total - $pro_count ); ?>)</span></button>
+					<button type="button" class="zehoro-status-pill" data-status="pro"      aria-pressed="false"><?php esc_html_e( 'Pro',      'zehoro-toolkit' ); ?> <span class="zehoro-status-pill__count">(<?php echo (int) $pro_count; ?>)</span></button>
+				</div>
+				<div class="zehoro-module-filters__layout" role="tablist" aria-label="<?php esc_attr_e( 'Layout', 'zehoro-toolkit' ); ?>">
+					<button type="button" class="zehoro-module-filters__layout-button" data-layout="grid" aria-pressed="true"  aria-label="<?php esc_attr_e( 'Grid layout', 'zehoro-toolkit' ); ?>" title="<?php esc_attr_e( 'Grid', 'zehoro-toolkit' ); ?>">
+						<span class="dashicons dashicons-grid-view"></span>
 					</button>
-					<button type="button" class="zehoro-status-pill" data-status="active" aria-pressed="false" style="padding:6px 12px;background:#fff;color:#1d2327;border:none;border-left:1px solid #dcdcde;cursor:pointer;font-size:12px;">
-						<?php esc_html_e( 'Active', 'zehoro-toolkit' ); ?>
-						<span style="opacity:0.6;margin-left:4px;">(<?php echo (int) $active_count; ?>)</span>
-					</button>
-					<button type="button" class="zehoro-status-pill" data-status="inactive" aria-pressed="false" style="padding:6px 12px;background:#fff;color:#1d2327;border:none;border-left:1px solid #dcdcde;cursor:pointer;font-size:12px;">
-						<?php esc_html_e( 'Inactive', 'zehoro-toolkit' ); ?>
-						<span style="opacity:0.6;margin-left:4px;">(<?php echo (int) ( $total - $active_count ); ?>)</span>
-					</button>
-					<button type="button" class="zehoro-status-pill" data-status="free" aria-pressed="false" style="padding:6px 12px;background:#fff;color:#1d2327;border:none;border-left:1px solid #dcdcde;cursor:pointer;font-size:12px;">
-						<?php esc_html_e( 'Free', 'zehoro-toolkit' ); ?>
-						<span style="opacity:0.6;margin-left:4px;">(<?php echo (int) ( $total - $pro_count ); ?>)</span>
-					</button>
-					<button type="button" class="zehoro-status-pill" data-status="pro" aria-pressed="false" style="padding:6px 12px;background:#fff;color:#1d2327;border:none;border-left:1px solid #dcdcde;cursor:pointer;font-size:12px;">
-						<?php esc_html_e( 'Pro', 'zehoro-toolkit' ); ?>
-						<span style="opacity:0.6;margin-left:4px;">(<?php echo (int) $pro_count; ?>)</span>
+					<button type="button" class="zehoro-module-filters__layout-button" data-layout="list" aria-pressed="false" aria-label="<?php esc_attr_e( 'List layout', 'zehoro-toolkit' ); ?>" title="<?php esc_attr_e( 'List', 'zehoro-toolkit' ); ?>">
+						<span class="dashicons dashicons-list-view"></span>
 					</button>
 				</div>
-				<div id="zehoro-modules-result" style="color:#646970;font-size:12px;white-space:nowrap;">
+				<div class="zehoro-module-filters__total">
 					<?php
 					printf(
 						/* translators: 1: visible count 2: total count */
@@ -223,6 +233,7 @@ class Dashboard {
 					?>
 				</div>
 			</div>
+			<div class="zehoro-live-region" role="status" aria-live="polite"></div>
 
 			<form method="post" action="">
 				<?php wp_nonce_field( 'zehoro_modules_action', 'zehoro_modules_nonce' ); ?>
@@ -231,13 +242,12 @@ class Dashboard {
 					<section
 						class="zehoro-module-category"
 						data-category-slug="<?php echo esc_attr( $cat_slug ); ?>"
-						style="margin-bottom:24px;"
 					>
-						<h2 style="margin:14px 0 8px;font-size:13px;font-weight:600;color:#646970;text-transform:uppercase;letter-spacing:0.6px;">
+						<h2 class="zehoro-module-category__title">
 							<?php echo esc_html( $category_order[ $cat_slug ] ?? ucfirst( $cat_slug ) ); ?>
-							<span style="color:#a7aaad;font-weight:500;text-transform:none;letter-spacing:normal;">· <?php echo (int) count( $cat_modules ); ?></span>
+							<span class="zehoro-module-category__count">· <?php echo (int) count( $cat_modules ); ?></span>
 						</h2>
-						<div class="lkst-modules-grid">
+						<div class="lkst-modules-grid zehoro-modules--grid">
 						<?php foreach ( $cat_modules as $slug => $data ) :
 							$is_active = $data['is_active'];
 							$tier      = $data['tier'];
@@ -288,7 +298,7 @@ class Dashboard {
 					</section>
 				<?php endforeach; ?>
 				</div>
-				<div id="zehoro-modules-empty" style="display:none;padding:24px;text-align:center;color:#646970;background:#fff;border:1px solid #c3c4c7;border-radius:6px;margin-top:8px;">
+				<div id="zehoro-modules-empty" class="zehoro-no-modules">
 					<?php esc_html_e( 'No modules match the current filter.', 'zehoro-toolkit' ); ?>
 				</div>
 				<p class="submit">
@@ -297,71 +307,7 @@ class Dashboard {
 			</form>
 		</div>
 
-		<script>
-		( function () {
-			var search = document.getElementById( 'zehoro-modules-search' );
-			var pills  = document.querySelectorAll( '.zehoro-status-pill' );
-			var grid   = document.getElementById( 'zehoro-modules-grid' );
-			var empty  = document.getElementById( 'zehoro-modules-empty' );
-			var visibleCounter = document.getElementById( 'zehoro-modules-result-visible' );
-			if ( ! search || ! grid || ! visibleCounter ) return;
-
-			var statusFilter = 'all';
-
-			function setActivePill( status ) {
-				pills.forEach( function ( pill ) {
-					var active = pill.dataset.status === status;
-					pill.setAttribute( 'aria-pressed', active ? 'true' : 'false' );
-					pill.style.background = active ? '#2271b1' : '#fff';
-					pill.style.color      = active ? '#fff'    : '#1d2327';
-				} );
-			}
-
-			function applyFilter() {
-				var q = ( search.value || '' ).trim().toLowerCase();
-				// Multi-token AND match — every whitespace-separated token must
-				// appear in the haystack. Matches the WPExtended search pattern.
-				var tokens = q ? q.split( /\s+/ ).filter( Boolean ) : [];
-				var visible = 0;
-				var cards = grid.querySelectorAll( '.lkst-module-card' );
-				cards.forEach( function ( card ) {
-					var hay = ( card.dataset.moduleHaystack || '' ).toLowerCase();
-					var isActive = card.dataset.moduleActive === '1';
-					var tier     = card.dataset.moduleTier || 'free';
-					var matchesSearch = tokens.length === 0 || tokens.every( function ( t ) { return hay.indexOf( t ) !== -1; } );
-					var matchesStatus = statusFilter === 'all'
-						|| ( statusFilter === 'active'   && isActive )
-						|| ( statusFilter === 'inactive' && ! isActive )
-						|| ( statusFilter === 'free'     && tier === 'free' )
-						|| ( statusFilter === 'pro'      && tier === 'pro' );
-					var show = matchesSearch && matchesStatus;
-					card.style.display = show ? '' : 'none';
-					if ( show ) visible++;
-				} );
-				// Hide category sections whose cards are all filtered out, so
-				// the headings don't dangle above empty grids.
-				grid.querySelectorAll( '.zehoro-module-category' ).forEach( function ( section ) {
-					var anyVisible = Array.prototype.some.call(
-						section.querySelectorAll( '.lkst-module-card' ),
-						function ( c ) { return c.style.display !== 'none'; }
-					);
-					section.style.display = anyVisible ? '' : 'none';
-				} );
-				visibleCounter.textContent = String( visible );
-				empty.style.display = visible === 0 ? 'block' : 'none';
-				grid.style.display  = visible === 0 ? 'none'  : '';
-			}
-
-			search.addEventListener( 'input', applyFilter );
-			pills.forEach( function ( pill ) {
-				pill.addEventListener( 'click', function () {
-					statusFilter = pill.dataset.status;
-					setActivePill( statusFilter );
-					applyFilter();
-				} );
-			} );
-		} )();
-		</script>
+		<?php /* Filter UX JS lives in assets/admin/modules.js — enqueued by enqueue_assets(). */ ?>
 		<?php
 	}
 

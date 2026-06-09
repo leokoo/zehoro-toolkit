@@ -1,0 +1,251 @@
+/**
+ * Modules page — filter bar, sidebar nav, card grid + list layouts.
+ *
+ * BEM class naming per zorasi-roadmaps/specs/phase-0-module-filtering.md
+ * Single asset, no SCSS — direct edit + CDN-cacheable through PUC releases.
+ */
+
+/* ── Filter bar ─────────────────────────────────────────────────────────── */
+
+.zehoro-module-filters {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 14px;
+	margin: 16px 0;
+	padding: 12px 14px;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 6px;
+}
+
+.zehoro-module-filters__search {
+	flex: 1;
+	min-width: 220px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.zehoro-module-filters__search .dashicons {
+	color: #646970;
+}
+
+.zehoro-module-filters__search-input {
+	flex: 1;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 6px 10px;
+	font-size: 13px;
+}
+
+.zehoro-module-filters__search-clear {
+	background: transparent;
+	border: 0;
+	color: #646970;
+	cursor: pointer;
+	padding: 0 4px;
+	font-size: 14px;
+	display: none; /* shown by JS when search has text */
+}
+
+.zehoro-module-filters__search-clear:hover {
+	color: #8a1f2b;
+}
+
+.zehoro-module-filters__status {
+	display: inline-flex;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.zehoro-status-pill {
+	padding: 6px 12px;
+	background: #fff;
+	color: #1d2327;
+	border: none;
+	border-left: 1px solid #dcdcde;
+	cursor: pointer;
+	font-size: 12px;
+	transition: background 0.15s, color 0.15s;
+}
+
+.zehoro-status-pill:first-child {
+	border-left: 0;
+}
+
+.zehoro-status-pill[aria-pressed="true"] {
+	background: #2271b1;
+	color: #fff;
+}
+
+.zehoro-status-pill__count {
+	opacity: 0.6;
+	margin-left: 4px;
+}
+
+.zehoro-status-pill[aria-pressed="true"] .zehoro-status-pill__count {
+	opacity: 0.75;
+}
+
+.zehoro-module-filters__total {
+	color: #646970;
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+.zehoro-module-filters__layout {
+	display: inline-flex;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.zehoro-module-filters__layout-button {
+	padding: 6px 10px;
+	background: #fff;
+	color: #50575e;
+	border: none;
+	border-left: 1px solid #dcdcde;
+	cursor: pointer;
+	font-size: 11px;
+	display: inline-flex;
+	align-items: center;
+}
+
+.zehoro-module-filters__layout-button:first-child {
+	border-left: 0;
+}
+
+.zehoro-module-filters__layout-button[aria-pressed="true"] {
+	background: #2271b1;
+	color: #fff;
+}
+
+.zehoro-module-filters__layout-button .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+/* ── Category section headings ─────────────────────────────────────────── */
+
+.zehoro-module-category {
+	margin-bottom: 24px;
+}
+
+.zehoro-module-category__title {
+	margin: 14px 0 8px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #646970;
+	text-transform: uppercase;
+	letter-spacing: 0.6px;
+}
+
+.zehoro-module-category__count {
+	color: #a7aaad;
+	font-weight: 500;
+	text-transform: none;
+	letter-spacing: normal;
+}
+
+/* ── Card grid / list layouts ───────────────────────────────────────────── */
+
+.zehoro-modules--grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 280px, 1fr ) );
+	gap: 14px;
+}
+
+.zehoro-modules--list {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.zehoro-modules--list .lkst-module-card {
+	display: grid;
+	grid-template-columns: 1fr auto auto;
+	gap: 12px;
+	align-items: center;
+	padding: 10px 14px;
+}
+
+.zehoro-modules--list .lkst-module-card .lkst-module-header {
+	display: contents;
+}
+
+.zehoro-modules--list .lkst-module-card .lkst-module-desc {
+	display: none;
+}
+
+.zehoro-modules--list .lkst-module-card .lkst-module-footer {
+	display: none;
+}
+
+/* ── Empty state ────────────────────────────────────────────────────────── */
+
+.zehoro-no-modules {
+	display: none;
+	padding: 24px;
+	text-align: center;
+	color: #646970;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 6px;
+	margin-top: 8px;
+}
+
+/* ── Tier badge (Pro pill on card titles) ──────────────────────────────── */
+
+.lkst-tier-badge {
+	display: inline-block;
+	font-size: 9px;
+	font-weight: 700;
+	color: #fff;
+	padding: 1px 6px;
+	border-radius: 8px;
+	margin-left: 6px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	vertical-align: 1px;
+}
+
+.lkst-tier-badge--pro {
+	background: #8a1f2b;
+}
+
+/* ── Live region (visually hidden, screen-reader only) ─────────────────── */
+
+.zehoro-live-region {
+	position: absolute;
+	left: -9999px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+/* ── Card fade animations on filter change ─────────────────────────────── */
+
+.lkst-module-card {
+	transition: opacity 0.3s, transform 0.3s;
+	--stagger-delay: 0s;
+}
+
+.lkst-module-card--fade-out {
+	opacity: 0;
+	transform: translateY( -8px );
+	pointer-events: none;
+}
+
+.lkst-module-card--fade-in {
+	animation: zehoro-fade-in 0.3s ease-out forwards;
+	animation-delay: var( --stagger-delay );
+}
+
+@keyframes zehoro-fade-in {
+	from { opacity: 0; transform: translateY( 8px ); }
+	to   { opacity: 1; transform: translateY( 0 );    }
+}
