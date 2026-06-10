@@ -52,12 +52,12 @@ class Dashboard {
 	public function register_menus(): void {
 		add_menu_page(
 			__( 'Zehoro Toolkit', 'zehoro-toolkit' ),
-			__( 'Site Toolkit', 'zehoro-toolkit' ),
+			__( 'Zehoro', 'zehoro-toolkit' ),
 			'manage_options',
 			'zehoro-dashboard',
 			[ $this, 'render_dashboard_page' ],
 			'dashicons-admin-generic',
-			80
+			58 // mirrors where Pro's GSC used to sit so the icon stays in the same lane
 		);
 
 		add_submenu_page(
@@ -335,6 +335,7 @@ class Dashboard {
 	public function render_styles_settings_page(): void {
 		?>
 		<div class="wrap">
+			<p style="margin-top:14px;"><a href="<?php echo esc_url( admin_url( 'admin.php?page=zehoro-dashboard' ) ); ?>" class="button button-secondary">&larr; <?php esc_html_e( 'Back to Modules', 'zehoro-toolkit' ); ?></a></p>
 			<h1><?php esc_html_e( 'Visual Styles', 'zehoro-toolkit' ); ?></h1>
 			<p><?php esc_html_e( 'Customize the colors used across all toolkit modules.', 'zehoro-toolkit' ); ?></p>
 			<form method="post" action="options.php">
@@ -362,6 +363,7 @@ class Dashboard {
 		$exclude    = [ 'attachment', 'page', 'bricks_template', 'etch_template', 'elementor_library', 'ifso_triggers' ];
 		?>
 		<div class="wrap">
+			<p style="margin-top:14px;"><a href="<?php echo esc_url( admin_url( 'admin.php?page=zehoro-dashboard' ) ); ?>" class="button button-secondary">&larr; <?php esc_html_e( 'Back to Modules', 'zehoro-toolkit' ); ?></a></p>
 			<h1><?php esc_html_e( 'RSS Feed Support', 'zehoro-toolkit' ); ?></h1>
 			<form method="post" action="options.php">
 				<?php settings_fields( 'zehoro_rss_group' ); ?>
@@ -389,6 +391,7 @@ class Dashboard {
 	public function render_author_box_settings_page(): void {
 		?>
 		<div class="wrap">
+			<p style="margin-top:14px;"><a href="<?php echo esc_url( admin_url( 'admin.php?page=zehoro-dashboard' ) ); ?>" class="button button-secondary">&larr; <?php esc_html_e( 'Back to Modules', 'zehoro-toolkit' ); ?></a></p>
 			<h1><?php esc_html_e( 'Author Box Settings', 'zehoro-toolkit' ); ?></h1>
 			<form method="post" action="options.php">
 				<?php settings_fields( 'zehoro_author_box_group' ); ?>

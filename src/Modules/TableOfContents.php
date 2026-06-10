@@ -210,6 +210,7 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
         $pt_exclude = [ 'attachment', 'bricks_template', 'etch_template', 'elementor_library', 'ifso_triggers' ];
         ?>
         <div class="wrap">
+            <p style="margin-top:14px;"><a href="<?php echo esc_url( admin_url( 'admin.php?page=zehoro-dashboard' ) ); ?>" class="button button-secondary">&larr; <?php esc_html_e( 'Back to Modules', 'zehoro-toolkit' ); ?></a></p>
             <h1><?php esc_html_e( 'Table of Contents Settings', 'zehoro-toolkit' ); ?></h1>
             <form method="post" action="options.php">
                 <?php settings_fields( 'zehoro_toc_group' ); ?>
