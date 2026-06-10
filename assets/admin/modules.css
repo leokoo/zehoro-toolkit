@@ -339,3 +339,14 @@
 	from { opacity: 0; transform: translateY( 8px ); }
 	to   { opacity: 1; transform: translateY( 0 );    }
 }
+
+/* Bulk actions — scope follows the sidebar group selection. */
+.zehoro-module-filters__bulk {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+}
+.zehoro-module-filters__bulk .zehoro-bulk-btn[data-bulk="disable"] {
+	color: #8a1f2b;
+	border-color: #c9909a;
+}

@@ -112,9 +112,16 @@ class Dashboard {
 					'root'        => esc_url_raw( rest_url( 'zehoro/v1/' ) ),
 					'nonce'       => wp_create_nonce( 'wp_rest' ),
 					'toggleRoute' => 'modules/{slug}/toggle',
+					'bulkRoute'   => 'modules/bulk',
 				],
 				'i18n'       => [
-					'toggleFailed' => __( 'Could not save — check your connection and try again.', 'zehoro-toolkit' ),
+					'toggleFailed'       => __( 'Could not save — check your connection and try again.', 'zehoro-toolkit' ),
+					/* translators: {scope} is "all modules" or a category name */
+					'bulkEnableConfirm'  => __( 'Enable {scope}?', 'zehoro-toolkit' ),
+					'bulkDisableConfirm' => __( 'Disable {scope}? Their features stop working until re-enabled.', 'zehoro-toolkit' ),
+					'allModules'         => __( 'all modules', 'zehoro-toolkit' ),
+					/* translators: %s: category name */
+					'groupModules'       => __( 'all modules in “{group}”', 'zehoro-toolkit' ),
 				],
 			] );
 		}
@@ -244,7 +251,11 @@ class Dashboard {
 					<button type="button" class="zehoro-status-pill" data-status="free"     aria-pressed="false"><?php esc_html_e( 'Free',     'zehoro-toolkit' ); ?> <span class="zehoro-status-pill__count">(<?php echo (int) ( $total - $pro_count ); ?>)</span></button>
 					<button type="button" class="zehoro-status-pill" data-status="pro"      aria-pressed="false"><?php esc_html_e( 'Pro',      'zehoro-toolkit' ); ?> <span class="zehoro-status-pill__count">(<?php echo (int) $pro_count; ?>)</span></button>
 				</div>
-				<div class="zehoro-module-filters__layout" role="tablist" aria-label="<?php esc_attr_e( 'Layout', 'zehoro-toolkit' ); ?>">
+				<div class="zehoro-module-filters__bulk" aria-label="<?php esc_attr_e( 'Bulk actions', 'zehoro-toolkit' ); ?>">
+				<button type="button" class="button zehoro-bulk-btn" data-bulk="enable"><?php esc_html_e( 'Enable all', 'zehoro-toolkit' ); ?></button>
+				<button type="button" class="button zehoro-bulk-btn" data-bulk="disable"><?php esc_html_e( 'Disable all', 'zehoro-toolkit' ); ?></button>
+			</div>
+			<div class="zehoro-module-filters__layout" role="tablist" aria-label="<?php esc_attr_e( 'Layout', 'zehoro-toolkit' ); ?>">
 					<button type="button" class="zehoro-module-filters__layout-button" data-layout="grid" aria-pressed="true"  aria-label="<?php esc_attr_e( 'Grid layout', 'zehoro-toolkit' ); ?>" title="<?php esc_attr_e( 'Grid', 'zehoro-toolkit' ); ?>">
 						<span class="dashicons dashicons-grid-view"></span>
 					</button>

@@ -30,6 +30,7 @@ class ModulesController {
 
 	public const NAMESPACE = 'zehoro/v1';
 	public const ROUTE_TOGGLE = '/modules/(?P<slug>[a-z0-9_]+)/toggle';
+	public const ROUTE_BULK   = '/modules/bulk';
 
 	public function register_routes(): void {
 		register_rest_route( self::NAMESPACE, self::ROUTE_TOGGLE, [
@@ -40,6 +41,28 @@ class ModulesController {
 				'slug' => [
 					'required'          => true,
 					'type'              => 'string',
+					'sanitize_callback' => 'sanitize_key',
+				],
+			],
+		] );
+
+		// Bulk enable/disable — every module, or every module in one group.
+		//   POST /wp-json/zehoro/v1/modules/bulk { enable: bool, group?: string }
+		//     → 200 { success: true, enabled: bool, slugs: string[], active_count: int }
+		//     → 404 { code: 'no_modules_in_group' } when the group matches nothing
+		register_rest_route( self::NAMESPACE, self::ROUTE_BULK, [
+			'methods'             => 'POST',
+			'callback'            => [ $this, 'bulk' ],
+			'permission_callback' => [ $this, 'permission_check' ],
+			'args'                => [
+				'enable' => [
+					'required' => true,
+					'type'     => 'boolean',
+				],
+				'group'  => [
+					'required'          => false,
+					'type'              => 'string',
+					'default'           => '',
 					'sanitize_callback' => 'sanitize_key',
 				],
 			],
@@ -78,6 +101,44 @@ class ModulesController {
 			'success' => true,
 			'enabled' => $enabled,
 			'slug'    => $slug,
+		], 200 );
+	}
+
+	/**
+	 * Bulk enable/disable. Empty group = every registered module; otherwise
+	 * every module whose registry `group` matches. One option write either
+	 * way — the per-module init cost only exists on the next page load.
+	 */
+	public function bulk( WP_REST_Request $request ): WP_REST_Response {
+		$enable = (bool) $request->get_param( 'enable' );
+		$group  = (string) $request->get_param( 'group' );
+
+		$targets = [];
+		foreach ( Plugin::get_registered_modules() as $slug => $meta ) {
+			if ( '' === $group || ( $meta['group'] ?? 'other' ) === $group ) {
+				$targets[] = $slug;
+			}
+		}
+
+		if ( [] === $targets ) {
+			return new WP_REST_Response( [
+				'code'    => 'no_modules_in_group',
+				'message' => sprintf( 'No modules registered in group "%s".', $group ),
+			], 404 );
+		}
+
+		$active = (array) Option::get( 'zehoro_active_modules', [] );
+		$active = $enable
+			? array_values( array_unique( array_merge( $active, $targets ) ) )
+			: array_values( array_diff( $active, $targets ) );
+
+		update_option( 'zehoro_active_modules', $active );
+
+		return new WP_REST_Response( [
+			'success'      => true,
+			'enabled'      => $enable,
+			'slugs'        => $targets,
+			'active_count' => count( $active ),
 		], 200 );
 	}
 }

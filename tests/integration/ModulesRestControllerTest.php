@@ -30,6 +30,9 @@ class ModulesRestControllerTest extends WP_UnitTestCase {
 			'tier'    => 'free',
 			'group'   => 'other',
 		];
+		// Two more in a distinct group so bulk-by-group has a boundary to respect.
+		$snap['seo_alpha'] = [ 'class' => '\\Zehoro\\Modules\\A', 'title' => 'A', 'desc' => '', 'default' => false, 'tier' => 'free', 'group' => 'zz_test_group' ];
+		$snap['seo_beta']  = [ 'class' => '\\Zehoro\\Modules\\B', 'title' => 'B', 'desc' => '', 'default' => false, 'tier' => 'free', 'group' => 'zz_test_group' ];
 		$this->write_registry( $snap );
 	}
 
@@ -127,7 +130,73 @@ class ModulesRestControllerTest extends WP_UnitTestCase {
 		$this->assertLessThan( 500, $response->get_status() );
 	}
 
+	// ── Bulk endpoint ───────────────────────────────────────────────────────
+
+	public function test_bulk_enable_all_activates_every_registered_module() {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+
+		$response = $this->do_bulk( true );
+
+		$this->assertSame( 200, $response->get_status() );
+		$active = (array) get_option( 'zehoro_active_modules', [] );
+		foreach ( array_keys( $this->read_registry() ) as $slug ) {
+			$this->assertContains( $slug, $active );
+		}
+	}
+
+	public function test_bulk_disable_scoped_to_group_leaves_other_groups_alone() {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+		update_option( 'zehoro_active_modules', [ 'test_module', 'seo_alpha', 'seo_beta' ] );
+
+		$response = $this->do_bulk( false, 'zz_test_group' );
+
+		$this->assertSame( 200, $response->get_status() );
+		$body = $response->get_data();
+		$this->assertEqualsCanonicalizing( [ 'seo_alpha', 'seo_beta' ], $body['slugs'] );
+
+		$active = (array) get_option( 'zehoro_active_modules', [] );
+		$this->assertSame( [ 'test_module' ], $active, 'Only the seo group should have been disabled.' );
+	}
+
+	public function test_bulk_enable_group_does_not_duplicate_already_active() {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+		update_option( 'zehoro_active_modules', [ 'seo_alpha' ] );
+
+		$this->do_bulk( true, 'zz_test_group' );
+
+		$active = array_count_values( (array) get_option( 'zehoro_active_modules', [] ) );
+		$this->assertSame( 1, $active['seo_alpha'] );
+		$this->assertSame( 1, $active['seo_beta'] );
+	}
+
+	public function test_bulk_unknown_group_returns_404() {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+
+		$response = $this->do_bulk( true, 'no_such_group' );
+
+		$this->assertSame( 404, $response->get_status() );
+		$this->assertSame( 'no_modules_in_group', $response->get_data()['code'] );
+	}
+
+	public function test_bulk_denies_non_admin() {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'editor' ] ) );
+
+		$response = $this->do_bulk( true );
+
+		$this->assertGreaterThanOrEqual( 401, $response->get_status() );
+		$this->assertLessThan( 500, $response->get_status() );
+		$this->assertSame( [], (array) get_option( 'zehoro_active_modules', [] ) );
+	}
+
 	// ── helpers ─────────────────────────────────────────────────────────────
+
+	private function do_bulk( bool $enable, string $group = '' ): \WP_REST_Response {
+		$request = new \WP_REST_Request( 'POST', '/zehoro/v1/modules/bulk' );
+		$request->set_body_params( [ 'enable' => $enable, 'group' => $group ] );
+
+		return rest_ensure_response( rest_get_server()->dispatch( $request ) );
+	}
+
 
 	private function do_toggle( string $slug ): \WP_REST_Response {
 		$request = new \WP_REST_Request( 'POST', '/zehoro/v1/modules/' . $slug . '/toggle' );

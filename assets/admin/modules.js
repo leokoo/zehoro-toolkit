@@ -47,7 +47,86 @@
 
 		bindEvents();
 		bindToggleEvents();
+		bindBulkEvents();
 		applyFilter( /* skipAnimation = */ true );
+	}
+
+	/**
+	 * Bulk enable/disable. Scope follows the sidebar group selection:
+	 * "All" = every module, a category = that category. Confirm first —
+	 * one click flips up to the whole plugin.
+	 */
+	function bindBulkEvents() {
+		if ( ! data.rest || ! data.rest.root || ! data.rest.bulkRoute ) return;
+		var btns = document.querySelectorAll( '.zehoro-bulk-btn' );
+
+		btns.forEach( function ( btn ) {
+			btn.addEventListener( 'click', function () {
+				var enable = btn.dataset.bulk === 'enable';
+				var group  = state.group || 'all';
+
+				var scope = ( data.i18n && data.i18n.allModules ) || 'all modules';
+				if ( group !== 'all' ) {
+					var link  = document.querySelector( '.zehoro-module-nav__link[data-group="' + group + '"]' );
+					var label = link ? link.textContent.replace( /\(\d+\)\s*$/, '' ).trim() : group;
+					scope = ( ( data.i18n && data.i18n.groupModules ) || 'all modules in "{group}"' ).replace( '{group}', label );
+				}
+
+				var template = enable
+					? ( ( data.i18n && data.i18n.bulkEnableConfirm )  || 'Enable {scope}?' )
+					: ( ( data.i18n && data.i18n.bulkDisableConfirm ) || 'Disable {scope}?' );
+				if ( ! window.confirm( template.replace( '{scope}', scope ) ) ) return;
+
+				btns.forEach( function ( b ) { b.disabled = true; } );
+
+				fetch( data.rest.root + data.rest.bulkRoute, {
+					method: 'POST',
+					credentials: 'same-origin',
+					headers: {
+						'X-WP-Nonce':   data.rest.nonce,
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify( { enable: enable, group: group === 'all' ? '' : group } ),
+				} )
+				.then( function ( r ) { return r.json().then( function ( j ) { return { ok: r.ok, json: j }; } ); } )
+				.then( function ( res ) {
+					btns.forEach( function ( b ) { b.disabled = false; } );
+					if ( ! res.ok || ! res.json || ! res.json.success ) {
+						alert( ( data.i18n && data.i18n.toggleFailed ) || 'Bulk update failed.' );
+						return;
+					}
+					( res.json.slugs || [] ).forEach( function ( slug ) {
+						var card = els.root.querySelector( '.lkst-module-card[data-module-slug="' + slug + '"]' );
+						if ( ! card ) return;
+						card.dataset.moduleActive = enable ? '1' : '0';
+						card.classList.toggle( 'active',   enable );
+						card.classList.toggle( 'inactive', ! enable );
+						var input = card.querySelector( '.lkst-switch input[type="checkbox"]' );
+						if ( input ) input.checked = enable;
+					} );
+					updatePillCounts();
+					applyFilter();
+				} )
+				.catch( function () {
+					btns.forEach( function ( b ) { b.disabled = false; } );
+					alert( ( data.i18n && data.i18n.toggleFailed ) || 'Bulk update failed.' );
+				} );
+			} );
+		} );
+	}
+
+	/** Recompute the Active / Inactive pill counts from current card state. */
+	function updatePillCounts() {
+		var cards  = els.root.querySelectorAll( '.lkst-module-card' );
+		var active = 0;
+		cards.forEach( function ( c ) { if ( c.dataset.moduleActive === '1' ) active++; } );
+
+		var set = function ( status, n ) {
+			var count = document.querySelector( '.zehoro-status-pill[data-status="' + status + '"] .zehoro-status-pill__count' );
+			if ( count ) count.textContent = '(' + n + ')';
+		};
+		set( 'active', active );
+		set( 'inactive', cards.length - active );
 	}
 
 	function bindToggleEvents() {
