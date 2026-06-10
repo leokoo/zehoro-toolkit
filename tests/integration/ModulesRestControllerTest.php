@@ -175,7 +175,7 @@ class ModulesRestControllerTest extends WP_UnitTestCase {
 		$response = $this->do_bulk( true, 'no_such_group' );
 
 		$this->assertSame( 404, $response->get_status() );
-		$this->assertSame( 'no_modules_in_group', $response->get_data()['code'] );
+		$this->assertSame( 'no_modules_matched', $response->get_data()['code'] );
 	}
 
 	public function test_bulk_denies_non_admin() {
@@ -188,11 +188,35 @@ class ModulesRestControllerTest extends WP_UnitTestCase {
 		$this->assertSame( [], (array) get_option( 'zehoro_active_modules', [] ) );
 	}
 
+	public function test_bulk_with_slug_list_enables_exactly_those_modules() {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+
+		$response = $this->do_bulk( true, '', [ 'seo_alpha', 'test_module', 'never_registered' ] );
+
+		$this->assertSame( 200, $response->get_status() );
+		// Unregistered slugs silently dropped — preset counts stay honest.
+		$this->assertEqualsCanonicalizing( [ 'seo_alpha', 'test_module' ], $response->get_data()['slugs'] );
+
+		$active = (array) get_option( 'zehoro_active_modules', [] );
+		$this->assertContains( 'seo_alpha', $active );
+		$this->assertContains( 'test_module', $active );
+		$this->assertNotContains( 'seo_beta', $active, 'Slug list must beat group/all resolution.' );
+	}
+
+	public function test_bulk_with_only_unknown_slugs_returns_404() {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+
+		$response = $this->do_bulk( true, '', [ 'ghost_one', 'ghost_two' ] );
+
+		$this->assertSame( 404, $response->get_status() );
+		$this->assertSame( 'no_modules_matched', $response->get_data()['code'] );
+	}
+
 	// ── helpers ─────────────────────────────────────────────────────────────
 
-	private function do_bulk( bool $enable, string $group = '' ): \WP_REST_Response {
+	private function do_bulk( bool $enable, string $group = '', array $slugs = [] ): \WP_REST_Response {
 		$request = new \WP_REST_Request( 'POST', '/zehoro/v1/modules/bulk' );
-		$request->set_body_params( [ 'enable' => $enable, 'group' => $group ] );
+		$request->set_body_params( [ 'enable' => $enable, 'group' => $group, 'slugs' => $slugs ] );
 
 		return rest_ensure_response( rest_get_server()->dispatch( $request ) );
 	}

@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *   - shortcodes are not expanded unnecessarily early
  *   - expensive form/gallery shortcodes don\'t fire outside their normal context
  *   - Gutenberg block HTML already contains headings as plain HTML tags
- * Usage: [lkst_toc]
+ * Usage: [zehoro_toc]
  *
  * @package Zehoro\Modules
  */
@@ -23,7 +23,7 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
     public static function register(): void {
         Plugin::register_module( 'table_of_contents', self::class, [
             'title'   => 'Table of Contents',
-            'desc'    => 'Wirecutter-style TOC. Auto-injects at the top of posts, or use [lkst_toc].',
+            'desc'    => 'Wirecutter-style TOC. Auto-injects at the top of posts, or use [zehoro_toc].',
             'default' => true,
             'settings_page' => 'zehoro-toc-settings'
         ] );
@@ -73,7 +73,7 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
 
     /**
      * Runs on the `wp` hook — before Bricks renders any elements.
-     * Pre-parses post headings so a [lkst_toc] shortcode in a sidebar
+     * Pre-parses post headings so a [zehoro_toc] shortcode in a sidebar
      * element can render immediately, before the_content processes.
      *
      * Uses raw post_content (no do_shortcode) because:
@@ -153,15 +153,19 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
 
         $items = ! empty( $lkst_toc_items ) ? $lkst_toc_items : $new_items;
 
+        // Canonical + legacy placeholder literals — existing posts carry
+        // [lkst_toc], new content uses [zehoro_toc]; both must work.
+        $placeholders = [ '[zehoro_toc]', '[lkst_toc]' ];
+
         if ( empty( $items ) || count( $items ) < 2 ) {
-            // Remove any [lkst_toc] placeholder — not enough headings to render.
-            return str_replace( '[lkst_toc]', '', $content );
+            // Remove any TOC placeholder — not enough headings to render.
+            return str_replace( $placeholders, '', $content );
         }
 
         $toc_html = $this->build_toc_html( $items );
 
-        if ( strpos( $content, '[lkst_toc]' ) !== false ) {
-            $content = str_replace( '[lkst_toc]', $toc_html, $content );
+        if ( strpos( $content, '[zehoro_toc]' ) !== false || strpos( $content, '[lkst_toc]' ) !== false ) {
+            $content = str_replace( $placeholders, $toc_html, $content );
         } elseif ( $settings['insertion'] === 'auto' ) {
             $content = $toc_html . $content;
         }
@@ -174,7 +178,7 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
      * (e.g., a Bricks shortcode widget in the sidebar) rather than inside post content.
      *
      * Returns the built TOC HTML when enough headings exist, or an empty string.
-     * Never returns the literal "[lkst_toc]" string — that would render as visible
+     * Never returns the literal "[zehoro_toc]" string — that would render as visible
      * text inside the shortcode element (Bug 4).
      */
     public function render_shortcode(): string {
@@ -226,7 +230,7 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
                             <label>
                                 <input type="radio" name="zehoro_toc_settings[insertion]" value="shortcode" <?php checked( $s['insertion'], 'shortcode' ); ?>>
                                 <strong><?php esc_html_e( 'Shortcode Only', 'zehoro-toolkit' ); ?></strong>
-                                <?php esc_html_e( '(Only renders where you place the [lkst_toc] shortcode)', 'zehoro-toolkit' ); ?>
+                                <?php esc_html_e( '(Only renders where you place the [zehoro_toc] shortcode)', 'zehoro-toolkit' ); ?>
                             </label>
                         </td>
                     </tr>

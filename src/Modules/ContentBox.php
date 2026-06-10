@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Content Box Module
  *
  * Manually place a styled CTA or built-in email-capture box anywhere in your
- * content using [lkst_box]. Two modes:
+ * content using [zehoro_box]. Two modes:
  *   - cta:   eyebrow / heading / desc + external form shortcode (FluentForms etc.)
  *   - email: eyebrow / heading / desc + built-in name+email form → webhook delivery
  *
@@ -26,7 +26,7 @@ class ContentBox implements ModuleInterface {
     public static function register(): void {
         Plugin::register_module( 'content_box', self::class, [
             'title'         => 'Content Box',
-            'desc'          => 'Place a styled CTA or email-capture box anywhere with [lkst_box]. Choose a newsletter form shortcode or a built-in file-download form with webhook delivery.',
+            'desc'          => 'Place a styled CTA or email-capture box anywhere with [zehoro_box]. Choose a newsletter form shortcode or a built-in file-download form with webhook delivery.',
             'default'       => true,
             'settings_page' => 'zehoro-content-box',
         ] );
@@ -106,7 +106,7 @@ class ContentBox implements ModuleInterface {
         <div class="wrap">
             <h1><?php esc_html_e( 'Content Box Settings', 'zehoro-toolkit' ); ?></h1>
             <p><?php esc_html_e( 'These are the site-wide defaults. Override any field directly in the shortcode: ', 'zehoro-toolkit' ); ?>
-               <code>[lkst_box type="email" heading="Download the Guide" file_url="https://..."]</code></p>
+               <code>[zehoro_box type="email" heading="Download the Guide" file_url="https://..."]</code></p>
 
             <form method="post" action="options.php">
                 <?php settings_fields( 'zehoro_content_box_group' ); ?>

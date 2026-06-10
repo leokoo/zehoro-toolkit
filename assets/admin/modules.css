@@ -350,3 +350,31 @@
 	color: #8a1f2b;
 	border-color: #c9909a;
 }
+
+/* Persona presets — collapsible recommended setups above the filter bar. */
+.zehoro-presets {
+	margin: 0 0 16px;
+	border: 1px solid #c3c4c7;
+	border-radius: 6px;
+	background: #fff;
+}
+.zehoro-presets > summary {
+	padding: 12px 16px;
+	cursor: pointer;
+	font-weight: 600;
+	color: #1d2327;
+}
+.zehoro-presets__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	gap: 12px;
+	padding: 4px 16px 12px;
+}
+.zehoro-presets__card {
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 14px 16px;
+	background: #fbfbfc;
+}
+.zehoro-presets__card h3 { margin: 0 0 6px; font-size: 14px; }
+.zehoro-presets__card p  { margin: 0 0 10px; color: #50575e; font-size: 12.5px; line-height: 1.5; }

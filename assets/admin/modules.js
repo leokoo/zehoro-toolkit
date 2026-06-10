@@ -48,7 +48,12 @@
 		bindEvents();
 		bindToggleEvents();
 		bindBulkEvents();
+		bindPresetEvents();
 		applyFilter( /* skipAnimation = */ true );
+
+		// Pills are server-rendered; recompute from live card state so they
+		// can never sit stale (and stay correct after every toggle below).
+		updatePillCounts();
 	}
 
 	/**
@@ -115,6 +120,62 @@
 		} );
 	}
 
+	/**
+	 * Persona presets — "enable this curated set". Only ever ENABLES;
+	 * the confirm copy says so explicitly.
+	 */
+	function bindPresetEvents() {
+		if ( ! data.rest || ! data.rest.root || ! data.rest.bulkRoute ) return;
+
+		document.querySelectorAll( '.zehoro-preset-btn' ).forEach( function ( btn ) {
+			btn.addEventListener( 'click', function () {
+				var slugs = [];
+				try { slugs = JSON.parse( btn.dataset.presetSlugs || '[]' ); } catch ( e ) { slugs = []; }
+				if ( ! slugs.length ) return;
+
+				var msg = ( ( data.i18n && data.i18n.presetConfirm ) || 'Enable the {count} modules in “{title}”? Nothing will be disabled.' )
+					.replace( '{count}', String( slugs.length ) )
+					.replace( '{title}', btn.dataset.presetTitle || '' );
+				if ( ! window.confirm( msg ) ) return;
+
+				btn.disabled = true;
+
+				fetch( data.rest.root + data.rest.bulkRoute, {
+					method: 'POST',
+					credentials: 'same-origin',
+					headers: {
+						'X-WP-Nonce':   data.rest.nonce,
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify( { enable: true, slugs: slugs } ),
+				} )
+				.then( function ( r ) { return r.json().then( function ( j ) { return { ok: r.ok, json: j }; } ); } )
+				.then( function ( res ) {
+					btn.disabled = false;
+					if ( ! res.ok || ! res.json || ! res.json.success ) {
+						alert( ( data.i18n && data.i18n.toggleFailed ) || 'Could not apply the preset.' );
+						return;
+					}
+					( res.json.slugs || [] ).forEach( function ( slug ) {
+						var card = els.root.querySelector( '.lkst-module-card[data-module-slug="' + slug + '"]' );
+						if ( ! card ) return;
+						card.dataset.moduleActive = '1';
+						card.classList.add( 'active' );
+						card.classList.remove( 'inactive' );
+						var input = card.querySelector( '.lkst-switch input[type="checkbox"]' );
+						if ( input ) input.checked = true;
+					} );
+					updatePillCounts();
+					applyFilter();
+				} )
+				.catch( function () {
+					btn.disabled = false;
+					alert( ( data.i18n && data.i18n.toggleFailed ) || 'Could not apply the preset.' );
+				} );
+			} );
+		} );
+	}
+
 	/** Recompute the Active / Inactive pill counts from current card state. */
 	function updatePillCounts() {
 		var cards  = els.root.querySelectorAll( '.lkst-module-card' );
@@ -159,11 +220,12 @@
 						alert( ( data.i18n && data.i18n.toggleFailed ) || 'Toggle failed.' );
 						return;
 					}
-					// Update card state for the filter logic.
+					// Update card state for the filter logic + live pill counts.
 					var enabled = !! res.json.enabled;
 					card.dataset.moduleActive = enabled ? '1' : '0';
 					card.classList.toggle( 'active',   enabled );
 					card.classList.toggle( 'inactive', ! enabled );
+					updatePillCounts();
 				} )
 				.catch( function () {
 					input.disabled = false;

@@ -122,6 +122,8 @@ class Dashboard {
 					'allModules'         => __( 'all modules', 'zehoro-toolkit' ),
 					/* translators: %s: category name */
 					'groupModules'       => __( 'all modules in “{group}”', 'zehoro-toolkit' ),
+					/* translators: {count}: module count, {title}: preset name */
+					'presetConfirm'      => __( 'Enable the {count} modules in “{title}”? Nothing will be disabled.', 'zehoro-toolkit' ),
 				],
 			] );
 		}
@@ -130,6 +132,97 @@ class Dashboard {
 			wp_enqueue_style( 'wp-color-picker' );
 			wp_enqueue_script( 'zehoro-admin-js', ZEHORO_URL . 'assets/admin.js', [ 'wp-color-picker', 'jquery' ], ZEHORO_VERSION, true );
 		}
+	}
+
+	/**
+	 * Persona presets — curated module sets for the site archetypes we
+	 * design for (see the persona test in zorasi-roadmaps loop-first
+	 * spec). Slugs that aren't registered on this install (e.g. Pro
+	 * modules without Pro active) are silently dropped, so counts shown
+	 * to the user are always real. Extend or replace via the
+	 * `zehoro_module_presets` filter.
+	 *
+	 * @return array<string, array{title: string, desc: string, slugs: string[]}>
+	 */
+	private function presets(): array {
+		$presets = [
+			'affiliate' => [
+				'title' => __( 'Affiliate marketer', 'zehoro-toolkit' ),
+				'desc'  => __( 'Product boxes, comparisons, verdicts and disclosure for monetised reviews — plus the GSC loop with affiliate-click conversion tracking, so you see which post earns.', 'zehoro-toolkit' ),
+				'slugs' => [
+					'product_box', 'product_roundup', 'product_verdict', 'comparison_table',
+					'versus_box', 'review_box', 'pros_cons', 'pros_cons_schema', 'coupon_box',
+					'inline_product', 'disclosure', 'table_of_contents', 'last_updated',
+					'article_schema', 'entity_map', 'freshness_log', 'content_stream',
+					'google_search_console', 'ctr_rescue', 'cannibalisation_check',
+					'refresh_trigger', 'orphan_check', 'edit_log',
+				],
+			],
+			'publisher' => [
+				'title' => __( 'Content publisher / blogger', 'zehoro-toolkit' ),
+				'desc'  => __( 'E-E-A-T signals (author box, freshness, FAQ, schema), editorial blocks, the rewrite workflow and the full GSC loop — which post to fix next, and proof the fix worked.', 'zehoro-toolkit' ),
+				'slugs' => [
+					'author_box', 'table_of_contents', 'tldr', 'faq', 'callout', 'stat_callout',
+					'steps', 'testimonial', 'last_updated', 'freshness_log', 'article_schema',
+					'entity_map', 'rewrite_context', 'ai_visibility', 'inline_subscribe',
+					'category_pills', 'google_search_console', 'ctr_rescue',
+					'cannibalisation_check', 'refresh_trigger', 'orphan_check', 'edit_log',
+				],
+			],
+			'local' => [
+				'title' => __( 'Local service business', 'zehoro-toolkit' ),
+				'desc'  => __( 'Content that converts to enquiries: sticky CTA, WhatsApp/form conversion tracking via the stream, trust blocks — and the GSC loop tuned to service pages.', 'zehoro-toolkit' ),
+				'slugs' => [
+					'google_search_console', 'ctr_rescue', 'cannibalisation_check',
+					'refresh_trigger', 'orphan_check', 'edit_log', 'entity_map',
+					'content_stream', 'sticky_bar', 'faq', 'testimonial', 'steps',
+					'article_schema', 'last_updated', 'freshness_log', 'rewrite_context',
+					'ai_visibility', 'table_of_contents',
+				],
+			],
+		];
+
+		$presets    = apply_filters( 'zehoro_module_presets', $presets );
+		$registered = array_keys( Plugin::get_registered_modules() );
+
+		foreach ( $presets as $key => $preset ) {
+			$slugs = array_values( array_intersect( (array) ( $preset['slugs'] ?? [] ), $registered ) );
+			if ( [] === $slugs ) {
+				unset( $presets[ $key ] );
+				continue;
+			}
+			$presets[ $key ]['slugs'] = $slugs;
+		}
+
+		return $presets;
+	}
+
+	/** Collapsible "Recommended setups" panel above the filter bar. */
+	private function render_presets(): void {
+		$presets = $this->presets();
+		if ( [] === $presets ) return;
+		?>
+		<details class="zehoro-presets">
+			<summary><?php esc_html_e( 'Recommended setups — enable a curated module set for your kind of site', 'zehoro-toolkit' ); ?></summary>
+			<div class="zehoro-presets__grid">
+				<?php foreach ( $presets as $preset ) : ?>
+					<div class="zehoro-presets__card">
+						<h3><?php echo esc_html( $preset['title'] ); ?></h3>
+						<p><?php echo esc_html( $preset['desc'] ); ?></p>
+						<button type="button" class="button button-primary zehoro-preset-btn"
+							data-preset-title="<?php echo esc_attr( $preset['title'] ); ?>"
+							data-preset-slugs="<?php echo esc_attr( (string) wp_json_encode( $preset['slugs'] ) ); ?>">
+							<?php
+							/* translators: %d: number of modules in the preset */
+							echo esc_html( sprintf( __( 'Enable these %d modules', 'zehoro-toolkit' ), count( $preset['slugs'] ) ) );
+							?>
+						</button>
+					</div>
+				<?php endforeach; ?>
+			</div>
+			<p class="description" style="margin:10px 2px 2px;"><?php esc_html_e( 'Presets only enable modules — nothing you already use gets turned off. You can fine-tune with the switches below afterwards.', 'zehoro-toolkit' ); ?></p>
+		</details>
+		<?php
 	}
 
 	/**
@@ -196,6 +289,7 @@ class Dashboard {
 		// Group taxonomy still needed for the left sidebar nav. Per-group
 		// counts are computed off the unfiltered set so the sidebar shows
 		// stable totals regardless of the active filter.
+		// (Persona presets render via render_presets() above the filter bar.)
 		$category_order = Plugin::GROUPS;
 		foreach ( $category_order as $k => $label ) {
 			$category_order[ $k ] = __( $label, 'zehoro-toolkit' );
@@ -231,6 +325,7 @@ class Dashboard {
 				</ul>
 			</aside>
 			<div class="zehoro-modules-main">
+			<?php $this->render_presets(); ?>
 			<div class="zehoro-module-filters">
 				<div class="zehoro-module-filters__search">
 					<span class="dashicons dashicons-search"></span>

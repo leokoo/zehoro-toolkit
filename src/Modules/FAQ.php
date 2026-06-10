@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * FAQ Module (Free Version)
  *
- * Provides a manually placed shortcode [lkst_faq] for styled accordions.
+ * Provides a manually placed shortcode [zehoro_faq] for styled accordions.
  * Automatically aggregates all FAQs on the page and outputs FAQPage JSON-LD schema.
  * Features a "Polite Pre-flight Check" to disable schema if an SEO plugin is detected.
  *
@@ -21,7 +21,7 @@ class FAQ implements ModuleInterface {
     public static function register(): void {
         Plugin::register_module( 'faq', self::class, [
             'title'         => 'FAQ Accordions',
-            'desc'          => 'Beautiful FAQ accordions that automatically generate FAQPage JSON-LD schema. Use [lkst_faq question="..."]Answer[/lkst_faq].',
+            'desc'          => 'Beautiful FAQ accordions that automatically generate FAQPage JSON-LD schema. Use [zehoro_faq question="..."]Answer[/zehoro_faq].',
             'default'       => true,
             'settings_page' => 'zehoro-faq'
         ] );
@@ -65,7 +65,7 @@ class FAQ implements ModuleInterface {
         <div class="wrap">
             <h1><?php esc_html_e( 'FAQ Accordion Settings', 'zehoro-toolkit' ); ?></h1>
             <p><?php esc_html_e( 'Use the shortcode to output styled FAQs in your content:', 'zehoro-toolkit' ); ?><br>
-            <code>[lkst_faq question="Your question?"]Your answer.[/lkst_faq]</code></p>
+            <code>[zehoro_faq question="Your question?"]Your answer.[/zehoro_faq]</code></p>
 
             <form method="post" action="options.php">
                 <?php settings_fields( 'zehoro_faq_group' ); ?>

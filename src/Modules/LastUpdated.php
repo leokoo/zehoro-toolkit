@@ -9,7 +9,7 @@ class LastUpdated implements ModuleInterface {
     public static function register(): void {
         Plugin::register_module( 'last_updated', self::class, [
             'title' => 'Last Updated Badge',
-            'desc'  => 'Outputs a freshness signal. Use [lkst_last_updated] or enable auto-inject via settings.',
+            'desc'  => 'Outputs a freshness signal. Use [zehoro_last_updated] or enable auto-inject via settings.',
             'default' => true,
             'settings_page' => 'zehoro-last-updated'
         ] );
@@ -81,7 +81,7 @@ class LastUpdated implements ModuleInterface {
      *
      * Sites that want the legacy "editorial pill" look (small uppercase pill,
      * cream background, dark text) opt in via the `variant` attribute:
-     *   [lkst_last_updated variant="pill"]
+     *   [zehoro_last_updated variant="pill"]
      *
      * Attributes:
      *   variant  default | pill   — `pill` adds the .lkst-last-updated--pill
@@ -126,7 +126,7 @@ class LastUpdated implements ModuleInterface {
         if ( is_single() && in_the_loop() && is_main_query() && \Zehoro\Utils\Option::get( 'zehoro_lu_auto_inject', '0' ) ) {
             // Auto-inject uses the default unstyled variant. Site owners who want
             // the pill look should disable auto-inject and place the shortcode
-            // with [lkst_last_updated variant="pill"] manually.
+            // with [zehoro_last_updated variant="pill"] manually.
             $badge = $this->render_shortcode();
             if ( $badge ) {
                 return $badge . $content;

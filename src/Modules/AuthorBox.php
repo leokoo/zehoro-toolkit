@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Resolves author_id safely whether inside or outside the WP loop —
  * Bricks/Etch text elements render shortcodes outside the_loop, so
  * get_the_author_meta(\'ID\') returns 0; we fall back to get_queried_object_id().
- * Usage: [lkst_author_box author_id=""] or [lkst_author_socials author_id=""]
+ * Usage: [zehoro_author_box author_id=""] or [zehoro_author_socials author_id=""]
  *
  * @package Zehoro\Modules
  */
@@ -22,7 +22,7 @@ class AuthorBox implements \Zehoro\Core\ModuleInterface {
     public static function register(): void {
         Plugin::register_module( 'author_box', self::class, [
             'title'   => 'Author Box',
-            'desc'    => 'Display a full author card with biography, social icons, and call-to-action buttons. Use [lkst_author_box].',
+            'desc'    => 'Display a full author card with biography, social icons, and call-to-action buttons. Use [zehoro_author_box].',
             'default' => true,
             'settings_page' => 'zehoro-author-box'
         ] );

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Each pill is a real <a> tag — click navigates to the archive (clean SEO
  * URL, shareable, no JS, no AJAX). Active state derived from current URL.
  *
- * Site-specific pill items configured via the `lkst/home_filter_pills/items`
+ * Site-specific pill items configured via the `zehoro/home_filter_pills/items`
  * filter. Each item array:
  *   [
  *     'label' => string,           // visible pill text
@@ -26,8 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *   - ['type' => 'cpt', 'post_type' => 'reviews']
  *
  * Usage:
- *   [lkst_home_filter_pills]                  — default dark scheme
- *   [lkst_home_filter_pills scheme="light"]   — light-bg scheme
+ *   [zehoro_home_filter_pills]                  — default dark scheme
+ *   [zehoro_home_filter_pills scheme="light"]   — light-bg scheme
  *
  * @package Zehoro\Modules
  */
@@ -36,7 +36,7 @@ class HomeFilterPills implements \Zehoro\Core\ModuleInterface {
 	public static function register(): void {
 		Plugin::register_module( 'home_filter_pills', self::class, [
 			'title'   => 'Home Filter Pills',
-			'desc'    => 'Cross-CPT topic navigation pills. Pills configured via lkst/home_filter_pills/items filter. Use [lkst_home_filter_pills scheme="light|dark"].',
+			'desc'    => 'Cross-CPT topic navigation pills. Pills configured via zehoro/home_filter_pills/items filter. Use [zehoro_home_filter_pills scheme="light|dark"].',
 			'default' => true,
 		] );
 	}

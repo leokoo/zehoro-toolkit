@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * Renders a horizontal list of dynamic category/taxonomy pills.
  * Results are cached in transients (12 h) and invalidated on term changes.
- * Usage: [lkst_top_category_pills limit="8"]
+ * Usage: [zehoro_top_category_pills limit="8"]
  *
  * @package Zehoro\Modules
  */
@@ -20,7 +20,7 @@ class CategoryPills implements \Zehoro\Core\ModuleInterface {
     public static function register(): void {
         Plugin::register_module( 'category_pills', self::class, [
             'title'   => 'Category Pills',
-            'desc'    => 'Dynamic post category or tag pills for archives. Use [lkst_top_category_pills].',
+            'desc'    => 'Dynamic post category or tag pills for archives. Use [zehoro_top_category_pills].',
             'default' => true
         ] );
     }

@@ -46,10 +46,11 @@ class ModulesController {
 			],
 		] );
 
-		// Bulk enable/disable — every module, or every module in one group.
-		//   POST /wp-json/zehoro/v1/modules/bulk { enable: bool, group?: string }
+		// Bulk enable/disable — an explicit slug list (persona presets), or
+		// every module in one group, or every module.
+		//   POST /wp-json/zehoro/v1/modules/bulk { enable: bool, slugs?: string[], group?: string }
 		//     → 200 { success: true, enabled: bool, slugs: string[], active_count: int }
-		//     → 404 { code: 'no_modules_in_group' } when the group matches nothing
+		//     → 404 { code: 'no_modules_matched' } when nothing matches
 		register_rest_route( self::NAMESPACE, self::ROUTE_BULK, [
 			'methods'             => 'POST',
 			'callback'            => [ $this, 'bulk' ],
@@ -58,6 +59,12 @@ class ModulesController {
 				'enable' => [
 					'required' => true,
 					'type'     => 'boolean',
+				],
+				'slugs'  => [
+					'required' => false,
+					'type'     => 'array',
+					'default'  => [],
+					'items'    => [ 'type' => 'string' ],
 				],
 				'group'  => [
 					'required'          => false,
@@ -105,25 +112,32 @@ class ModulesController {
 	}
 
 	/**
-	 * Bulk enable/disable. Empty group = every registered module; otherwise
-	 * every module whose registry `group` matches. One option write either
-	 * way — the per-module init cost only exists on the next page load.
+	 * Bulk enable/disable. Resolution: explicit slug list (filtered to
+	 * registered modules — used by persona presets) > group > everything.
+	 * One option write either way — the per-module init cost only exists
+	 * on the next page load.
 	 */
 	public function bulk( WP_REST_Request $request ): WP_REST_Response {
-		$enable = (bool) $request->get_param( 'enable' );
-		$group  = (string) $request->get_param( 'group' );
+		$enable     = (bool) $request->get_param( 'enable' );
+		$group      = (string) $request->get_param( 'group' );
+		$slugs      = array_map( 'sanitize_key', (array) $request->get_param( 'slugs' ) );
+		$registered = Plugin::get_registered_modules();
 
 		$targets = [];
-		foreach ( Plugin::get_registered_modules() as $slug => $meta ) {
-			if ( '' === $group || ( $meta['group'] ?? 'other' ) === $group ) {
-				$targets[] = $slug;
+		if ( [] !== $slugs ) {
+			$targets = array_values( array_intersect( $slugs, array_keys( $registered ) ) );
+		} else {
+			foreach ( $registered as $slug => $meta ) {
+				if ( '' === $group || ( $meta['group'] ?? 'other' ) === $group ) {
+					$targets[] = $slug;
+				}
 			}
 		}
 
 		if ( [] === $targets ) {
 			return new WP_REST_Response( [
-				'code'    => 'no_modules_in_group',
-				'message' => sprintf( 'No modules registered in group "%s".', $group ),
+				'code'    => 'no_modules_matched',
+				'message' => 'No registered modules matched the request.',
 			], 404 );
 		}
 
