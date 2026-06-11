@@ -244,7 +244,7 @@ class ContentBox implements ModuleInterface {
     // ── CTA box (external form shortcode) ─────────────────────────────────────
 
     /**
-     * Renders using the shared .lkst-midpost-cta CSS classes so it inherits
+     * Renders using the shared .zehoro-midpost-cta CSS classes so it inherits
      * all Pro ContentStream styling automatically in Phase 2.
      */
     public function render_cta_box( array $atts, string $extra_class = '' ): string {
@@ -266,23 +266,23 @@ class ContentBox implements ModuleInterface {
         $html = '<div class="' . implode( ' ', $classes ) . '">';
 
         if ( strpos( $layout, 'image-' ) !== false && ! empty( $img_url ) ) {
-            $html .= '<div class="lkst-cta-image-wrapper"><img src="' . esc_url( $img_url ) . '" class="lkst-cta-image" alt=""></div>';
+            $html .= '<div class="zehoro-cta-image-wrapper"><img src="' . esc_url( $img_url ) . '" class="zehoro-cta-image" alt=""></div>';
         }
 
-        $html .= '<div class="lkst-midpost-cta__text">';
+        $html .= '<div class="zehoro-midpost-cta__text">';
         if ( ! empty( $atts['eyebrow'] ) ) {
-            $html .= '<small class="lkst-midpost-cta__eyebrow">' . esc_html( $atts['eyebrow'] ) . '</small>';
+            $html .= '<small class="zehoro-midpost-cta__eyebrow">' . esc_html( $atts['eyebrow'] ) . '</small>';
         }
         if ( ! empty( $atts['heading'] ) ) {
-            $html .= '<strong class="lkst-midpost-cta__heading">' . esc_html( $atts['heading'] ) . '</strong>';
+            $html .= '<strong class="zehoro-midpost-cta__heading">' . esc_html( $atts['heading'] ) . '</strong>';
         }
         if ( ! empty( $atts['desc'] ) ) {
-            $html .= '<span class="lkst-midpost-cta__desc">' . wp_kses_post( $atts['desc'] ) . '</span>';
+            $html .= '<span class="zehoro-midpost-cta__desc">' . wp_kses_post( $atts['desc'] ) . '</span>';
         }
         $html .= '</div>';
 
         if ( ! empty( $atts['form'] ) ) {
-            $html .= '<div class="lkst-midpost-cta__form">' . do_shortcode( $atts['form'] ) . '</div>';
+            $html .= '<div class="zehoro-midpost-cta__form">' . do_shortcode( $atts['form'] ) . '</div>';
         }
 
         $html .= '</div>';
@@ -311,20 +311,20 @@ class ContentBox implements ModuleInterface {
         ?>
         <div class="<?php echo implode( ' ', $classes ); ?>" style="background-color:<?php echo $bg_light; ?>; border-left:4px solid <?php echo $primary; ?>; border-radius:4px; padding:1.5em 2em; margin:2em 0; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
             <?php if ( strpos( $layout, 'image-' ) !== false && ! empty( $img_url ) ) : ?>
-                <div class="lkst-cta-image-wrapper"><img src="<?php echo esc_url( $img_url ); ?>" class="lkst-cta-image" alt=""></div>
+                <div class="zehoro-cta-image-wrapper"><img src="<?php echo esc_url( $img_url ); ?>" class="zehoro-cta-image" alt=""></div>
             <?php endif; ?>
 
-            <div class="lkst-midpost-cta__text" style="margin-bottom:1em;">
+            <div class="zehoro-midpost-cta__text" style="margin-bottom:1em;">
                 <?php if ( ! empty( $atts['eyebrow'] ) ) : ?>
-                    <small class="lkst-midpost-cta__eyebrow" style="color:<?php echo $primary; ?>;"><?php echo esc_html( $atts['eyebrow'] ); ?></small>
+                    <small class="zehoro-midpost-cta__eyebrow" style="color:<?php echo $primary; ?>;"><?php echo esc_html( $atts['eyebrow'] ); ?></small>
                 <?php endif; ?>
                 <?php if ( ! empty( $atts['heading'] ) ) : ?>
-                    <strong class="lkst-midpost-cta__heading" style="display:block; color:<?php echo $contrast; ?>; font-size:1.1em; margin:4px 0;">
+                    <strong class="zehoro-midpost-cta__heading" style="display:block; color:<?php echo $contrast; ?>; font-size:1.1em; margin:4px 0;">
                         <span style="margin-right:6px;">📄</span><?php echo esc_html( $atts['heading'] ); ?>
                     </strong>
                 <?php endif; ?>
                 <?php if ( ! empty( $atts['desc'] ) ) : ?>
-                    <span class="lkst-midpost-cta__desc"><?php echo wp_kses_post( $atts['desc'] ); ?></span>
+                    <span class="zehoro-midpost-cta__desc"><?php echo wp_kses_post( $atts['desc'] ); ?></span>
                 <?php endif; ?>
             </div>
 
@@ -365,7 +365,7 @@ class ContentBox implements ModuleInterface {
                 e.preventDefault();
 
                 var form = e.target;
-                var box  = form.closest('.lkst-midpost-cta');
+                var box  = form.closest('.zehoro-midpost-cta');
                 var msg  = box ? box.querySelector('.lkst-box-message') : form.nextElementSibling;
                 var btn  = form.querySelector('button[type="submit"]');
                 var originalText = btn.textContent;

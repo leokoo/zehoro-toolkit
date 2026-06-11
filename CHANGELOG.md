@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.19.1] - 2026-06-12
+
+### Fixed
+- **Mid-post CTA card rendered with an invisible heading** (cream text on white). The CTA wrapper had already been renamed to `zehoro-midpost-cta` but its child elements and *all* the CSS still used `lkst-midpost-cta*`, so the dark card background (which the cream heading depends on) never applied. Completed the rename — `lkst-midpost-cta*`, `lkst-cta-image*`, and the `lkst-sidebar-cta` modifier → `zehoro-*` — across `ContentBox.php` render and `style.css` in lockstep. (Surfaced by the v1.19.0 stylesheet-gate fix, which finally loaded the CSS that exposed the half-rename.)
+
 ## [1.19.0] - 2026-06-12
 
 ### Fixed
