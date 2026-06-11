@@ -274,6 +274,8 @@ class Dashboard {
 				'docs'          => $data['docs'] ?? '',
 				'keywords'      => $data['keywords'] ?? [],
 				'order'         => (int) ( $data['order'] ?? 100 ),
+				'type'          => $data['type'] ?? 'module',
+				'needs'         => (array) ( $data['needs'] ?? [] ),
 			];
 			if ( $is_active ) $active_count++;
 			if ( $tier === 'pro' ) $pro_count++;
@@ -381,6 +383,7 @@ class Dashboard {
 					// Keywords give modules a per-author "make this findable" surface.
 					$haystack  = strtolower(
 						$slug . ' ' . $data['title'] . ' ' . $data['desc'] . ' ' . implode( ' ', $data['keywords'] )
+						. ' ' . $data['type'] . ' ' . implode( ' ', $data['needs'] )
 					);
 				?>
 					<div
@@ -397,6 +400,14 @@ class Dashboard {
 								<?php if ( $tier === 'pro' ) : ?>
 									<span class="lkst-tier-badge lkst-tier-badge--pro">PRO</span>
 								<?php endif; ?>
+								<?php if ( in_array( $data['type'], [ 'block', 'tool' ], true ) ) : ?>
+									<span class="lkst-type-badge lkst-type-badge--<?php echo esc_attr( $data['type'] ); ?>"><?php echo esc_html( 'block' === $data['type'] ? __( 'Block', 'zehoro-toolkit' ) : __( 'Tool', 'zehoro-toolkit' ) ); ?></span>
+								<?php endif; ?>
+								<?php foreach ( $data['needs'] as $need ) :
+									$nlabel = [ 'ai' => __( 'AI', 'zehoro-toolkit' ), 'gsc' => __( 'GSC', 'zehoro-toolkit' ) ][ $need ] ?? '';
+									if ( '' === $nlabel ) continue; ?>
+									<span class="lkst-need-badge lkst-need-badge--<?php echo esc_attr( $need ); ?>"><?php echo esc_html( $nlabel ); ?></span>
+								<?php endforeach; ?>
 							</h3>
 							<label class="lkst-switch">
 								<input type="checkbox" name="modules[<?php echo esc_attr( $slug ); ?>]" value="1" <?php checked( $is_active ); ?>>

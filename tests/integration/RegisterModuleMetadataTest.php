@@ -171,6 +171,43 @@ class RegisterModuleMetadataTest extends WP_UnitTestCase {
 		$this->assertSame( $expected, array_keys( Plugin::GROUPS ) );
 	}
 
+	// ── Auto-detected type (block / tool / module) ──────────────────────────
+
+	public function test_type_auto_detects_block_tool_and_module() {
+		Plugin::register_module( 'coupon_box',     '\\Zehoro\\Pro\\Modules\\CouponBox',     [ 'title' => 'Coupon', 'desc' => '...', 'default' => true ] );
+		Plugin::register_module( 'topical_gap',    '\\Zehoro\\Pro\\Modules\\TopicalGap',    [ 'title' => 'Gap',    'desc' => '...', 'default' => true ] );
+		Plugin::register_module( 'content_stream', '\\Zehoro\\Pro\\Modules\\ContentStream', [ 'title' => 'Stream', 'desc' => '...', 'default' => true ] );
+
+		$r = Plugin::get_registered_modules();
+		$this->assertSame( 'block',  $r['coupon_box']['type'] );
+		$this->assertSame( 'tool',   $r['topical_gap']['type'] );
+		$this->assertSame( 'module', $r['content_stream']['type'] );
+	}
+
+	public function test_explicit_type_overrides_auto_detection() {
+		Plugin::register_module( 'coupon_box', '\\Zehoro\\Pro\\Modules\\CouponBox', [ 'title' => 'Coupon', 'desc' => '...', 'default' => true, 'type' => 'tool' ] );
+		$this->assertSame( 'tool', Plugin::get_registered_modules()['coupon_box']['type'] );
+	}
+
+	// ── Auto-detected capability needs (ai / gsc) ───────────────────────────
+
+	public function test_needs_auto_detects_ai_and_gsc() {
+		Plugin::register_module( 'rewrite_context', '\\Zehoro\\Pro\\Modules\\RewriteContext', [ 'title' => 'Rewrite', 'desc' => '...', 'default' => true ] );
+		Plugin::register_module( 'ctr_rescue',      '\\Zehoro\\Pro\\Modules\\CTRRescue',      [ 'title' => 'CTR',     'desc' => '...', 'default' => true ] );
+		Plugin::register_module( 'topical_gap',     '\\Zehoro\\Pro\\Modules\\TopicalGap',     [ 'title' => 'Gap',     'desc' => '...', 'default' => true ] );
+
+		$r = Plugin::get_registered_modules();
+		$this->assertContains( 'ai',  $r['rewrite_context']['needs'] );
+		$this->assertContains( 'gsc', $r['ctr_rescue']['needs'] );
+		// Topical Gap is deterministic crawl + token-diff — NOT an AI module.
+		$this->assertSame( [], $r['topical_gap']['needs'] );
+	}
+
+	public function test_needs_defaults_to_empty_array() {
+		Plugin::register_module( 'foo', '\\Zehoro\\Modules\\Foo', [ 'title' => 'Foo', 'desc' => '...', 'default' => true ] );
+		$this->assertSame( [], Plugin::get_registered_modules()['foo']['needs'] );
+	}
+
 	// ── helpers ─────────────────────────────────────────────────────────────
 
 	private function read_registry(): array {

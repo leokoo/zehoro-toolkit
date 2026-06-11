@@ -63,6 +63,12 @@ class Plugin {
 		if ( ! isset( $enriched['keywords'] ) || ! is_array( $enriched['keywords'] ) ) {
 			$enriched['keywords'] = [];
 		}
+		if ( ! isset( $enriched['type'] ) ) {
+			$enriched['type'] = self::detect_type( $slug );
+		}
+		if ( ! isset( $enriched['needs'] ) || ! is_array( $enriched['needs'] ) ) {
+			$enriched['needs'] = self::detect_needs( $slug );
+		}
 
 		self::$registry[ $slug ] = $enriched;
 	}
@@ -166,6 +172,45 @@ class Plugin {
 			'styles'            => 'admin',
 		];
 		return $map[ $slug ] ?? 'other';
+	}
+
+	/**
+	 * Module "type" for the card's type pill:
+	 *   block  → a Gutenberg block the author inserts,
+	 *   tool   → an admin analysis / dashboard screen,
+	 *   module → an automatic behavior (the default; left unbadged to avoid noise).
+	 * Override by passing 'type' to register_module().
+	 */
+	private static function detect_type( string $slug ): string {
+		static $blocks = [
+			'callout', 'faq', 'pros_cons', 'stat_callout', 'steps', 'testimonial',
+			'tldr', 'inline_product', 'comparison_table', 'coupon_box', 'product_box',
+			'product_roundup', 'product_verdict', 'review_box', 'versus_box',
+		];
+		static $tools = [
+			'topical_gap', 'ctr_rescue', 'cannibalisation_check', 'refresh_trigger',
+			'orphan_check', 'google_search_console', 'ai_visibility', 'css_auditor',
+		];
+		if ( in_array( $slug, $blocks, true ) ) return 'block';
+		if ( in_array( $slug, $tools, true ) )  return 'tool';
+		return 'module';
+	}
+
+	/**
+	 * External capabilities a module needs, for the card's capability pills:
+	 *   ai  → calls a BYOK LLM (or the MCP/agent lane),
+	 *   gsc → needs Google Search Console connected.
+	 * Override by passing 'needs' to register_module().
+	 *
+	 * @return string[]
+	 */
+	private static function detect_needs( string $slug ): array {
+		static $ai  = [ 'rewrite_context', 'ai_visibility', 'entity_map' ];
+		static $gsc = [ 'ctr_rescue', 'cannibalisation_check', 'refresh_trigger', 'orphan_check', 'google_search_console' ];
+		$needs = [];
+		if ( in_array( $slug, $ai,  true ) ) $needs[] = 'ai';
+		if ( in_array( $slug, $gsc, true ) ) $needs[] = 'gsc';
+		return $needs;
 	}
 
 	public function init(): void {

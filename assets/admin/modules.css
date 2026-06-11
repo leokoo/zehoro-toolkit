@@ -286,6 +286,27 @@
 	background: #8a1f2b;
 }
 
+/* ── Type + capability badges (Block/Tool, AI/GSC) ─────────────────────── */
+
+.lkst-type-badge,
+.lkst-need-badge {
+	display: inline-block;
+	font-size: 9px;
+	font-weight: 700;
+	color: #fff;
+	padding: 1px 6px;
+	border-radius: 8px;
+	margin-left: 6px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	vertical-align: 1px;
+}
+
+.lkst-type-badge--block { background: #2a6df4; }
+.lkst-type-badge--tool  { background: #3a7d44; }
+.lkst-need-badge--ai    { background: #6d28d9; }
+.lkst-need-badge--gsc   { background: #b8541a; }
+
 /* ── Card footer atoms ─────────────────────────────────────────────────── */
 
 .lkst-module-footer__hint {

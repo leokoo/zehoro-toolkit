@@ -2,7 +2,10 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
-## [1.19.2] - 2026-06-12
+## [1.20.0] - 2026-06-12
+
+### Added
+- **Module cards now carry type + capability pills.** Each card shows a `Block` or `Tool` pill (plain behaviour modules stay unbadged to avoid badge-soup), an `AI` pill on modules that use a BYOK LLM (Rewrite with Context, AI Visibility, EntityMap), and a `GSC` pill on the Search-Console-fed modules (CTR Rescue, Cannibalisation, Refresh Trigger, Orphan Check). **Topical Gap deliberately carries no AI pill** — it's deterministic crawl + token-diff. The registry auto-derives `type`/`needs` from the slug (each overridable per module via `register_module()`), and the pills are part of the card search index. The existing `PRO` tier badge already covered tier, so the redundant "(Pro)" suffix was dropped from Pro module titles (Pro 1.47.1).
 
 ### Fixed
 - **The Table of Contents rendered but wouldn't open** — clicking the bar did nothing. `toc.js` (the click-to-expand handler) was only enqueued when the `[zehoro_toc]` *shortcode* was present, so every auto-injected TOC loaded styled but inert (same bug class as the v1.19.0 stylesheet gate, one layer down). The script now loads whenever a TOC will actually render, via a shared `toc_will_render()` check used by both the style gate and the script enqueue so they can't disagree. (Enqueue moved out of `Plugin::enqueue_assets` into `TableOfContents`.)
