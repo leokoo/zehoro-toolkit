@@ -2,6 +2,45 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.18.0] - 2026-06-10
+- Live module counts, recommended setups, shortcode copy fixes
+
+## [1.17.0] - 2026-06-10
+- Bulk module toggles
+
+## [1.16.0] - 2026-06-10
+- Sidebar rename Site Toolkit → Zehoro + back-to-Modules links
+
+## [1.15.1] - 2026-06-09
+- Flat alphabetical grid (fix v1.14.0 redundant category sections)
+
+## [1.15.0] - 2026-06-09
+- Conditional enqueue gating (49 KB saved per page)
+
+## [1.14.0] - 2026-06-09
+- Modules page sidebar group nav + URL state
+
+## [1.13.0] - 2026-06-09
+- Per-module submenus hidden from Site Toolkit sidebar
+
+## [1.12.0] - 2026-06-09
+- REST toggle endpoint (no Save button)
+
+## [1.11.0] - 2026-06-09
+- Modules JS + CSS extracted to assets/
+
+## [1.10.0] - 2026-06-09
+- Module metadata: tier, group, order, keywords, badges
+
+## [1.9.0] - 2026-06-09
+- Modules page: category grouping
+
+## [1.8.0] - 2026-06-09
+- Search + status filter on Modules page
+
+## [1.7.0] - 2026-06-08
+- Full lkst → zehoro rename
+
 ## [1.6.1] - 2026-06-06
 
 ### Changed — renamed Leokoo Site Toolkit → Zehoro Toolkit
