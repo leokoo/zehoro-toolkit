@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.19.2] - 2026-06-12
+
+### Fixed
+- **The Table of Contents rendered but wouldn't open** — clicking the bar did nothing. `toc.js` (the click-to-expand handler) was only enqueued when the `[zehoro_toc]` *shortcode* was present, so every auto-injected TOC loaded styled but inert (same bug class as the v1.19.0 stylesheet gate, one layer down). The script now loads whenever a TOC will actually render, via a shared `toc_will_render()` check used by both the style gate and the script enqueue so they can't disagree. (Enqueue moved out of `Plugin::enqueue_assets` into `TableOfContents`.)
+
 ## [1.19.1] - 2026-06-12
 
 ### Fixed

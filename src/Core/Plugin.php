@@ -273,14 +273,10 @@ class Plugin {
 			) );
 		}
 
-		// TOC is shortcode-only; only load the JS when the shortcode is
-		// actually in the post content.
-		if ( isset( $this->modules['table_of_contents'] ) && is_singular() ) {
-			$post = get_post();
-			if ( $post && ( has_shortcode( $post->post_content, 'zehoro_toc' ) || has_shortcode( $post->post_content, 'lkst_toc' ) ) ) {
-				wp_enqueue_script( 'zehoro-toc', ZEHORO_URL . 'assets/toc.js', [], ZEHORO_VERSION, true );
-			}
-		}
+		// toc.js enqueue now lives in TableOfContents::maybe_enqueue_toc_js(),
+		// gated on "a TOC will actually render" (auto-inject OR shortcode) —
+		// the shortcode-only check here missed every auto-injected TOC, which
+		// then rendered styled but couldn't open.
 	}
 
 	public static function activate(): void {

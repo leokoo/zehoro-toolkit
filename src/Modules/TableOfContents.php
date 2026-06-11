@@ -40,6 +40,10 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
         // STORED content) can't see it — force the stylesheet + CSS
         // variables to load when a TOC of ≥2 entries is actually coming.
         add_filter( 'zehoro/load_global_styles', [ $this, 'force_styles_when_toc_renders' ] );
+        // toc.js (the click-to-open handler) must load whenever a TOC will
+        // render — NOT only when the [zehoro_toc] shortcode is present, or the
+        // auto-injected TOC renders styled but inert (can't expand).
+        add_action( 'wp_enqueue_scripts', [ $this, 'maybe_enqueue_toc_js' ] );
         // Canonical zehoro_toc + legacy lkst_toc alias (existing posts).
         add_shortcode( 'zehoro_toc', [ $this, 'render_shortcode' ] );
         add_shortcode( 'lkst_toc',   [ $this, 'render_shortcode' ] );
@@ -62,10 +66,33 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
      * load CSS precisely then, preserving the optimisation everywhere else.
      */
     public function force_styles_when_toc_renders( $load ) {
-        if ( $load || ! is_singular() ) return $load;
+        if ( $load ) return $load;
+        return $this->toc_will_render() ? true : $load;
+    }
+
+    /**
+     * Enqueue toc.js exactly when the TOC will render — the auto-inject case
+     * the old shortcode-only gate missed, which left the styled TOC unable to
+     * open. Runs on `wp_enqueue_scripts`, after `preparse_toc_headings` (on
+     * `wp`) has populated the heading list.
+     */
+    public function maybe_enqueue_toc_js(): void {
+        if ( $this->toc_will_render() ) {
+            wp_enqueue_script( 'zehoro-toc', ZEHORO_URL . 'assets/toc.js', [], ZEHORO_VERSION, true );
+        }
+    }
+
+    /**
+     * Single source of truth for "is a ≥2-entry TOC actually rendering on this
+     * view?" — shared by the style gate and the script enqueue so they can
+     * never disagree. Relies on the `$lkst_toc_items` global populated by
+     * preparse_toc_headings() on the `wp` hook.
+     */
+    private function toc_will_render(): bool {
+        if ( ! is_singular() ) return false;
 
         global $lkst_toc_items;
-        if ( empty( $lkst_toc_items ) || count( $lkst_toc_items ) < 2 ) return $load;
+        if ( empty( $lkst_toc_items ) || count( $lkst_toc_items ) < 2 ) return false;
 
         // Shortcode mode only injects where the placeholder is present.
         $settings = \Zehoro\Utils\Option::get( 'zehoro_toc_settings', static::get_defaults() );
@@ -74,7 +101,7 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
             if ( ! $post
                 || ( strpos( $post->post_content, '[zehoro_toc]' ) === false
                   && strpos( $post->post_content, '[lkst_toc]' ) === false ) ) {
-                return $load;
+                return false;
             }
         }
 
