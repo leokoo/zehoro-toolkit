@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const tocWrappers = document.querySelectorAll('[data-lkst-toc]');
+    const tocWrappers = document.querySelectorAll('[data-zehoro-toc]');
     if (!tocWrappers.length) return;
 
     tocWrappers.forEach(wrapper => {
-        const toggle = wrapper.querySelector('.lkst-toc-toggle');
-        const activeText = wrapper.querySelector('.lkst-toc-active-text');
-        const links = wrapper.querySelectorAll('.lkst-toc-list a');
+        const toggle = wrapper.querySelector('.zehoro-toc-toggle');
+        const activeText = wrapper.querySelector('.zehoro-toc-active-text');
+        const links = wrapper.querySelectorAll('.zehoro-toc-list a');
         
-        const header = wrapper.querySelector('.lkst-toc-header');
+        const header = wrapper.querySelector('.zehoro-toc-header');
         if (header) {
             header.addEventListener('click', () => {
                 wrapper.classList.toggle('is-open');

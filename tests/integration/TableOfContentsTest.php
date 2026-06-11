@@ -123,7 +123,7 @@ class TableOfContentsTest extends WP_UnitTestCase {
         $content = "<h2>Only One</h2>\n<p>body</p>";
 
         $output = $this->toc->process_content( $content );
-        $this->assertStringNotContainsString( 'lkst-toc-wrapper', $output );
+        $this->assertStringNotContainsString( 'zehoro-toc-wrapper', $output );
     }
 
     public function test_two_or_more_headings_inject_toc_at_top_under_auto() {
@@ -133,14 +133,14 @@ class TableOfContentsTest extends WP_UnitTestCase {
         $output = $this->toc->process_content( $content );
 
         // TOC HTML present.
-        $this->assertStringContainsString( 'lkst-toc-wrapper', $output );
+        $this->assertStringContainsString( 'zehoro-toc-wrapper', $output );
         // Both heading anchors listed.
         $this->assertStringContainsString( 'href="#one"', $output );
         $this->assertStringContainsString( 'href="#two"', $output );
         // TOC appears BEFORE the first heading (auto = prepend).
         $this->assertLessThan(
             strpos( $output, '<h2' ),
-            strpos( $output, 'lkst-toc-wrapper' ),
+            strpos( $output, 'zehoro-toc-wrapper' ),
             'Auto insertion must prepend the TOC before the first heading'
         );
     }
@@ -177,8 +177,8 @@ class TableOfContentsTest extends WP_UnitTestCase {
 
         $output = $this->toc->process_content( $content );
 
-        $this->assertStringContainsString( 'lkst-toc-depth-2', $output );
-        $this->assertStringContainsString( 'lkst-toc-depth-3', $output );
+        $this->assertStringContainsString( 'zehoro-toc-depth-2', $output );
+        $this->assertStringContainsString( 'zehoro-toc-depth-3', $output );
     }
 
     // -------------------------------------------------------------------------
@@ -195,7 +195,7 @@ class TableOfContentsTest extends WP_UnitTestCase {
 
         $output = $this->toc->process_content( $content );
 
-        $this->assertStringContainsString( 'lkst-toc-wrapper', $output );
+        $this->assertStringContainsString( 'zehoro-toc-wrapper', $output );
         $this->assertStringNotContainsString( '[lkst_toc]', $output );
     }
 
@@ -210,7 +210,7 @@ class TableOfContentsTest extends WP_UnitTestCase {
 
         $output = $this->toc->process_content( $content );
 
-        $this->assertStringNotContainsString( 'lkst-toc-wrapper', $output );
+        $this->assertStringNotContainsString( 'zehoro-toc-wrapper', $output );
     }
 
     public function test_placeholder_stripped_when_under_two_headings() {
@@ -226,7 +226,7 @@ class TableOfContentsTest extends WP_UnitTestCase {
         $output = $this->toc->process_content( $content );
 
         $this->assertStringNotContainsString( '[lkst_toc]', $output );
-        $this->assertStringNotContainsString( 'lkst-toc-wrapper', $output );
+        $this->assertStringNotContainsString( 'zehoro-toc-wrapper', $output );
     }
 
     // -------------------------------------------------------------------------
@@ -243,7 +243,7 @@ class TableOfContentsTest extends WP_UnitTestCase {
 
         $output = $this->toc->process_content( $content );
 
-        $this->assertStringNotContainsString( 'lkst-toc-wrapper', $output );
+        $this->assertStringNotContainsString( 'zehoro-toc-wrapper', $output );
     }
 
     public function test_bricks_preview_short_circuits() {
@@ -256,7 +256,7 @@ class TableOfContentsTest extends WP_UnitTestCase {
 
         $output = $this->toc->process_content( $content );
 
-        $this->assertStringNotContainsString( 'lkst-toc-wrapper', $output );
+        $this->assertStringNotContainsString( 'zehoro-toc-wrapper', $output );
         $this->assertSame( $content, $output );
     }
 
@@ -347,7 +347,7 @@ class TableOfContentsTest extends WP_UnitTestCase {
 
         $output = $this->toc->render_shortcode();
 
-        $this->assertStringContainsString( 'lkst-toc-wrapper', $output );
+        $this->assertStringContainsString( 'zehoro-toc-wrapper', $output );
         $this->assertStringContainsString( 'href="#a"', $output );
         $this->assertStringContainsString( 'href="#b"', $output );
     }

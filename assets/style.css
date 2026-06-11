@@ -549,7 +549,7 @@
    Table of Contents (Wirecutter Style)
    ============================================================================= */
 
-.lkst-toc-wrapper {
+.zehoro-toc-wrapper {
     position: sticky;
     top: 0;
     z-index: 100;
@@ -564,7 +564,7 @@
 
 
 
-.lkst-toc-header {
+.zehoro-toc-header {
     padding: 12px 20px;
     display: flex;
     justify-content: space-between;
@@ -575,7 +575,7 @@
     margin: 0 auto;
 }
 
-.lkst-toc-title {
+.zehoro-toc-title {
     font-size: 12px;
     font-weight: 400;
     padding-right: 16px;
@@ -586,7 +586,7 @@
     overflow: hidden;
 }
 
-.lkst-toc-active-text-wrapper {
+.zehoro-toc-active-text-wrapper {
     flex: 1;
     overflow: hidden;
     position: relative;
@@ -595,14 +595,14 @@
     -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
 }
 
-.lkst-toc-active-text {
+.zehoro-toc-active-text {
     display: inline-block;
     white-space: nowrap;
     color: #3D3730;
     font-size:15px;
 }
 
-.lkst-toc-active-text.is-marquee {
+.zehoro-toc-active-text.is-marquee {
     display: inline-flex;
     animation: lkst-marquee-anim 10s linear infinite;
 }
@@ -616,22 +616,22 @@
     85%, 100% { transform: translateX(var(--scroll-dist)); }
 }
 
-.lkst-toc-title strong {
+.zehoro-toc-title strong {
     font-size: 12px !important;
     font-weight: 800;
     text-transform: uppercase;
 }
 
-.lkst-toc-sep {
+.zehoro-toc-sep {
     margin: 0 8px;
     color: rgba(15, 26, 46, 0.3);
 }
 
-.lkst-toc-active-text {
+.zehoro-toc-active-text {
     color: #3D3730;
 }
 
-.lkst-toc-toggle {
+.zehoro-toc-toggle {
     background: none;
     border: none;
     padding: 4px;
@@ -644,12 +644,12 @@
     flex-shrink: 0;
 }
 
-.lkst-toc-wrapper.is-open .lkst-toc-toggle {
+.zehoro-toc-wrapper.is-open .zehoro-toc-toggle {
     transform: rotate(180deg);
 }
 
 /* Dropdown body for ALL screen sizes */
-.lkst-toc-body {
+.zehoro-toc-body {
     display: none;
     position: absolute;
     top: 100%;
@@ -663,38 +663,38 @@
     border-bottom: 1px solid rgba(15, 26, 46, 0.1);
 }
 
-.lkst-toc-wrapper.is-open .lkst-toc-body {
+.zehoro-toc-wrapper.is-open .zehoro-toc-body {
     display: block;
 }
 
-.lkst-toc-list {
+.zehoro-toc-list {
     list-style: none;
     margin: 0 auto;
     padding: 20px;
     max-width: 1200px;
 }
 
-.lkst-toc-item {
+.zehoro-toc-item {
     margin-bottom: 12px;
 }
 
-.lkst-toc-item:last-child {
+.zehoro-toc-item:last-child {
     margin-bottom: 0;
 }
 
-.lkst-toc-depth-3 {
+.zehoro-toc-depth-3 {
     padding-left: 20px;
     font-size: 0.9em;
 }
 
-.lkst-toc-list a {
+.zehoro-toc-list a {
     color: #3D3730;
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
-.lkst-toc-list a:hover,
-.lkst-toc-list a.is-active {
+.zehoro-toc-list a:hover,
+.zehoro-toc-list a.is-active {
     color: #E8A020;
     font-weight: 600;
 }

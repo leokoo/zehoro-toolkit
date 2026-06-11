@@ -2,6 +2,14 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.19.0] - 2026-06-12
+
+### Fixed
+- **Table of Contents rendered unstyled** on posts where it auto-injects. The global stylesheet gate scans *stored* post content, so it never saw the runtime-injected TOC and skipped loading `style.css` + the CSS variables. The TOC now hooks the `zehoro/load_global_styles` filter and forces the stylesheet when a ≥2-entry TOC is actually coming.
+
+### Changed
+- **TOC markup renamed `lkst-toc-*` → `zehoro-toc-*`** (wrapper, header, title, list, items, depth classes, `data-zehoro-toc` attribute) across the rendered HTML, `style.css`, and `toc.js` in lockstep. The `[lkst_toc]` shortcode alias and `lkst_toc_settings` option fallback are unchanged, so existing posts keep working.
+
 ## [1.18.0] - 2026-06-10
 - Live module counts, recommended setups, shortcode copy fixes
 

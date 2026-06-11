@@ -36,6 +36,10 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
         }
         add_action( 'wp',          [ $this, 'preparse_toc_headings' ], 10 );
         add_filter( 'the_content', [ $this, 'process_content' ], 15 );
+        // The TOC auto-injects, so the global enqueue gate (which scans
+        // STORED content) can't see it — force the stylesheet + CSS
+        // variables to load when a TOC of ≥2 entries is actually coming.
+        add_filter( 'zehoro/load_global_styles', [ $this, 'force_styles_when_toc_renders' ] );
         // Canonical zehoro_toc + legacy lkst_toc alias (existing posts).
         add_shortcode( 'zehoro_toc', [ $this, 'render_shortcode' ] );
         add_shortcode( 'lkst_toc',   [ $this, 'render_shortcode' ] );
@@ -46,6 +50,35 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
             'post_types' => [ 'post', 'reviews', 'buying-guides' ],
             'insertion'  => 'auto',
         ];
+    }
+
+    /**
+     * `zehoro/load_global_styles` filter: force the shared stylesheet (and
+     * its CSS variables) to load when a TOC will actually render on this
+     * view — the auto-inject case the default gate can't detect.
+     *
+     * Runs after `preparse_toc_headings` (on `wp`) has populated
+     * `$lkst_toc_items`, so we know whether a ≥2-entry TOC is coming and
+     * load CSS precisely then, preserving the optimisation everywhere else.
+     */
+    public function force_styles_when_toc_renders( $load ) {
+        if ( $load || ! is_singular() ) return $load;
+
+        global $lkst_toc_items;
+        if ( empty( $lkst_toc_items ) || count( $lkst_toc_items ) < 2 ) return $load;
+
+        // Shortcode mode only injects where the placeholder is present.
+        $settings = \Zehoro\Utils\Option::get( 'zehoro_toc_settings', static::get_defaults() );
+        if ( ( $settings['insertion'] ?? 'auto' ) === 'shortcode' ) {
+            $post = get_post();
+            if ( ! $post
+                || ( strpos( $post->post_content, '[zehoro_toc]' ) === false
+                  && strpos( $post->post_content, '[lkst_toc]' ) === false ) ) {
+                return $load;
+            }
+        }
+
+        return true;
     }
 
     public function register_settings(): void {
@@ -191,17 +224,17 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
     }
 
     private function build_toc_html( array $items ): string {
-        $html  = '<div class="lkst-toc-wrapper" data-lkst-toc>';
-        $html .= '<div class="lkst-toc-header">';
-        $html .= '<div class="lkst-toc-title"><strong>BROWSE</strong> <span class="lkst-toc-sep">|</span> <div class="lkst-toc-active-text-wrapper"><span class="lkst-toc-active-text">Sections in this article</span></div></div>';
-        $html .= '<button class="lkst-toc-toggle" aria-expanded="false" aria-label="Toggle table of contents">';
+        $html  = '<div class="zehoro-toc-wrapper" data-zehoro-toc>';
+        $html .= '<div class="zehoro-toc-header">';
+        $html .= '<div class="zehoro-toc-title"><strong>BROWSE</strong> <span class="zehoro-toc-sep">|</span> <div class="zehoro-toc-active-text-wrapper"><span class="zehoro-toc-active-text">Sections in this article</span></div></div>';
+        $html .= '<button class="zehoro-toc-toggle" aria-expanded="false" aria-label="Toggle table of contents">';
         $html .= '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
         $html .= '</button>';
         $html .= '</div>';
-        $html .= '<div class="lkst-toc-body"><ul class="lkst-toc-list">';
+        $html .= '<div class="zehoro-toc-body"><ul class="zehoro-toc-list">';
         foreach ( $items as $item ) {
-            $depth_class = ( $item['level'] == '3' ) ? ' lkst-toc-depth-3' : ' lkst-toc-depth-2';
-            $html .= '<li class="lkst-toc-item' . $depth_class . '"><a href="#' . esc_attr( $item['id'] ) . '">' . esc_html( $item['text'] ) . '</a></li>';
+            $depth_class = ( $item['level'] == '3' ) ? ' zehoro-toc-depth-3' : ' zehoro-toc-depth-2';
+            $html .= '<li class="zehoro-toc-item' . $depth_class . '"><a href="#' . esc_attr( $item['id'] ) . '">' . esc_html( $item['text'] ) . '</a></li>';
         }
         $html .= '</ul></div>';
         $html .= '</div>';
