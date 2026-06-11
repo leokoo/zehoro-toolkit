@@ -262,6 +262,13 @@ class Dashboard {
 		$active_count = 0;
 		$pro_count    = 0;
 		foreach ( $registered as $slug => $data ) {
+			// Content Box is folded into Content Stream for Pro users — hide its
+			// card when Stream is active. Stream owns box composition; Content Box
+			// is its renderer, kept active as a dependency. Its settings stay
+			// reachable from the Content Stream page.
+			if ( 'content_box' === $slug && in_array( 'content_stream', $active, true ) ) {
+				continue;
+			}
 			$is_active = in_array( $slug, $active, true );
 			$tier      = $data['tier'] ?? 'free';
 			$modules[ $slug ] = [

@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.20.2] - 2026-06-12
+
+### Changed
+- **Content Box folds into Content Stream for Pro users (IA pass).** When Content Stream is active, the Content Box card is hidden from the Modules grid — Stream owns box composition and keeps Content Box active as its renderer (so the injected forms can't break). Content Box's settings stay reachable from the Content Stream page.
+
 ## [1.20.1] - 2026-06-12
 
 ### Changed
