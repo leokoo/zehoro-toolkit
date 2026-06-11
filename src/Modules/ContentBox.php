@@ -83,7 +83,7 @@ class ContentBox implements ModuleInterface {
 
     public function register_settings_page(): void {
         add_submenu_page(
-            'zehoro-dashboard',
+            null, // hidden from the sidebar — folded into Content Stream for Pro users (IA pass)
             __( 'Content Box Settings', 'zehoro-toolkit' ),
             __( 'Content Box', 'zehoro-toolkit' ),
             'manage_options',

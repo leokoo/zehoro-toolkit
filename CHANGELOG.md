@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.20.1] - 2026-06-12
+
+### Changed
+- **Sidebar curation (IA pass).** The Zehoro admin sidebar now surfaces only daily-driver surfaces; everything else stays in the Modules grid (reachable via each card's *Configure* link). **Content Box** and **Disclaimer** settings moved out of the sidebar (Content Box is being folded into Content Stream for Pro users). No settings were removed — only the menu placement changed.
+
 ## [1.20.0] - 2026-06-12
 
 ### Added

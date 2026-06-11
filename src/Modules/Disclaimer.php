@@ -44,7 +44,7 @@ class Disclaimer implements ModuleInterface {
     }
 
     public function register_settings_page(): void {
-        add_submenu_page( 'zehoro-dashboard', 'Disclaimer Settings', 'Disclaimer', 'manage_options', 'zehoro-disclaimer', [ $this, 'render_page' ] );
+        add_submenu_page( null, 'Disclaimer Settings', 'Disclaimer', 'manage_options', 'zehoro-disclaimer', [ $this, 'render_page' ] );
     }
 
     public function get_disclaimer_text(): string {
