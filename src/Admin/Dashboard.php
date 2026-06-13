@@ -50,24 +50,43 @@ class Dashboard {
 	}
 
 	public function register_menus(): void {
+		// A Pro (or any) add-on can claim the landing page by hooking
+		// `zehoro_landing` (e.g. Pro's "Start Here" home). When nothing claims
+		// it, the landing IS the Modules grid, exactly as before — so a Free-only
+		// install is unchanged. Pro registers its hook on plugins_loaded, before
+		// this admin_menu@9 runs, so this check is reliable.
+		$has_landing = has_action( 'zehoro_landing' );
+
 		add_menu_page(
 			__( 'Zehoro Toolkit', 'zehoro-toolkit' ),
 			__( 'Zehoro', 'zehoro-toolkit' ),
 			'manage_options',
 			'zehoro-dashboard',
-			[ $this, 'render_dashboard_page' ],
+			[ $this, 'render_landing' ],
 			'dashicons-admin-generic',
 			58 // mirrors where Pro's GSC used to sit so the icon stays in the same lane
 		);
 
 		add_submenu_page(
 			'zehoro-dashboard',
-			__( 'Modules', 'zehoro-toolkit' ),
-			__( 'Modules', 'zehoro-toolkit' ),
+			$has_landing ? __( 'Start Here', 'zehoro-toolkit' ) : __( 'Modules', 'zehoro-toolkit' ),
+			$has_landing ? __( 'Start Here', 'zehoro-toolkit' ) : __( 'Modules', 'zehoro-toolkit' ),
 			'manage_options',
 			'zehoro-dashboard',
-			[ $this, 'render_dashboard_page' ]
+			[ $this, 'render_landing' ]
 		);
+
+		// When the landing is claimed, the Modules grid keeps its own item.
+		if ( $has_landing ) {
+			add_submenu_page(
+				'zehoro-dashboard',
+				__( 'Modules', 'zehoro-toolkit' ),
+				__( 'Modules', 'zehoro-toolkit' ),
+				'manage_options',
+				'zehoro-modules',
+				[ $this, 'render_dashboard_page' ]
+			);
+		}
 
 		// Per-module settings pages: registered with parent_slug = null so they
 		// stay accessible at ?page=<slug> but don't clutter the sidebar.
@@ -96,8 +115,10 @@ class Dashboard {
 		if ( strpos( $hook, 'zehoro-' ) === false && strpos( $hook, 'lkst-' ) === false ) return;
 		wp_enqueue_style( 'zehoro-admin-css', ZEHORO_URL . 'assets/admin.css', [], ZEHORO_VERSION );
 
-		// Modules-page-only assets (filter UX + per-card REST toggle).
-		if ( strpos( $hook, 'lkst-dashboard' ) !== false || strpos( $hook, 'zehoro-dashboard' ) !== false ) {
+		// Modules-page-only assets (filter UX + per-card REST toggle). The grid
+		// renders on the landing (zehoro-dashboard) when unclaimed, and on its
+		// own zehoro-modules page when Pro claims the landing.
+		if ( strpos( $hook, 'lkst-dashboard' ) !== false || strpos( $hook, 'zehoro-dashboard' ) !== false || strpos( $hook, 'zehoro-modules' ) !== false ) {
 			wp_enqueue_style( 'zehoro-modules-admin', ZEHORO_URL . 'assets/admin/modules.css', [ 'dashicons' ], ZEHORO_VERSION );
 			wp_enqueue_script( 'zehoro-modules-admin', ZEHORO_URL . 'assets/admin/modules.js', [], ZEHORO_VERSION, true );
 			wp_localize_script( 'zehoro-modules-admin', 'zehoroModulesAdmin', [
@@ -235,6 +256,20 @@ class Dashboard {
 	 */
 	public static function infer_category( string $slug ): string {
 		return Plugin::get_registered_modules()[ $slug ]['group'] ?? 'other';
+	}
+
+	/**
+	 * The Zehoro landing page. An add-on (Pro's "Start Here" home) can claim it
+	 * by hooking `zehoro_landing`; otherwise it's the Modules grid — so a
+	 * Free-only install is unchanged.
+	 */
+	public function render_landing(): void {
+		if ( ! current_user_can( 'manage_options' ) ) return;
+		if ( has_action( 'zehoro_landing' ) ) {
+			do_action( 'zehoro_landing' );
+			return;
+		}
+		$this->render_dashboard_page();
 	}
 
 	public function render_dashboard_page(): void {

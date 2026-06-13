@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.21.0] - 2026-06-14
+
+### Added
+- **`zehoro_landing` extension point** — the top-level Zehoro menu page now delegates to whoever hooks `zehoro_landing` (Pro's "Start Here" home claims it), falling back to the **Modules grid** when nothing does. So a Free-only install is unchanged; with Pro active, the landing becomes the Start-Here dashboard and the Modules grid moves to its own **Modules** submenu (its filter/REST assets follow it). `Dashboard::render_landing()` + a conditional menu in `register_menus()`.
+
 ## [1.20.2] - 2026-06-12
 
 ### Changed
