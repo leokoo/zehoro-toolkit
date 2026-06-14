@@ -3,9 +3,11 @@
  * Plugin Name:  Zehoro Toolkit
  * Plugin URI:   https://leokoo.com
  * Description:  Editorial toolkit for WordPress — Article schema (E-E-A-T), Table of Contents, FAQ, author boxes, and content blocks. The free base for Zehoro Toolkit Pro.
- * Version:      1.22.0
+ * Version:      1.22.1
  * Author:       Leo Koo
  * Author URI:   https://leokoo.com
+ * License:      GPLv2 or later
+ * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:  zehoro-toolkit
  * Domain Path:  /languages
  * Requires PHP: 7.4
@@ -19,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // zehoro-toolkit/). The second copy returns immediately.
 if ( defined( 'ZEHORO_VERSION' ) ) return;
 
-define( 'ZEHORO_VERSION', '1.22.0' );
+define( 'ZEHORO_VERSION', '1.22.1' );
 define( 'ZEHORO_DIR',     plugin_dir_path( __FILE__ ) );
 define( 'ZEHORO_URL',     plugin_dir_url( __FILE__ ) );
 
@@ -35,29 +37,37 @@ spl_autoload_register( function( $class ) {
 } );
 
 // --- Auto-updater (GitHub) ---
-require_once __DIR__ . '/vendor/yahnis-elsts/plugin-update-checker/plugin-update-checker.php';
+// Guarded by file_exists(): the wordpress.org build ships WITHOUT vendor/
+// (excluded via .distignore), so this whole block is skipped there and
+// wordpress.org serves updates instead. GitHub / self-hosted installs keep
+// auto-updates because vendor/ is present. wp.org forbids a self-hosted
+// updater in the distributed package — excluding vendor/ satisfies that
+// without forking the source.
+if ( file_exists( __DIR__ . '/vendor/yahnis-elsts/plugin-update-checker/plugin-update-checker.php' ) ) {
+    require_once __DIR__ . '/vendor/yahnis-elsts/plugin-update-checker/plugin-update-checker.php';
 
-$lkst_updater = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
-    'https://github.com/leokoo/zehoro-toolkit/',
-    __FILE__,
-    'zehoro-toolkit'
-);
-// Use the shared GitHub token if available (avoids API rate-limit / enables
-// private-repo updates). Read the CANONICAL key first — Pro reads/writes
-// `zehoro_pro_github_token`, so without this fallback a token set the canonical
-// way left Free's updater unauthenticated — then the legacy `lkst_*` key.
-$gh_token = get_option( 'zehoro_pro_github_token', '' );
-if ( empty( $gh_token ) ) {
-    $gh_token = get_option( 'lkst_pro_github_token', '' );
+    $lkst_updater = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateChecker(
+        'https://github.com/leokoo/zehoro-toolkit/',
+        __FILE__,
+        'zehoro-toolkit'
+    );
+    // Use the shared GitHub token if available (avoids API rate-limit / enables
+    // private-repo updates). Read the CANONICAL key first — Pro reads/writes
+    // `zehoro_pro_github_token`, so without this fallback a token set the canonical
+    // way left Free's updater unauthenticated — then the legacy `lkst_*` key.
+    $gh_token = get_option( 'zehoro_pro_github_token', '' );
+    if ( empty( $gh_token ) ) {
+        $gh_token = get_option( 'lkst_pro_github_token', '' );
+    }
+    if ( empty( $gh_token ) && defined( 'ZEHORO_GITHUB_TOKEN' ) ) {
+        $gh_token = ZEHORO_GITHUB_TOKEN;
+    }
+    if ( ! empty( $gh_token ) ) {
+        $lkst_updater->setAuthentication( $gh_token );
+    }
+    $lkst_updater->setBranch( 'main' );
+    $lkst_updater->getVcsApi()->enableReleaseAssets();
 }
-if ( empty( $gh_token ) && defined( 'ZEHORO_GITHUB_TOKEN' ) ) {
-    $gh_token = ZEHORO_GITHUB_TOKEN;
-}
-if ( ! empty( $gh_token ) ) {
-    $lkst_updater->setAuthentication( $gh_token );
-}
-$lkst_updater->setBranch( 'main' );
-$lkst_updater->getVcsApi()->enableReleaseAssets();
 
 // Rename migrator (lkst_* → zehoro_*) runs idempotently early, so all option
 // reads downstream find the canonical key. Re-fires on activation in case a

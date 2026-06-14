@@ -1,0 +1,30 @@
+# Paths excluded from the wordpress.org distribution build.
+#
+# The self-hosted GitHub updater (vendor/) is excluded because wordpress.org
+# serves updates for hosted plugins — the main file guards its updater with
+# file_exists(), so its absence here is a clean no-op. Dev tooling and tests
+# don't belong in the shipped package either.
+#
+# Runtime dirs are intentionally NOT listed and DO ship: src/, build/,
+# assets/, languages/ (plus readme.txt, LICENSE, uninstall.php, the main file).
+
+/.git
+/.github
+/.gitignore
+/.graphifyignore
+/.distignore
+/.phpunit.result.cache
+/bin
+/node_modules
+/tests
+/vendor
+/composer.json
+/composer.lock
+/package.json
+/package-lock.json
+/phpunit.xml.dist
+/webpack.config.js
+/graphify-out
+/README.md
+/MODULES.md
+/CHANGELOG.md

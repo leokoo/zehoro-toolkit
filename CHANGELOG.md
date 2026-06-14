@@ -2,6 +2,16 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.22.1] - 2026-06-14
+
+### Added — licensing + wordpress.org distribution readiness
+- **GPLv2-or-later license** declared in the plugin header (`License` + `License URI`) and the full canonical GPLv2 text shipped as `LICENSE` (the previous `LICENSE` was a 6-line stub — only the license *header*, missing the actual terms).
+- **GitHub auto-updater now guarded with `file_exists()`** so it cleanly no-ops when the package ships without `vendor/`. A wordpress.org build (which must exclude the self-hosted updater per repo rules) drops in with **no source fork** — GitHub / self-hosted installs keep auto-updates exactly as before (`vendor/` present), while a wp.org build lets wordpress.org serve updates.
+- **`.distignore`** — excludes dev tooling, tests, and `vendor/` (the updater) from a wordpress.org build, while keeping every runtime dir (`src/`, `build/`, `assets/`, `languages/`).
+- **`readme.txt`** (wordpress.org format) — leads with SEO-plugin coexistence + plug-and-play (no API keys) positioning.
+
+No functional change to any plugin feature.
+
 ## [1.22.0] - 2026-06-14
 
 ### Added — SEO-plugin coexistence
