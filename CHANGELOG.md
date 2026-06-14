@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.21.1] - 2026-06-14
+
+### Fixed
+- **The GitHub-token lookup for auto-updates is now consistent with Pro.** The Free updater read the legacy `lkst_pro_github_token` option, while Pro reads/writes the canonical `zehoro_pro_github_token` — so a token set the canonical way left Free's updater unauthenticated (GitHub API rate-limit / private-repo update failures). Free now reads `zehoro_pro_github_token` first, falling back to the legacy `lkst_pro_github_token`. *(External review.)*
+
 ## [1.21.0] - 2026-06-14
 
 ### Added

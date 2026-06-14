@@ -3,7 +3,7 @@
  * Plugin Name:  Zehoro Toolkit
  * Plugin URI:   https://leokoo.com
  * Description:  Editorial toolkit for WordPress — Article schema (E-E-A-T), Table of Contents, FAQ, author boxes, and content blocks. The free base for Zehoro Toolkit Pro.
- * Version:      1.21.0
+ * Version:      1.21.1
  * Author:       Leo Koo
  * Author URI:   https://leokoo.com
  * Text Domain:  zehoro-toolkit
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // zehoro-toolkit/). The second copy returns immediately.
 if ( defined( 'ZEHORO_VERSION' ) ) return;
 
-define( 'ZEHORO_VERSION', '1.21.0' );
+define( 'ZEHORO_VERSION', '1.21.1' );
 define( 'ZEHORO_DIR',     plugin_dir_path( __FILE__ ) );
 define( 'ZEHORO_URL',     plugin_dir_url( __FILE__ ) );
 
@@ -41,8 +41,14 @@ $lkst_updater = \YahnisElsts\PluginUpdateChecker\v5\PucFactory::buildUpdateCheck
     __FILE__,
     'zehoro-toolkit'
 );
-// Use Pro token if available (avoids GitHub API rate-limit on unauthenticated calls)
-$gh_token = get_option( 'lkst_pro_github_token', '' );
+// Use the shared GitHub token if available (avoids API rate-limit / enables
+// private-repo updates). Read the CANONICAL key first — Pro reads/writes
+// `zehoro_pro_github_token`, so without this fallback a token set the canonical
+// way left Free's updater unauthenticated — then the legacy `lkst_*` key.
+$gh_token = get_option( 'zehoro_pro_github_token', '' );
+if ( empty( $gh_token ) ) {
+    $gh_token = get_option( 'lkst_pro_github_token', '' );
+}
 if ( empty( $gh_token ) && defined( 'ZEHORO_GITHUB_TOKEN' ) ) {
     $gh_token = ZEHORO_GITHUB_TOKEN;
 }
