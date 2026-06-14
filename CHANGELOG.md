@@ -2,6 +2,14 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.23.0] - 2026-06-15
+
+### Added — module "suites" (the Kadence-Blocks model, for onboarding)
+- The Modules grid now collapses the commodity groups into **single suite cards with sub-toggles inside**, so a new user meets ~15 cards instead of ~50. Three suites: **Blocks** (the 16 editorial blocks), **Schema**, and **Reading & Trust**. Each suite card has a **master toggle** (turn the whole set on/off at once, via the existing bulk route) and an **expandable list** to disable individual features — exactly how Kadence Blocks works. The master shows an *indeterminate* state when only some members are on.
+- The spine modules (CTR Rescue, the entity layer, GSC diagnostics, etc.) stay as distinct cards — they are not co-activated and they are the differentiated features.
+- `Dashboard::collapse_suites()` is the pure, unit-tested partition the grid renders from; suites are filterable via `zehoro/module_suites`.
+- **Browser-verified** (Playwright): the master cascade, per-member toggle (master → indeterminate), regular-card toggles, search-by-block-name, and the left-nav counts all work and persist; zero JS errors.
+
 ## [1.22.2] - 2026-06-15
 
 ### Fixed — module grouping (onboarding)

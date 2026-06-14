@@ -272,6 +272,121 @@ class Dashboard {
 		$this->render_dashboard_page();
 	}
 
+	/**
+	 * Suite groups — commodity module groups that collapse into ONE card on the
+	 * grid (the Kadence-Blocks model: one "Blocks" card, individual blocks
+	 * toggled inside). group => [ label, desc ]. Filterable.
+	 *
+	 * @return array<string,array<string,string>>
+	 */
+	public static function suite_defs(): array {
+		return (array) apply_filters( 'zehoro/module_suites', [
+			'editorial_blocks' => [
+				'label' => __( 'Blocks', 'zehoro-toolkit' ),
+				'desc'  => __( 'Ready-made content blocks for your posts — callouts, FAQs, pros & cons, comparison and review boxes, and more. Turn the set on, then switch off any you do not use.', 'zehoro-toolkit' ),
+			],
+			'schema' => [
+				'label' => __( 'Schema', 'zehoro-toolkit' ),
+				'desc'  => __( 'Structured data that helps Google show rich results for your articles, FAQs and how-tos. Pauses automatically if a dedicated SEO plugin already handles it.', 'zehoro-toolkit' ),
+			],
+			'reading_ux' => [
+				'label' => __( 'Reading & Trust', 'zehoro-toolkit' ),
+				'desc'  => __( 'Reader-facing touches that build trust — a table of contents, last-updated and freshness stamps, and disclosure notices.', 'zehoro-toolkit' ),
+			],
+		] );
+	}
+
+	/**
+	 * Partition the per-module list into suite cards (collapsed commodity
+	 * groups) + regular module cards. Pure → unit-testable.
+	 *
+	 * @param array<string,array<string,mixed>>  $modules    slug => card data (incl. group / is_active / tier / title)
+	 * @param array<string,array<string,string>> $suite_defs group => [label, desc]
+	 * @return array{regular: array<string,array<string,mixed>>, suites: array<string,array<string,mixed>>}
+	 */
+	public static function collapse_suites( array $modules, array $suite_defs ): array {
+		$regular = [];
+		$suites  = [];
+		foreach ( $modules as $slug => $data ) {
+			$g = (string) ( $data['group'] ?? 'other' );
+			if ( ! isset( $suite_defs[ $g ] ) ) {
+				$regular[ $slug ] = $data;
+				continue;
+			}
+			if ( ! isset( $suites[ $g ] ) ) {
+				$suites[ $g ] = [
+					'suite'   => $g,
+					'title'   => (string) $suite_defs[ $g ]['label'],
+					'desc'    => (string) $suite_defs[ $g ]['desc'],
+					'group'   => $g,
+					'members' => [],
+					'active'  => 0,
+					'total'   => 0,
+				];
+			}
+			$suites[ $g ]['members'][] = [
+				'slug'      => $slug,
+				'title'     => (string) ( $data['title'] ?? $slug ),
+				'is_active' => ! empty( $data['is_active'] ),
+			];
+			$suites[ $g ]['total']++;
+			if ( ! empty( $data['is_active'] ) ) $suites[ $g ]['active']++;
+		}
+		foreach ( $suites as &$s ) {
+			usort( $s['members'], fn( $a, $b ) => strcasecmp( (string) $a['title'], (string) $b['title'] ) );
+		}
+		unset( $s );
+		return [ 'regular' => $regular, 'suites' => $suites ];
+	}
+
+	/** Render one suite card: a master toggle + an expandable list of sub-toggles. */
+	private function render_suite_card( array $s ): void {
+		$members  = (array) $s['members'];
+		$slugs    = implode( ',', array_map( static fn( $m ) => $m['slug'], $members ) );
+		$active   = (int) $s['active'];
+		$total    = (int) $s['total'];
+		$names    = implode( ' ', array_map( static fn( $m ) => $m['slug'] . ' ' . $m['title'], $members ) );
+		$haystack = strtolower( $s['suite'] . ' ' . $s['title'] . ' ' . $s['desc'] . ' ' . $names );
+		?>
+		<div
+			class="lkst-module-card zehoro-suite-card <?php echo $active > 0 ? 'active' : 'inactive'; ?> tier-free"
+			data-module-slug="suite_<?php echo esc_attr( $s['suite'] ); ?>"
+			data-suite="<?php echo esc_attr( $s['suite'] ); ?>"
+			data-suite-members="<?php echo esc_attr( $slugs ); ?>"
+			data-module-haystack="<?php echo esc_attr( $haystack ); ?>"
+			data-module-active="<?php echo $active > 0 ? '1' : '0'; ?>"
+			data-module-tier="free"
+			data-module-group="<?php echo esc_attr( $s['group'] ); ?>"
+		>
+			<div class="lkst-module-header">
+				<h3 class="lkst-module-title">
+					<?php echo esc_html( $s['title'] ); ?>
+					<span class="lkst-type-badge lkst-type-badge--suite"><?php echo esc_html( sprintf( /* translators: %d: number of features */ _n( '%d feature', '%d features', $total, 'zehoro-toolkit' ), $total ) ); ?></span>
+				</h3>
+				<label class="lkst-switch zehoro-suite-master">
+					<input type="checkbox" <?php checked( $active === $total && $total > 0 ); ?>>
+					<span class="lkst-slider"></span>
+				</label>
+			</div>
+			<p class="lkst-module-desc"><?php echo esc_html( $s['desc'] ); ?></p>
+			<details class="zehoro-suite-details">
+				<summary class="zehoro-suite-summary"><span class="zehoro-suite-count"><?php echo (int) $active; ?></span><?php printf( esc_html__( ' of %d on — manage individually', 'zehoro-toolkit' ), (int) $total ); ?></summary>
+				<ul class="zehoro-suite-members">
+					<?php foreach ( $members as $m ) : ?>
+						<li class="zehoro-suite-member" data-module-slug="<?php echo esc_attr( $m['slug'] ); ?>">
+							<label class="lkst-switch lkst-switch--sm">
+								<input type="checkbox" name="modules[<?php echo esc_attr( $m['slug'] ); ?>]" value="1" <?php checked( $m['is_active'] ); ?>>
+								<span class="lkst-slider"></span>
+							</label>
+							<span class="zehoro-suite-member__title"><?php echo esc_html( $m['title'] ); ?></span>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			</details>
+		</div>
+		<?php
+	}
+
 	public function render_dashboard_page(): void {
 		if ( ! current_user_can( 'manage_options' ) ) return;
 
@@ -324,20 +439,43 @@ class Dashboard {
 		}
 		$total = count( $modules );
 
-		// Flat alphabetical sort. Categories used to be section headings in
-		// the grid as well as left-sidebar entries — that was redundant.
-		// Left sidebar nav is now the sole grouping surface; the right
-		// column is one flat alphabetised list that the JS filter narrows.
 		uasort( $modules, fn( $a, $b ) => strcasecmp( $a['title'], $b['title'] ) );
 
-		// Group taxonomy still needed for the left sidebar nav. Per-group
-		// counts are computed off the unfiltered set so the sidebar shows
-		// stable totals regardless of the active filter.
-		// (Persona presets render via render_presets() above the filter bar.)
+		// Collapse the commodity groups (Blocks / Schema / Reading & Trust) into
+		// single suite cards — one card with sub-toggles inside (Kadence-Blocks
+		// model), so the grid shows ~15 things, not ~50.
+		$suite_defs = self::suite_defs();
+		$partition  = self::collapse_suites( $modules, $suite_defs );
+
+		// Combined, alphabetised render list (regular module cards + suite cards).
+		$render_list = [];
+		foreach ( $partition['regular'] as $slug => $d ) {
+			$render_list[] = [ 'type' => 'module', 'slug' => $slug, 'data' => $d, 'sort' => (string) ( $d['title'] ?? $slug ) ];
+		}
+		foreach ( $partition['suites'] as $sk => $s ) {
+			$render_list[] = [ 'type' => 'suite', 'data' => $s, 'sort' => (string) $s['title'] ];
+		}
+		usort( $render_list, fn( $a, $b ) => strcasecmp( $a['sort'], $b['sort'] ) );
+
+		// Counts off the COLLAPSED view: a suite is one card, active if any member is on.
+		$total        = count( $render_list );
+		$active_count = 0;
+		$pro_count    = 0;
+		foreach ( $render_list as $item ) {
+			if ( 'suite' === $item['type'] ) {
+				if ( $item['data']['active'] > 0 ) $active_count++;
+			} else {
+				if ( ! empty( $item['data']['is_active'] ) ) $active_count++;
+				if ( 'pro' === ( $item['data']['tier'] ?? 'free' ) ) $pro_count++;
+			}
+		}
+
+		// Left-sidebar group nav counts, off the collapsed view (a suite = 1).
 		$category_order = Plugin::group_labels(); // translated, extractable literals
 		$group_counts   = array_fill_keys( array_keys( $category_order ), 0 );
-		foreach ( $modules as $data ) {
-			$g = isset( $group_counts[ $data['group'] ] ) ? $data['group'] : 'other';
+		foreach ( $render_list as $item ) {
+			$g = ( 'suite' === $item['type'] ) ? $item['data']['group'] : ( $item['data']['group'] ?? 'other' );
+			if ( ! isset( $group_counts[ $g ] ) ) $g = 'other';
 			$group_counts[ $g ]++;
 		}
 		$group_counts = array_filter( $group_counts ); // drop empty groups
@@ -415,7 +553,10 @@ class Dashboard {
 			<form method="post" action="">
 				<?php wp_nonce_field( 'zehoro_modules_action', 'zehoro_modules_nonce' ); ?>
 				<div id="zehoro-modules-grid" class="zehoro-modules--grid">
-				<?php foreach ( $modules as $slug => $data ) :
+				<?php foreach ( $render_list as $item ) :
+					if ( 'suite' === $item['type'] ) { $this->render_suite_card( $item['data'] ); continue; }
+					$slug      = $item['slug'];
+					$data      = $item['data'];
 					$is_active = $data['is_active'];
 					$tier      = $data['tier'];
 					// Search haystack = slug + title + description + keywords.

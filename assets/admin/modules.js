@@ -47,6 +47,7 @@
 
 		bindEvents();
 		bindToggleEvents();
+		bindSuiteEvents();
 		bindBulkEvents();
 		bindPresetEvents();
 		applyFilter( /* skipAnimation = */ true );
@@ -192,7 +193,7 @@
 
 	function bindToggleEvents() {
 		if ( ! data.rest || ! data.rest.root ) return; // no REST config — fall back to Save button
-		var switches = document.querySelectorAll( '.lkst-module-card .lkst-switch input[type="checkbox"]' );
+		var switches = document.querySelectorAll( '.lkst-module-card:not(.zehoro-suite-card) .lkst-switch input[type="checkbox"]' );
 		switches.forEach( function ( input ) {
 			input.addEventListener( 'change', function () {
 				var card = input.closest( '.lkst-module-card' );
@@ -234,6 +235,119 @@
 				} );
 			} );
 		} );
+	}
+
+	/**
+	 * Suite cards (Blocks / Schema / Reading & Trust): one card whose master
+	 * toggle flips every member at once (bulk route), with a sub-list of
+	 * per-member toggles (per-module route). The regular per-card handler skips
+	 * suite cards (see the :not(.zehoro-suite-card) selector above).
+	 */
+	function bindSuiteEvents() {
+		if ( ! data.rest || ! data.rest.root ) return;
+
+		document.querySelectorAll( '.zehoro-suite-card' ).forEach( function ( c ) { syncSuiteMaster( c ); } );
+
+		// Master toggle → bulk enable/disable all members.
+		document.querySelectorAll( '.zehoro-suite-card .zehoro-suite-master input[type="checkbox"]' ).forEach( function ( master ) {
+			master.addEventListener( 'change', function () {
+				var card = master.closest( '.zehoro-suite-card' );
+				if ( ! card ) return;
+				var members = ( card.dataset.suiteMembers || '' ).split( ',' ).filter( Boolean );
+				if ( ! members.length ) return;
+				var enable = master.checked;
+				master.disabled = true;
+				master.indeterminate = false;
+
+				fetch( data.rest.root + data.rest.bulkRoute, {
+					method: 'POST',
+					credentials: 'same-origin',
+					headers: { 'X-WP-Nonce': data.rest.nonce, 'Content-Type': 'application/json' },
+					body: JSON.stringify( { enable: enable, slugs: members } ),
+				} )
+				.then( function ( r ) { return r.json().then( function ( j ) { return { ok: r.ok, json: j }; } ); } )
+				.then( function ( res ) {
+					master.disabled = false;
+					if ( ! res.ok || ! res.json || ! res.json.success ) {
+						master.checked = ! enable;
+						alert( ( data.i18n && data.i18n.toggleFailed ) || 'Update failed.' );
+						return;
+					}
+					card.querySelectorAll( '.zehoro-suite-member input[type="checkbox"]' ).forEach( function ( mi ) { mi.checked = enable; } );
+					updateSuiteCard( card );
+					updatePillCounts();
+				} )
+				.catch( function () {
+					master.disabled = false;
+					master.checked = ! enable;
+					alert( ( data.i18n && data.i18n.toggleFailed ) || 'Update failed.' );
+				} );
+			} );
+		} );
+
+		// Member toggle → per-module toggle route.
+		document.querySelectorAll( '.zehoro-suite-member input[type="checkbox"]' ).forEach( function ( input ) {
+			input.addEventListener( 'change', function () {
+				var li = input.closest( '.zehoro-suite-member' );
+				if ( ! li ) return;
+				var slug = li.dataset.moduleSlug || '';
+				if ( ! slug ) return;
+				input.disabled = true;
+				var prev = ! input.checked;
+
+				var url = data.rest.root + data.rest.toggleRoute.replace( '{slug}', encodeURIComponent( slug ) );
+				fetch( url, {
+					method: 'POST',
+					credentials: 'same-origin',
+					headers: { 'X-WP-Nonce': data.rest.nonce, 'Content-Type': 'application/json' },
+				} )
+				.then( function ( r ) { return r.json().then( function ( j ) { return { ok: r.ok, json: j }; } ); } )
+				.then( function ( res ) {
+					input.disabled = false;
+					if ( ! res.ok || ! res.json || ! res.json.success ) {
+						input.checked = prev;
+						alert( ( data.i18n && data.i18n.toggleFailed ) || 'Toggle failed.' );
+						return;
+					}
+					input.checked = !! res.json.enabled;
+					updateSuiteCard( input.closest( '.zehoro-suite-card' ) );
+					updatePillCounts();
+				} )
+				.catch( function () {
+					input.disabled = false;
+					input.checked = prev;
+					alert( ( data.i18n && data.i18n.toggleFailed ) || 'Toggle failed.' );
+				} );
+			} );
+		} );
+	}
+
+	/** Recompute a suite card's active count + card state + master from its members. */
+	function updateSuiteCard( card ) {
+		if ( ! card ) return;
+		var members = card.querySelectorAll( '.zehoro-suite-member input[type="checkbox"]' );
+		var active  = 0;
+		members.forEach( function ( m ) { if ( m.checked ) active++; } );
+		card.dataset.moduleActive = active > 0 ? '1' : '0';
+		card.classList.toggle( 'active',   active > 0 );
+		card.classList.toggle( 'inactive', active === 0 );
+		var count = card.querySelector( '.zehoro-suite-count' );
+		if ( count ) count.textContent = String( active );
+		syncSuiteMaster( card, active, members.length );
+	}
+
+	/** Master checkbox: checked when all on, indeterminate when only some on. */
+	function syncSuiteMaster( card, active, total ) {
+		var master = card.querySelector( '.zehoro-suite-master input[type="checkbox"]' );
+		if ( ! master ) return;
+		if ( typeof active === 'undefined' ) {
+			var members = card.querySelectorAll( '.zehoro-suite-member input[type="checkbox"]' );
+			total  = members.length;
+			active = 0;
+			members.forEach( function ( m ) { if ( m.checked ) active++; } );
+		}
+		master.checked = total > 0 && active === total;
+		master.indeterminate = active > 0 && active < total;
 	}
 
 	function bindEvents() {
