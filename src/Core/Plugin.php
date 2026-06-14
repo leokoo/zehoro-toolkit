@@ -179,12 +179,23 @@ class Plugin {
 			'disclosure'        => 'reading_ux',
 			'disclaimer'        => 'reading_ux',
 
-			// SEO — data + intelligence engines.
+			// SEO — data + intelligence engines (the loop's diagnostics + maps).
 			'entity_map'             => 'seo',
 			'google_search_console'  => 'seo',
 			'ctr_rescue'             => 'seo',
+			'cannibalisation_check'  => 'seo',
+			'refresh_trigger'        => 'seo',
+			'orphan_check'           => 'seo',
+			'topical_gap'            => 'seo',
+			'entity_index'           => 'seo',
+			'dataforseo'             => 'seo',
+			'ga4'                    => 'seo',
 			'category_pills'         => 'seo',
 			'home_filter_pills'      => 'seo',
+
+			// AI Assistance — AI-driven analysis / rewriting.
+			'ai_visibility'          => 'ai',
+			'rewrite_context'        => 'ai',
 
 			// Conversion — CTA / lead capture.
 			'content_stream'    => 'conversion',
@@ -197,6 +208,7 @@ class Plugin {
 			'archive_cleanup'   => 'admin',
 			'rss_support'       => 'admin',
 			'styles'            => 'admin',
+			'edit_log'          => 'admin',
 		];
 		return $map[ $slug ] ?? 'other';
 	}

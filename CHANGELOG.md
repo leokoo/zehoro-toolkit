@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.22.2] - 2026-06-15
+
+### Fixed — module grouping (onboarding)
+- **Ten loop/intelligence modules were falling into the "Other" group** on the Modules grid because the slug→group map hadn't kept pace as the spine shipped. Grouped them: Cannibalisation, Refresh Trigger, Orphan Check, Topical Gap, Entity Index, DataForSEO and GA4 → **SEO**; AI Visibility + Rewrite-with-Context → **AI Assistance**; Edit Log → **Admin & Plumbing**. "Other" should now be empty (or close to it).
+
 ## [1.22.1] - 2026-06-14
 
 ### Added — licensing + wordpress.org distribution readiness
