@@ -44,16 +44,11 @@ class ArticleSchema implements ModuleInterface {
      * Use add_filter( 'zehoro_article_schema_force', '__return_true' ) to bypass.
      */
     public static function seo_plugin_active(): bool {
-        if ( apply_filters( 'zehoro_article_schema_force', false ) ) {
-            return false;
-        }
-
-        return defined( 'WPSEO_VERSION' )                      // Yoast SEO
-            || defined( 'SEOPRESS_VERSION' )                   // SEOPress
-            || defined( 'RANK_MATH_VERSION' )                  // Rank Math
-            || defined( 'AIOSEO_VERSION' )                     // All-in-One SEO
-            || class_exists( 'SureRank\Core\SureRank' )        // SureRank (class)
-            || defined( 'SURERANK_VERSION' );                  // SureRank (constant)
+        // "Active" here means "another SEO plugin owns schema, so suppress ours."
+        // Delegates to the canonical Compat\SeoPlugin detector + override logic
+        // (the legacy `zehoro_article_schema_force` filter is honoured inside it),
+        // so the plugin list + the user override live in ONE place.
+        return ! \Zehoro\Compat\SeoPlugin::should_emit_schema();
     }
 
     /**
@@ -214,10 +209,16 @@ class ArticleSchema implements ModuleInterface {
     public function render_meta_box( \WP_Post $post ): void {
         // ── Conflict warning — SEO plugin ────────────────────────────────────
         if ( self::seo_plugin_active() ) {
+            $label = \Zehoro\Compat\SeoPlugin::label();
             echo '<p style="color:#856404;background:#fff3cd;padding:8px 10px;border-radius:4px;font-size:12px;margin:0;line-height:1.5;">';
-            echo '⚠️ <strong>Schema output disabled.</strong><br>An SEO plugin (Yoast / SEOPress / RankMath / AIOSEO / SureRank) is already active — LKST will not duplicate the schema.';
+            echo '⚠️ <strong>' . esc_html__( 'Schema output paused.', 'zehoro-toolkit' ) . '</strong><br>'
+                . esc_html(
+                    $label
+                        ? sprintf( /* translators: %s: SEO plugin name */ __( '%s is active and already emits structured data — Zehoro won\'t duplicate it.', 'zehoro-toolkit' ), $label )
+                        : __( 'An SEO plugin is active and already emits structured data — Zehoro won\'t duplicate it.', 'zehoro-toolkit' )
+                );
             echo '</p>';
-            echo '<p style="font-size:11px;color:#999;margin:8px 0 0;">To override:<br><code>add_filter(\'zehoro_article_schema_force\', \'__return_true\');</code></p>';
+            echo '<p style="font-size:11px;color:#999;margin:8px 0 0;">' . esc_html__( 'To keep Zehoro\'s schema instead, set Zehoro → Settings → Schema output to “Always”, or:', 'zehoro-toolkit' ) . '<br><code>add_filter(\'zehoro_article_schema_force\', \'__return_true\');</code></p>';
             return;
         }
 

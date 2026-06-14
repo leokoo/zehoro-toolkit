@@ -121,9 +121,9 @@ class FAQ implements ModuleInterface {
         if ( $mode === 'off' ) return;
         
         if ( $mode === 'auto' ) {
-            $has_seo = defined('WPSEO_VERSION') || defined('RANK_MATH_VERSION') || class_exists('SureRank\\SureRank');
-            if ( $has_seo ) {
-                echo '<!-- LKST: FAQPage Schema bypassed. Polite mode detected active SEO plugin. -->';
+            // Shared detector (was a narrower, inconsistent per-module check).
+            if ( \Zehoro\Compat\SeoPlugin::active() ) {
+                echo '<!-- Zehoro: FAQPage schema paused — an active SEO plugin already emits structured data. -->';
                 return;
             }
         }

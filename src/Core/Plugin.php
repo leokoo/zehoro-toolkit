@@ -260,6 +260,12 @@ class Plugin {
 		if ( is_admin() ) {
 			$admin = new \Zehoro\Admin\Dashboard( $active );
 			$admin->init();
+
+			// SEO-plugin coexistence notice — surfaces the schema stand-down +
+			// the manual override when a dedicated SEO plugin is detected.
+			if ( class_exists( '\\Zehoro\\Admin\\SeoCoexistenceNotice' ) ) {
+				( new \Zehoro\Admin\SeoCoexistenceNotice() )->init();
+			}
 		}
 
 		// REST endpoints — registered regardless of is_admin since they're

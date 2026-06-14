@@ -2,6 +2,16 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.22.0] - 2026-06-14
+
+### Added — SEO-plugin coexistence
+- **One canonical SEO-plugin detector** (`Zehoro\Compat\SeoPlugin`), replacing the per-module, inconsistent checks `ArticleSchema` and `FAQ` each carried (different plugin lists; one checked `SureRank\SureRank`, the other `SureRank\Core\SureRank`). Now recognises **Yoast, SEOPress, Rank Math, AIOSEO, SureRank, Slim SEO, The SEO Framework, Squirrly, Schema Pro** — extensible via the `zehoro/seo_plugins` filter.
+- **Coexist by default:** when a dedicated SEO plugin is active, Zehoro pauses its own structured-data (schema) output to avoid duplicate markup — the principle that *Zehoro is a content-business toolkit, not an SEO plugin*: it owns the loop / entity / conversion features, never the SEO-output plumbing, and its one overlap (JSON-LD) yields to the specialist.
+- **Visible + overridable:** a new admin notice (on Zehoro screens) names the detected plugin and offers a one-click **"Use Zehoro's schema instead"** (option `zehoro_schema_output` = `auto`/`always`/`never`) + a persistent dismiss. The editor schema meta box now names the plugin too. Dev override: the `zehoro/emit_schema` filter (and the legacy `zehoro_article_schema_force`, still honoured).
+
+### Changed
+- Regenerated `languages/zehoro-toolkit.pot` (169 strings) for the new copy.
+
 ## [1.21.2] - 2026-06-14
 
 ### Internationalization (translation-ready)
