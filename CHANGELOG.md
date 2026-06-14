@@ -2,6 +2,12 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.21.2] - 2026-06-14
+
+### Internationalization (translation-ready)
+- **Fixed the one un-extractable string.** The module-grid category labels were translated through a variable (`__( $label, … )`), which i18n tooling can't extract — so they'd never be translatable. They now come from `Plugin::group_labels()`, which maps each group key to a **literal** `__()` call (falling back to the English label for any future key). Every user-facing string is now wrapped with the correct, literal `zehoro-toolkit` text domain (220 call sites verified).
+- **Added the `Domain Path: /languages` header**, a bundled **`languages/zehoro-toolkit.pot`** (161 strings) for translators, and moved `load_plugin_textdomain()` to the `init` hook (avoids the WP 6.7+ "just-in-time textdomain" notice). On wordpress.org, translations are also served automatically from translate.wordpress.org.
+
 ## [1.21.1] - 2026-06-14
 
 ### Fixed

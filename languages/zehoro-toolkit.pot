@@ -1,0 +1,675 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Leo Koo
+# This file is distributed under the same license as the zehoro-toolkit package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: zehoro-toolkit 1.21.2\n"
+"Report-Msgid-Bugs-To: https://leokoo.com\n"
+"POT-Creation-Date: 2026-06-14 16:30+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"X-Domain: zehoro-toolkit\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: zehoro-toolkit/src/Core/Plugin.php:114
+msgid "Editorial Blocks"
+msgstr ""
+
+#: zehoro-toolkit/src/Core/Plugin.php:115
+msgid "Schema"
+msgstr ""
+
+#: zehoro-toolkit/src/Core/Plugin.php:116
+msgid "Reading & UX"
+msgstr ""
+
+#: zehoro-toolkit/src/Core/Plugin.php:117
+msgid "SEO"
+msgstr ""
+
+#: zehoro-toolkit/src/Core/Plugin.php:118
+msgid "Conversion"
+msgstr ""
+
+#: zehoro-toolkit/src/Core/Plugin.php:119
+msgid "AI Assistance"
+msgstr ""
+
+#: zehoro-toolkit/src/Core/Plugin.php:120
+msgid "Workflow"
+msgstr ""
+
+#: zehoro-toolkit/src/Core/Plugin.php:121
+msgid "Admin & Plumbing"
+msgstr ""
+
+#: zehoro-toolkit/src/Core/Plugin.php:122
+msgid "Other"
+msgstr ""
+
+#: zehoro-toolkit/src/Core/Plugin.php:296
+#: zehoro-toolkit/src/Admin/Dashboard.php:61
+msgid "Zehoro Toolkit"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:62
+msgid "Zehoro"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:72
+#: zehoro-toolkit/src/Admin/Dashboard.php:73
+msgid "Start Here"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:72
+#: zehoro-toolkit/src/Admin/Dashboard.php:73
+#: zehoro-toolkit/src/Admin/Dashboard.php:83
+#: zehoro-toolkit/src/Admin/Dashboard.php:84
+msgid "Modules"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:96
+#: zehoro-toolkit/src/Admin/Dashboard.php:551
+msgid "Author Box Settings"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:96
+msgid "Author Box"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:100
+msgid "Table of Contents"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:106
+msgid "RSS Feed Settings"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:106
+msgid "RSS Feed"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:110
+#: zehoro-toolkit/src/Admin/Dashboard.php:495
+msgid "Visual Styles"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:139
+msgid "Could not save — check your connection and try again."
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:141
+msgid "Enable {scope}?"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:142
+msgid "Disable {scope}? Their features stop working until re-enabled."
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:143
+msgid "all modules"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:145
+msgid "all modules in “{group}”"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:147
+msgid "Enable the {count} modules in “{title}”? Nothing will be disabled."
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:171
+msgid "Affiliate marketer"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:172
+msgid "Product boxes, comparisons, verdicts and disclosure for monetised reviews — plus the GSC loop with affiliate-click conversion tracking, so you see which post earns."
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:183
+msgid "Content publisher / blogger"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:184
+msgid "E-E-A-T signals (author box, freshness, FAQ, schema), editorial blocks, the rewrite workflow and the full GSC loop — which post to fix next, and proof the fix worked."
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:194
+msgid "Local service business"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:195
+msgid "Content that converts to enquiries: sticky CTA, WhatsApp/form conversion tracking via the stream, trust blocks — and the GSC loop tuned to service pages."
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:227
+msgid "Recommended setups — enable a curated module set for your kind of site"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:238
+#, php-format
+msgid "Enable these %d modules"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:244
+msgid "Presets only enable modules — nothing you already use gets turned off. You can fine-tune with the switches below afterwards."
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:293
+msgid "Modules updated successfully."
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:346
+msgid "Zehoro Toolkit — Modules"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:347
+msgid "Enable or disable specific features of the toolkit. Only active modules load their code."
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:350
+msgid "Module groups"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:354
+msgid "All modules"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:377
+msgid "Search modules…"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:379
+msgid "Search modules"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:381
+msgid "Clear search"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:383
+msgid "Filter by status"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:384
+msgid "All"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:385
+msgid "Active"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:386
+msgid "Inactive"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:387
+msgid "Free"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:388
+msgid "Pro"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:390
+msgid "Bulk actions"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:391
+msgid "Enable all"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:392
+msgid "Disable all"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:394
+#: zehoro-toolkit/src/Modules/ContentBox.php:143
+msgid "Layout"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:395
+msgid "Grid layout"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:395
+msgid "Grid"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:398
+msgid "List layout"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:398
+msgid "List"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:406
+#, php-format
+msgid "Showing %1$s of %2$s"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:443
+msgid "Block"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:443
+msgid "Tool"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:446
+msgid "AI"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:446
+msgid "GSC"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:460
+msgid "Configure"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:463
+msgid "No settings needed"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:466
+msgid "Documentation"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:475
+msgid "No modules match the current filter."
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:479
+msgid "Save Module Settings"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:494
+#: zehoro-toolkit/src/Admin/Dashboard.php:522
+#: zehoro-toolkit/src/Admin/Dashboard.php:550
+#: zehoro-toolkit/src/Modules/TableOfContents.php:277
+msgid "Back to Modules"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:496
+msgid "Customize the colors used across all toolkit modules."
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:500
+msgid "Primary Brand Color"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:502
+msgid "Primary Contrast Color"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:504
+msgid "Secondary Brand Color"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:506
+msgid "Dark Background"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:508
+msgid "Light Background"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:523
+msgid "RSS Feed Support"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:527
+msgid "Include Post Types"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:554
+msgid "CTA Buttons"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:556
+msgid "Primary button label"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:558
+msgid "Primary button URL"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:560
+msgid "Secondary button label"
+msgstr ""
+
+#: zehoro-toolkit/src/Admin/Dashboard.php:562
+msgid "Secondary button URL"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/Disclaimer.php:55
+msgid "This article is for informational purposes only and does not constitute medical advice. Consult a qualified ophthalmologist for diagnosis and treatment."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/Disclaimer.php:57
+msgid "This article provides general legal information, not legal advice. For advice specific to your situation, consult a qualified Malaysian lawyer."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/Disclaimer.php:100
+msgid "Disclaimer Settings"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/Disclaimer.php:105
+msgid "Disclaimer Type"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/Disclaimer.php:108
+msgid "Off"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/Disclaimer.php:109
+msgid "Medical (Standard)"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/Disclaimer.php:110
+msgid "Legal (Standard)"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/Disclaimer.php:111
+msgid "Custom"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/Disclaimer.php:116
+msgid "Custom Text"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/Disclaimer.php:125
+msgid "Only used if \"Custom\" is selected above."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/Disclaimer.php:129
+#: zehoro-toolkit/src/Modules/TableOfContents.php:298
+msgid "Active Post Types"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/HomeFilterPills.php:68
+msgid "Filter by topic"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/LastUpdated.php:45
+msgid "Last Updated Badge"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/LastUpdated.php:50
+msgid "Auto Inject (Top of content)"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/LastUpdated.php:54
+msgid "Threshold (Days)"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/LastUpdated.php:57
+msgid "Only show the badge if the post was updated more than X days after it was published."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/LastUpdated.php:61
+msgid "Output dateModified Schema"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/LastUpdated.php:64
+msgid "Injects structured data into the <head> to alert Google to the fresh content."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/FAQ.php:53 zehoro-toolkit/src/Modules/FAQ.php:54
+msgid "FAQ Settings"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/FAQ.php:66
+msgid "FAQ Accordion Settings"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/FAQ.php:67
+msgid "Use the shortcode to output styled FAQs in your content:"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/FAQ.php:74
+msgid "FAQPage Schema (JSON-LD)"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/FAQ.php:77
+msgid "Auto (Disable if SEO plugin detected)"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/FAQ.php:78
+msgid "Always Output Schema"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/FAQ.php:79
+msgid "Never Output Schema"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/FAQ.php:81
+msgid "To prevent Google Search Console errors, we recommend Auto. We will safely step aside and let your SEO plugin handle schema if we detect Yoast, RankMath, or SureRank are active."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:87
+#: zehoro-toolkit/src/Modules/ContentBox.php:107
+msgid "Content Box Settings"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:88
+msgid "Content Box"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:108
+msgid "These are the site-wide defaults. Override any field directly in the shortcode: "
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:117
+msgid "Box Type"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:120
+msgid "Newsletter CTA (external form)"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:121
+msgid "File Download (built-in form + webhook)"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:123
+msgid "Override per shortcode with type=\"cta\" or type=\"email\"."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:128
+msgid "Eyebrow"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:129
+msgid "e.g. Free Resource"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:133
+msgid "Heading"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:138
+msgid "Description"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:146
+msgid "Text Only"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:147
+msgid "Image Left"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:148
+msgid "Image Right"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:149
+msgid "Image Top"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:155
+msgid "Image URL"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:161
+msgid "Form Shortcode"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:164
+msgid "Paste your opt-in form shortcode. Accepts any shortcode-based form plugin."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:170
+msgid "Webhook URL"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:173
+msgid "POSTs name, email, file_url, post_id, and source to this URL. Works with Make.com, Zapier, or n8n."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:177
+msgid "Button Text"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:187
+msgid "Shortcode Reference"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:189
+msgid "Attribute"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:189
+msgid "Default"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:189
+msgid "Notes"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:191
+msgid "\"cta\" or \"email\""
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:192
+msgid "Small label above the heading"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:193
+msgid "Main headline"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:194
+msgid "Body copy (HTML allowed)"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:195
+msgid "text / image-left / image-right / image-top"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:196
+msgid "Image URL (required for image layouts)"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:197
+msgid "type=\"cta\" only — form shortcode"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:198
+msgid "none"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:198
+msgid "type=\"email\" only — the download URL passed to the webhook"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:199
+msgid "type=\"email\" only — override the global webhook per article"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:200
+msgid "type=\"email\" only — submit button label"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:334
+msgid "Your Name"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:339
+msgid "Your Email"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:374
+msgid "Sending…"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:387
+#: zehoro-toolkit/src/Modules/ContentBox.php:466
+msgid "Success! Check your email for the download link."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:395
+msgid "An error occurred. Please try again."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:405
+msgid "Network error. Please try again."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:445
+msgid "Please enter a valid email address."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:448
+msgid "This form is not configured yet. Please contact the site owner."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/ContentBox.php:463
+msgid "Could not reach the delivery server. Please try again shortly."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/TableOfContents.php:278
+msgid "Table of Contents Settings"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/TableOfContents.php:283
+msgid "Insertion Method"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/TableOfContents.php:287
+msgid "Auto-inject"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/TableOfContents.php:288
+msgid "(Automatically adds the TOC to the very top of the post content)"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/TableOfContents.php:292
+msgid "Shortcode Only"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/TableOfContents.php:293
+msgid "(Only renders where you place the [zehoro_toc] shortcode)"
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/TableOfContents.php:311
+msgid "Select which post types the TOC should be generated for."
+msgstr ""
+
+#: zehoro-toolkit/src/Modules/TableOfContents.php:315
+msgid "Save Settings"
+msgstr ""
+
+#: zehoro-toolkit/zehoro-toolkit.php:91
+msgid "Settings"
+msgstr ""

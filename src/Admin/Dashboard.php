@@ -334,11 +334,8 @@ class Dashboard {
 		// counts are computed off the unfiltered set so the sidebar shows
 		// stable totals regardless of the active filter.
 		// (Persona presets render via render_presets() above the filter bar.)
-		$category_order = Plugin::GROUPS;
-		foreach ( $category_order as $k => $label ) {
-			$category_order[ $k ] = __( $label, 'zehoro-toolkit' );
-		}
-		$group_counts = array_fill_keys( array_keys( $category_order ), 0 );
+		$category_order = Plugin::group_labels(); // translated, extractable literals
+		$group_counts   = array_fill_keys( array_keys( $category_order ), 0 );
 		foreach ( $modules as $data ) {
 			$g = isset( $group_counts[ $data['group'] ] ) ? $data['group'] : 'other';
 			$group_counts[ $g ]++;

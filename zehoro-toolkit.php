@@ -3,10 +3,11 @@
  * Plugin Name:  Zehoro Toolkit
  * Plugin URI:   https://leokoo.com
  * Description:  Editorial toolkit for WordPress — Article schema (E-E-A-T), Table of Contents, FAQ, author boxes, and content blocks. The free base for Zehoro Toolkit Pro.
- * Version:      1.21.1
+ * Version:      1.21.2
  * Author:       Leo Koo
  * Author URI:   https://leokoo.com
  * Text Domain:  zehoro-toolkit
+ * Domain Path:  /languages
  * Requires PHP: 7.4
  * Requires at least: 6.0
  */
@@ -18,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 // zehoro-toolkit/). The second copy returns immediately.
 if ( defined( 'ZEHORO_VERSION' ) ) return;
 
-define( 'ZEHORO_VERSION', '1.21.1' );
+define( 'ZEHORO_VERSION', '1.21.2' );
 define( 'ZEHORO_DIR',     plugin_dir_path( __FILE__ ) );
 define( 'ZEHORO_URL',     plugin_dir_url( __FILE__ ) );
 
@@ -64,9 +65,15 @@ $lkst_updater->getVcsApi()->enableReleaseAssets();
 // specs/db-migration-zehoro-rename.md.
 add_action( 'plugins_loaded', [ '\\Zehoro\\Migration\\ZehoroRenameMigrator', 'run' ], 1 );
 
+// Load translations on `init` (WP 6.7+ — translating before `init` triggers a
+// "just-in-time" notice; menus/settings render on admin_menu/admin_init, later).
+// On wordpress.org this is also handled automatically from translate.wordpress.org.
+add_action( 'init', function() {
+    load_plugin_textdomain( 'zehoro-toolkit', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+} );
+
 // Initialize the core plugin
 add_action( 'plugins_loaded', function() {
-    load_plugin_textdomain( 'zehoro-toolkit', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
     $plugin = new \Zehoro\Core\Plugin();
     $plugin->init();
 } );

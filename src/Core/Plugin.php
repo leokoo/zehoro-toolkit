@@ -102,6 +102,33 @@ class Plugin {
 	];
 
 	/**
+	 * Group labels, translated. The GROUPS values are constants (so they can't
+	 * be wrapped in `__()` in place); this maps each key to a LITERAL `__()`
+	 * call so the strings are extractable by the i18n tooling — and falls back
+	 * to the English label for any future key not listed here.
+	 *
+	 * @return array<string,string>
+	 */
+	public static function group_labels(): array {
+		$i18n = [
+			'editorial_blocks' => __( 'Editorial Blocks', 'zehoro-toolkit' ),
+			'schema'           => __( 'Schema', 'zehoro-toolkit' ),
+			'reading_ux'       => __( 'Reading & UX', 'zehoro-toolkit' ),
+			'seo'              => __( 'SEO', 'zehoro-toolkit' ),
+			'conversion'       => __( 'Conversion', 'zehoro-toolkit' ),
+			'ai'               => __( 'AI Assistance', 'zehoro-toolkit' ),
+			'workflow'         => __( 'Workflow', 'zehoro-toolkit' ),
+			'admin'            => __( 'Admin & Plumbing', 'zehoro-toolkit' ),
+			'other'            => __( 'Other', 'zehoro-toolkit' ),
+		];
+		$out = [];
+		foreach ( self::GROUPS as $k => $label ) {
+			$out[ $k ] = $i18n[ $k ] ?? $label;
+		}
+		return $out;
+	}
+
+	/**
 	 * Auto-detect tier from class namespace.
 	 *   Zehoro\Modules\*       → free
 	 *   Zehoro\Pro\Modules\*   → pro
