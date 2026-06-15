@@ -126,7 +126,7 @@ class ZehoroRenameMigratorTest extends WP_UnitTestCase {
 	}
 
 	public function test_run_handles_a_fresh_install_with_no_legacy_keys() {
-		// Nothing seeded — represents Simlecco's first install.
+		// Nothing seeded — represents a fresh install.
 		ZehoroRenameMigrator::run();
 
 		foreach ( ZehoroRenameMigrator::OPTION_MAP as $old => $new ) {
