@@ -25,6 +25,7 @@ class Dashboard {
 		add_action( 'admin_menu',             [ $this, 'register_menus' ], 9 );
 		add_action( 'admin_enqueue_scripts',  [ $this, 'enqueue_assets' ] );
 		add_action( 'admin_init',             [ $this, 'register_settings' ] );
+		add_action( 'admin_post_zehoro_danger', [ $this, 'handle_danger' ] );
 	}
 
 	public function register_settings(): void {
@@ -629,10 +630,75 @@ class Dashboard {
 			</form>
 			</div><!-- /.zehoro-modules-main -->
 			</div><!-- /.zehoro-modules-layout -->
+			<?php $this->render_danger_zone(); ?>
 		</div>
 
 		<?php /* Filter UX JS lives in assets/admin/modules.js — enqueued by enqueue_assets(). */ ?>
 		<?php
+	}
+
+	/**
+	 * Danger Zone — the opt-in "delete on uninstall" toggle + an on-demand
+	 * "erase everything" button. Both run the shared DataEraser so the wipe is
+	 * identical to what an opted-in uninstall does.
+	 */
+	private function render_danger_zone(): void {
+		$enabled = (bool) get_option( \Zehoro\Maintenance\DataEraser::DELETE_ON_UNINSTALL_OPTION, false );
+		if ( isset( $_GET['erased'] ) ) {
+			echo '<div class="updated notice is-dismissible"><p>' . esc_html__( 'All Zehoro Toolkit data was erased.', 'zehoro-toolkit' ) . '</p></div>';
+		}
+		if ( isset( $_GET['danger_saved'] ) ) {
+			echo '<div class="updated notice is-dismissible"><p>' . esc_html__( 'Saved.', 'zehoro-toolkit' ) . '</p></div>';
+		}
+		?>
+		<div class="zehoro-danger-zone" style="margin-top:32px;border:1px solid #d63638;border-radius:6px;background:#fff;max-width:760px;">
+			<h2 style="margin:0;padding:12px 16px;background:#fcebec;color:#8a1f2b;border-bottom:1px solid #f0c3c6;border-radius:6px 6px 0 0;font-size:14px;">⚠ <?php esc_html_e( 'Danger Zone', 'zehoro-toolkit' ); ?></h2>
+			<div style="padding:16px;">
+				<p style="margin-top:0;color:#50575e;font-size:13px;max-width:640px;"><?php esc_html_e( 'Zehoro keeps your settings when you deactivate or delete the plugin — so a temporary uninstall (e.g. to troubleshoot) never loses your data. Use the controls below only if you actually want to wipe everything.', 'zehoro-toolkit' ); ?></p>
+
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin:0 0 14px;">
+					<?php wp_nonce_field( 'zehoro_danger' ); ?>
+					<input type="hidden" name="action" value="zehoro_danger">
+					<input type="hidden" name="op" value="save">
+					<label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;">
+						<input type="checkbox" name="delete_on_uninstall" value="1" <?php checked( $enabled ); ?>>
+						<span><?php esc_html_e( 'Delete all Zehoro data when I delete this plugin. Off by default — your settings survive a delete and reinstall.', 'zehoro-toolkit' ); ?></span>
+					</label>
+					<p style="margin:10px 0 0;"><button type="submit" class="button"><?php esc_html_e( 'Save', 'zehoro-toolkit' ); ?></button></p>
+				</form>
+
+				<hr style="border:0;border-top:1px solid #f0f0f1;margin:14px 0;">
+
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('<?php echo esc_js( __( 'This permanently deletes ALL Zehoro Toolkit settings, options, and stored data on this site. It cannot be undone. Continue?', 'zehoro-toolkit' ) ); ?>');" style="margin:0;">
+					<?php wp_nonce_field( 'zehoro_danger' ); ?>
+					<input type="hidden" name="action" value="zehoro_danger">
+					<input type="hidden" name="op" value="erase">
+					<p style="margin:0 0 8px;color:#50575e;font-size:13px;"><?php esc_html_e( 'Erase everything now — options, post/user meta, and cached data. The plugin keeps running with fresh defaults.', 'zehoro-toolkit' ); ?></p>
+					<button type="submit" class="button" style="color:#8a1f2b;border-color:#c9909a;"><?php esc_html_e( 'Erase all Zehoro data now', 'zehoro-toolkit' ); ?></button>
+				</form>
+			</div>
+		</div>
+		<?php
+	}
+
+	/** Handle the Danger Zone forms (save the opt-in toggle, or erase now). */
+	public function handle_danger(): void {
+		check_admin_referer( 'zehoro_danger' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Insufficient permissions.', 'zehoro-toolkit' ), '', [ 'response' => 403 ] );
+		}
+		$op   = isset( $_POST['op'] ) ? sanitize_key( wp_unslash( $_POST['op'] ) ) : '';
+		$flag = 'danger';
+		if ( 'save' === $op ) {
+			update_option( \Zehoro\Maintenance\DataEraser::DELETE_ON_UNINSTALL_OPTION, ! empty( $_POST['delete_on_uninstall'] ), false );
+			$flag = 'danger_saved';
+		} elseif ( 'erase' === $op ) {
+			\Zehoro\Maintenance\DataEraser::erase();
+			$flag = 'erased';
+		}
+		$back = wp_get_referer() ?: admin_url( 'admin.php?page=zehoro-dashboard' );
+		wp_safe_redirect( add_query_arg( $flag, '1', $back ) );
+		exit;
 	}
 
 	public function render_styles_settings_page(): void {

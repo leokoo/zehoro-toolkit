@@ -2,6 +2,13 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.24.0] - 2026-06-15
+
+### Added — Danger Zone: your data is safe on uninstall
+- **Deleting (or temporarily uninstalling) the plugin no longer wipes your settings.** WordPress can't tell a permanent removal from a delete-then-reinstall, so Zehoro now **preserves all data by default** — a reinstall picks up exactly where you left off.
+- New **Danger Zone** at the bottom of the dashboard with two controls: an opt-in checkbox — *"Delete all Zehoro data when I delete this plugin"* (off by default) — and an **"Erase all data now"** button (with a confirm) for an immediate clean wipe.
+- Both run a shared `Maintenance\DataEraser` that clears every canonical `zehoro_*` and legacy `lkst_*` option, post meta, user meta, and transient, then flushes the object cache (so it's correct on Redis/Memcached sites too). `uninstall.php` now calls the same eraser — but only when the opt-in is set.
+
 ## [1.23.1] - 2026-06-15
 
 ### Fixed — uninstall completeness + a hardening (5-agent audit)
