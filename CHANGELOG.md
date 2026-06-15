@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.24.1] - 2026-06-15
+
+### Fixed — suite-card members now expose their settings link
+- When a module is collapsed into a **suite card** (the Blocks / Schema / Reading & Trust grouping from 1.23.0), its row showed only a toggle — so the settings page for FAQ, Article Schema, Last Updated, Content Box, etc. was reachable **only by typing the URL**. Each suite-member row now shows a ⚙ settings link (when the module has a settings page), so nothing is buried. `collapse_suites()` carries `settings_link` into each member.
+
 ## [1.24.0] - 2026-06-15
 
 ### Added — Danger Zone: your data is safe on uninstall

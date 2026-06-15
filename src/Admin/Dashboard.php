@@ -326,9 +326,10 @@ class Dashboard {
 				];
 			}
 			$suites[ $g ]['members'][] = [
-				'slug'      => $slug,
-				'title'     => (string) ( $data['title'] ?? $slug ),
-				'is_active' => ! empty( $data['is_active'] ),
+				'slug'          => $slug,
+				'title'         => (string) ( $data['title'] ?? $slug ),
+				'is_active'     => ! empty( $data['is_active'] ),
+				'settings_link' => (string) ( $data['settings_link'] ?? '' ),
 			];
 			$suites[ $g ]['total']++;
 			if ( ! empty( $data['is_active'] ) ) $suites[ $g ]['active']++;
@@ -380,6 +381,9 @@ class Dashboard {
 								<span class="lkst-slider"></span>
 							</label>
 							<span class="zehoro-suite-member__title"><?php echo esc_html( $m['title'] ); ?></span>
+							<?php if ( ! empty( $m['settings_link'] ) ) : ?>
+								<a class="zehoro-suite-member__settings" href="<?php echo esc_url( $m['settings_link'] ); ?>" title="<?php esc_attr_e( 'Settings', 'zehoro-toolkit' ); ?>" aria-label="<?php esc_attr_e( 'Settings', 'zehoro-toolkit' ); ?>" style="margin-left:auto;color:#787c82;text-decoration:none;line-height:1;"><span class="dashicons dashicons-admin-generic" style="font-size:16px;width:16px;height:16px;"></span></a>
+							<?php endif; ?>
 						</li>
 					<?php endforeach; ?>
 				</ul>
