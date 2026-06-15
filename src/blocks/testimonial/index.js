@@ -63,7 +63,7 @@ function Edit( { attributes, setAttributes } ) {
 				/>
 				<TextControl
 					label={ __( 'Company', 'zehoro-toolkit' ) }
-					placeholder={ __( 'Acme Corp', 'zehoro-toolkit' ) }
+					placeholder={ __( 'Acme Inc.', 'zehoro-toolkit' ) }
 					value={ company }
 					onChange={ set( 'company' ) }
 				/>

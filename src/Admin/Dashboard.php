@@ -394,7 +394,13 @@ class Dashboard {
 		// Without a redirect the user can re-submit by refreshing, and the browser
 		// shows a "resubmit form?" warning.
 		if ( isset( $_POST['zehoro_save_modules'] ) && check_admin_referer( 'zehoro_modules_action', 'zehoro_modules_nonce' ) ) {
-			$new_active = isset( $_POST['modules'] ) ? array_keys( $_POST['modules'] ) : [];
+			// Sanitise + intersect against the real registry so junk keys can't be
+			// persisted (parity with the REST bulk route). Nonce + capability are
+			// already enforced above; this is defence-in-depth for the noscript path.
+			$posted     = ( isset( $_POST['modules'] ) && is_array( $_POST['modules'] ) )
+				? array_map( 'sanitize_key', array_keys( wp_unslash( $_POST['modules'] ) ) )
+				: [];
+			$new_active = array_values( array_intersect( $posted, array_keys( \Zehoro\Core\Plugin::get_registered_modules() ) ) );
 			update_option( 'zehoro_active_modules', $new_active );
 			wp_safe_redirect( add_query_arg( [ 'page' => 'zehoro-dashboard', 'updated' => '1' ], admin_url( 'admin.php' ) ) );
 			exit;

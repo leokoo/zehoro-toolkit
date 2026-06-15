@@ -2,6 +2,13 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.23.1] - 2026-06-15
+
+### Fixed — uninstall completeness + a hardening (5-agent audit)
+- **Uninstall now cleans canonical `zehoro_*` data, not just legacy `lkst_*`.** After the v1.7.0 rename the plugin writes `zehoro_*` keys, but `uninstall.php` still only removed the old `lkst_*` ones — so deleting the plugin orphaned ~30 options (plus the migration flag, which made a reinstall *skip* migration and resurrect stale state). `uninstall.php` is now driven off the rename migrator's authoritative key map and clears both prefixes' options, post meta, user meta, and transients.
+- **Module-save (noscript path) hardened:** the form handler now `sanitize_key()`s the posted module slugs and intersects them against the real registry before saving (parity with the REST route) — nonce + capability were already enforced; this stops junk keys accumulating in `zehoro_active_modules`.
+- De-branded a leftover demo placeholder ("Acme Corp" → "Acme Inc.") in the Testimonial block for naming consistency.
+
 ## [1.23.0] - 2026-06-15
 
 ### Added — module "suites" (the Kadence-Blocks model, for onboarding)
