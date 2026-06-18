@@ -2,6 +2,15 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.24.2] - 2026-06-18
+
+### Fixed — the email-capture box (Content Box `type="email"`, also the ContentStream "email" slot) was silently broken by an incomplete rename
+- A half-finished `lkst_* → zehoro_*` rename left the email box's render, its inline JS, and its AJAX handler disagreeing — so the widget didn't work:
+  - **The form never submitted.** The inline submit handler gated on `classList.contains('zehoro-box-email-form')`, but the form's class was `lkst-box-email-form` — so the guard always failed, `preventDefault()` never ran, and the form did a broken full-page reload instead of the AJAX submit. (Fixed the JS to match the form, keeping the widget's identifiers internally consistent with its `lkst-`-named nonce/action/message.)
+  - **The download link was dropped.** `handle_submission()` read `$_POST['lkst_box_file_url']`, but the form field is `zehoro_box_file_url` — so the file URL passed to the delivery webhook was always empty.
+  - **The per-shortcode webhook override was ignored.** Same mismatch on `zehoro_box_webhook` vs `lkst_box_webhook` — the per-article webhook was never read, so it always fell back to the global setting.
+- The handler now reads the field names the form actually sends (with `lkst_box_*` fallbacks so any page cached before the rename keeps working). **+4 regression tests** (165 green) that pin the render↔JS↔handler contract: the form's class must match its JS submit hook, and its fields/nonce/action must match what the handler reads — so this class of rename-drift fails loudly next time.
+
 ## [1.24.1] - 2026-06-15
 
 ### Fixed — suite-card members now expose their settings link

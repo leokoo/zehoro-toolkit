@@ -361,7 +361,7 @@ class ContentBox implements ModuleInterface {
             window.lkstBoxEmailInit = true;
 
             document.addEventListener('submit', function(e) {
-                if (!e.target.classList.contains('zehoro-box-email-form')) return;
+                if (!e.target.classList.contains('lkst-box-email-form')) return;
                 e.preventDefault();
 
                 var form = e.target;
@@ -433,10 +433,12 @@ class ContentBox implements ModuleInterface {
 
         $email   = sanitize_email( $_POST['zehoro_box_email']   ?? '' );
         $name    = sanitize_text_field( $_POST['zehoro_box_name']    ?? '' );
-        $file    = esc_url_raw( $_POST['lkst_box_file_url']   ?? '' );
+        // Field names are zehoro_box_*; the lkst_box_* fallbacks keep any
+        // page cached before the rename working (the handler used to read those).
+        $file    = esc_url_raw( $_POST['zehoro_box_file_url'] ?? $_POST['lkst_box_file_url'] ?? '' );
 
         // Per-shortcode webhook overrides global setting
-        $webhook = esc_url_raw( $_POST['lkst_box_webhook'] ?? '' );
+        $webhook = esc_url_raw( $_POST['zehoro_box_webhook'] ?? $_POST['lkst_box_webhook'] ?? '' );
         if ( empty( $webhook ) ) {
             $webhook = \Zehoro\Utils\Option::get( 'zehoro_box_webhook_url', '' );
         }
