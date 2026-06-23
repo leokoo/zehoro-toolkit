@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.25.0] - 2026-06-24
+
+### Changed — Admin UX: the Claude Design system
+The Free admin (the Modules grid + suites, and the Visual Styles / Author Box / RSS settings pages) adopts the shared "warm editorial" design language — warm paper, near-black outlines, IBM Plex type — via a scoped `assets/admin-zui.css` (shared with Pro). The JS-driven modules grid keeps its existing markup, data-attributes, and behaviour (search, filter, per-card toggles, suite cards); the restyle is additive and scoped under `.zui`. 172 tests green. (UNDEPLOYED — on the `ux/claude-design-v1.1` branch for review.)
+
 ## [1.24.4] - 2026-06-24
 
 ### Fixed — FAQ and Last Updated schema now honor the central coexistence setting
