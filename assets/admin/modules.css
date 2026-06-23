@@ -3,6 +3,12 @@
  *
  * BEM class naming per zorasi-roadmaps/specs/phase-0-module-filtering.md
  * Single asset, no SCSS — direct edit + CDN-cacheable through PUC releases.
+ *
+ * Retheme note (Claude Design v1.1): colours/borders below are tuned to the
+ * warm-paper / hard-border `.zui` palette so the grid matches the restyled
+ * admin. ALL class names, data-attributes, grid/list `display` rules, fade
+ * animations, and [aria-pressed] toggling are UNCHANGED — assets/admin/modules.js
+ * binds to them and is untouched. Only visual paint moved.
  */
 
 /* ── 2-column layout: sidebar nav + main content ───────────────────────── */
@@ -27,9 +33,9 @@
 /* ── Sidebar group nav ──────────────────────────────────────────────────── */
 
 .zehoro-module-nav {
-	background: #fff;
-	border: 1px solid #c3c4c7;
-	border-radius: 6px;
+	background: #faf8f3;
+	border: 1.6px solid #2b2b2b;
+	border-radius: 2px;
 	padding: 8px 0;
 	position: sticky;
 	top: 46px; /* clear WP admin bar */
@@ -50,7 +56,7 @@
 	align-items: center;
 	gap: 8px;
 	padding: 8px 14px;
-	color: #1d2327;
+	color: #3a382f;
 	text-decoration: none;
 	font-size: 13px;
 	border-left: 3px solid transparent;
@@ -59,26 +65,26 @@
 
 .zehoro-module-nav__link:hover,
 .zehoro-module-nav__link:focus {
-	background: #f6f7f7;
-	color: #2271b1;
+	background: rgba(43, 43, 43, .05);
+	color: #2f5d8a;
 	box-shadow: none;
 }
 
 .zehoro-module-nav__link.is-active {
-	background: #f0f6fc;
-	color: #2271b1;
-	border-left-color: #2271b1;
+	background: #eaf0f7;
+	color: #2f5d8a;
+	border-left-color: #2f5d8a;
 	font-weight: 600;
 }
 
 .zehoro-module-nav__count {
-	color: #a7aaad;
+	color: #8a8678;
 	font-weight: 400;
 	font-size: 12px;
 }
 
 .zehoro-module-nav__link.is-active .zehoro-module-nav__count {
-	color: #2271b1;
+	color: #2f5d8a;
 	opacity: 0.7;
 }
 
@@ -91,9 +97,9 @@
 	gap: 14px;
 	margin: 16px 0;
 	padding: 12px 14px;
-	background: #fff;
-	border: 1px solid #c3c4c7;
-	border-radius: 6px;
+	background: #faf8f3;
+	border: 1.6px solid #2b2b2b;
+	border-radius: 2px;
 }
 
 .zehoro-module-filters__search {
@@ -105,21 +111,22 @@
 }
 
 .zehoro-module-filters__search .dashicons {
-	color: #646970;
+	color: #6b6859;
 }
 
 .zehoro-module-filters__search-input {
 	flex: 1;
-	border: 1px solid #dcdcde;
-	border-radius: 4px;
+	border: 1.4px solid #2b2b2b;
+	border-radius: 2px;
 	padding: 6px 10px;
 	font-size: 13px;
+	background: #fff;
 }
 
 .zehoro-module-filters__search-clear {
 	background: transparent;
 	border: 0;
-	color: #646970;
+	color: #6b6859;
 	cursor: pointer;
 	padding: 0 4px;
 	font-size: 14px;
@@ -127,22 +134,22 @@
 }
 
 .zehoro-module-filters__search-clear:hover {
-	color: #8a1f2b;
+	color: #b4503f;
 }
 
 .zehoro-module-filters__status {
 	display: inline-flex;
-	border: 1px solid #dcdcde;
-	border-radius: 4px;
+	border: 1.4px solid #2b2b2b;
+	border-radius: 2px;
 	overflow: hidden;
 }
 
 .zehoro-status-pill {
 	padding: 6px 12px;
 	background: #fff;
-	color: #1d2327;
+	color: #2b2b2b;
 	border: none;
-	border-left: 1px solid #dcdcde;
+	border-left: 1.4px solid #2b2b2b;
 	cursor: pointer;
 	font-size: 12px;
 	transition: background 0.15s, color 0.15s;
@@ -153,7 +160,7 @@
 }
 
 .zehoro-status-pill[aria-pressed="true"] {
-	background: #2271b1;
+	background: #2f5d8a;
 	color: #fff;
 }
 
@@ -167,24 +174,24 @@
 }
 
 .zehoro-module-filters__total {
-	color: #646970;
+	color: #6b6859;
 	font-size: 12px;
 	white-space: nowrap;
 }
 
 .zehoro-module-filters__layout {
 	display: inline-flex;
-	border: 1px solid #dcdcde;
-	border-radius: 4px;
+	border: 1.4px solid #2b2b2b;
+	border-radius: 2px;
 	overflow: hidden;
 }
 
 .zehoro-module-filters__layout-button {
 	padding: 6px 10px;
 	background: #fff;
-	color: #50575e;
+	color: #3a382f;
 	border: none;
-	border-left: 1px solid #dcdcde;
+	border-left: 1.4px solid #2b2b2b;
 	cursor: pointer;
 	font-size: 11px;
 	display: inline-flex;
@@ -196,7 +203,7 @@
 }
 
 .zehoro-module-filters__layout-button[aria-pressed="true"] {
-	background: #2271b1;
+	background: #2f5d8a;
 	color: #fff;
 }
 
@@ -260,10 +267,10 @@
 	display: none;
 	padding: 24px;
 	text-align: center;
-	color: #646970;
-	background: #fff;
-	border: 1px solid #c3c4c7;
-	border-radius: 6px;
+	color: #6b6859;
+	background: #faf8f3;
+	border: 1.6px solid #2b2b2b;
+	border-radius: 2px;
 	margin-top: 8px;
 }
 
@@ -275,7 +282,7 @@
 	font-weight: 700;
 	color: #fff;
 	padding: 1px 6px;
-	border-radius: 8px;
+	border-radius: 2px;
 	margin-left: 6px;
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
@@ -283,7 +290,7 @@
 }
 
 .lkst-tier-badge--pro {
-	background: #8a1f2b;
+	background: #b3801f;
 }
 
 /* ── Type + capability badges (Block/Tool, AI/GSC) ─────────────────────── */
@@ -295,22 +302,22 @@
 	font-weight: 700;
 	color: #fff;
 	padding: 1px 6px;
-	border-radius: 8px;
+	border-radius: 2px;
 	margin-left: 6px;
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
 	vertical-align: 1px;
 }
 
-.lkst-type-badge--block { background: #2a6df4; }
-.lkst-type-badge--tool  { background: #3a7d44; }
-.lkst-need-badge--ai    { background: #6d28d9; }
-.lkst-need-badge--gsc   { background: #b8541a; }
+.lkst-type-badge--block { background: #2f5d8a; }
+.lkst-type-badge--tool  { background: #3f7d4f; }
+.lkst-need-badge--ai    { background: #6b6859; }
+.lkst-need-badge--gsc   { background: #b4503f; }
 
 /* ── Card footer atoms ─────────────────────────────────────────────────── */
 
 .lkst-module-footer__hint {
-	color: #a7aaad;
+	color: #8a8678;
 	font-style: italic;
 	font-size: 12px;
 }
@@ -318,7 +325,7 @@
 .lkst-module-footer__docs {
 	margin-left: auto;
 	font-size: 12px;
-	color: #646970;
+	color: #6b6859;
 	text-decoration: none;
 }
 
@@ -368,22 +375,22 @@
 	align-items: center;
 }
 .zehoro-module-filters__bulk .zehoro-bulk-btn[data-bulk="disable"] {
-	color: #8a1f2b;
-	border-color: #c9909a;
+	color: #b4503f;
+	border-color: #d6a59a;
 }
 
 /* Persona presets — collapsible recommended setups above the filter bar. */
 .zehoro-presets {
 	margin: 0 0 16px;
-	border: 1px solid #c3c4c7;
-	border-radius: 6px;
-	background: #fff;
+	border: 1.6px solid #2b2b2b;
+	border-radius: 2px;
+	background: #faf8f3;
 }
 .zehoro-presets > summary {
 	padding: 12px 16px;
 	cursor: pointer;
 	font-weight: 600;
-	color: #1d2327;
+	color: #2b2b2b;
 }
 .zehoro-presets__grid {
 	display: grid;
@@ -392,29 +399,29 @@
 	padding: 4px 16px 12px;
 }
 .zehoro-presets__card {
-	border: 1px solid #dcdcde;
-	border-radius: 6px;
+	border: 1.4px solid #2b2b2b;
+	border-radius: 2px;
 	padding: 14px 16px;
-	background: #fbfbfc;
+	background: #fff;
 }
-.zehoro-presets__card h3 { margin: 0 0 6px; font-size: 14px; }
-.zehoro-presets__card p  { margin: 0 0 10px; color: #50575e; font-size: 12.5px; line-height: 1.5; }
+.zehoro-presets__card h3 { margin: 0 0 6px; font-size: 14px; color: #2b2b2b; }
+.zehoro-presets__card p  { margin: 0 0 10px; color: #6b6859; font-size: 12.5px; line-height: 1.5; }
 
 /* ── Suite cards: one card for a co-activated group, sub-toggles inside ──── */
 
 .zehoro-suite-card .lkst-type-badge--suite {
-	background: #eef1f5;
-	color: #50575e;
-	border: 1px solid #dcdcde;
+	background: #f4f1ea;
+	color: #6b6859;
+	border: 1.2px solid #8a8678;
 }
 .zehoro-suite-details {
 	margin-top: 10px;
-	border-top: 1px solid #f0f0f1;
+	border-top: 1px solid #e3ddcd;
 	padding-top: 8px;
 }
 .zehoro-suite-summary {
 	cursor: pointer;
-	color: #2271b1;
+	color: #2f6db0;
 	font-size: 12.5px;
 	list-style: none;
 	user-select: none;
@@ -427,7 +434,7 @@
 	transition: transform .15s ease;
 }
 .zehoro-suite-details[open] .zehoro-suite-summary::before { transform: rotate(90deg); }
-.zehoro-suite-count { font-weight: 600; color: #1d2327; }
+.zehoro-suite-count { font-weight: 600; color: #2b2b2b; }
 .zehoro-suite-members {
 	list-style: none;
 	margin: 10px 0 2px;
@@ -441,7 +448,7 @@
 	gap: 10px;
 	padding: 3px 0;
 	font-size: 13px;
-	color: #1d2327;
+	color: #3a382f;
 }
 .zehoro-suite-member__title { line-height: 1.3; }
 

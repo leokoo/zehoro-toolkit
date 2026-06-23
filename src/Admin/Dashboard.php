@@ -494,8 +494,15 @@ class Dashboard {
 		$group_counts = array_filter( $group_counts ); // drop empty groups
 		?>
 		<div class="wrap lkst-dashboard">
-			<h1><?php esc_html_e( 'Zehoro Toolkit — Modules', 'zehoro-toolkit' ); ?></h1>
-			<p><?php esc_html_e( 'Enable or disable specific features of the toolkit. Only active modules load their code.', 'zehoro-toolkit' ); ?></p>
+			<div class="zui">
+				<header class="zui-pagehead" style="padding-left:0;padding-right:0;">
+					<div>
+						<div class="zui-pagehead__eyebrow"><?php esc_html_e( 'Zehoro Toolkit', 'zehoro-toolkit' ); ?></div>
+						<h1 class="zui-pagehead__title"><?php esc_html_e( 'Modules', 'zehoro-toolkit' ); ?></h1>
+						<div class="zui-pagehead__sub"><?php esc_html_e( 'Enable or disable specific features of the toolkit. Only active modules load their code.', 'zehoro-toolkit' ); ?></div>
+					</div>
+				</header>
+			</div>
 
 			<div class="zehoro-modules-layout">
 			<aside class="zehoro-module-nav" aria-label="<?php esc_attr_e( 'Module groups', 'zehoro-toolkit' ); ?>">
@@ -650,38 +657,40 @@ class Dashboard {
 	 */
 	private function render_danger_zone(): void {
 		$enabled = (bool) get_option( \Zehoro\Maintenance\DataEraser::DELETE_ON_UNINSTALL_OPTION, false );
-		if ( isset( $_GET['erased'] ) ) {
-			echo '<div class="updated notice is-dismissible"><p>' . esc_html__( 'All Zehoro Toolkit data was erased.', 'zehoro-toolkit' ) . '</p></div>';
-		}
-		if ( isset( $_GET['danger_saved'] ) ) {
-			echo '<div class="updated notice is-dismissible"><p>' . esc_html__( 'Saved.', 'zehoro-toolkit' ) . '</p></div>';
-		}
 		?>
-		<div class="zehoro-danger-zone" style="margin-top:32px;border:1px solid #d63638;border-radius:6px;background:#fff;max-width:760px;">
-			<h2 style="margin:0;padding:12px 16px;background:#fcebec;color:#8a1f2b;border-bottom:1px solid #f0c3c6;border-radius:6px 6px 0 0;font-size:14px;">⚠ <?php esc_html_e( 'Danger Zone', 'zehoro-toolkit' ); ?></h2>
-			<div style="padding:16px;">
-				<p style="margin-top:0;color:#50575e;font-size:13px;max-width:640px;"><?php esc_html_e( 'Zehoro keeps your settings when you deactivate or delete the plugin — so a temporary uninstall (e.g. to troubleshoot) never loses your data. Use the controls below only if you actually want to wipe everything.', 'zehoro-toolkit' ); ?></p>
+		<div class="zui" style="margin-top:24px;">
+			<?php if ( isset( $_GET['erased'] ) ) : ?>
+				<div class="zui-banner zui-banner--info zui-mb16" style="max-width:760px;"><span class="zui-banner__badge"><?php esc_html_e( 'Erased', 'zehoro-toolkit' ); ?></span><span class="zui-banner__text"><?php esc_html_e( 'All Zehoro Toolkit data was erased.', 'zehoro-toolkit' ); ?></span></div>
+			<?php endif; ?>
+			<?php if ( isset( $_GET['danger_saved'] ) ) : ?>
+				<div class="zui-banner zui-banner--info zui-mb16" style="max-width:760px;"><span class="zui-banner__badge"><?php esc_html_e( 'Saved', 'zehoro-toolkit' ); ?></span><span class="zui-banner__text"><?php esc_html_e( 'Saved.', 'zehoro-toolkit' ); ?></span></div>
+			<?php endif; ?>
+			<div class="zehoro-danger-zone zui-card" style="max-width:760px;border-color:var(--zui-red);">
+				<div class="zui-card__head" style="background:var(--zui-red);"><span><?php esc_html_e( 'Danger Zone', 'zehoro-toolkit' ); ?></span></div>
+				<div class="zui-card__body">
+					<p class="zui-lead zui-mb16"><?php esc_html_e( 'Zehoro keeps your settings when you deactivate or delete the plugin — so a temporary uninstall (e.g. to troubleshoot) never loses your data. Use the controls below only if you actually want to wipe everything.', 'zehoro-toolkit' ); ?></p>
 
-				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin:0 0 14px;">
-					<?php wp_nonce_field( 'zehoro_danger' ); ?>
-					<input type="hidden" name="action" value="zehoro_danger">
-					<input type="hidden" name="op" value="save">
-					<label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.5;">
-						<input type="checkbox" name="delete_on_uninstall" value="1" <?php checked( $enabled ); ?>>
-						<span><?php esc_html_e( 'Delete all Zehoro data when I delete this plugin. Off by default — your settings survive a delete and reinstall.', 'zehoro-toolkit' ); ?></span>
-					</label>
-					<p style="margin:10px 0 0;"><button type="submit" class="button"><?php esc_html_e( 'Save', 'zehoro-toolkit' ); ?></button></p>
-				</form>
+					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="zui-mb16">
+						<?php wp_nonce_field( 'zehoro_danger' ); ?>
+						<input type="hidden" name="action" value="zehoro_danger">
+						<input type="hidden" name="op" value="save">
+						<label class="zui-inline" style="align-items:flex-start;line-height:1.5;">
+							<input type="checkbox" name="delete_on_uninstall" value="1" <?php checked( $enabled ); ?>>
+							<span><?php esc_html_e( 'Delete all Zehoro data when I delete this plugin. Off by default — your settings survive a delete and reinstall.', 'zehoro-toolkit' ); ?></span>
+						</label>
+						<p class="zui-mt12" style="margin-bottom:0;"><button type="submit" class="zui-btn zui-btn--secondary zui-btn--sm"><?php esc_html_e( 'Save', 'zehoro-toolkit' ); ?></button></p>
+					</form>
 
-				<hr style="border:0;border-top:1px solid #f0f0f1;margin:14px 0;">
+					<div class="zui-divider"></div>
 
-				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('<?php echo esc_js( __( 'This permanently deletes ALL Zehoro Toolkit settings, options, and stored data on this site. It cannot be undone. Continue?', 'zehoro-toolkit' ) ); ?>');" style="margin:0;">
-					<?php wp_nonce_field( 'zehoro_danger' ); ?>
-					<input type="hidden" name="action" value="zehoro_danger">
-					<input type="hidden" name="op" value="erase">
-					<p style="margin:0 0 8px;color:#50575e;font-size:13px;"><?php esc_html_e( 'Erase everything now — options, post/user meta, and cached data. The plugin keeps running with fresh defaults.', 'zehoro-toolkit' ); ?></p>
-					<button type="submit" class="button" style="color:#8a1f2b;border-color:#c9909a;"><?php esc_html_e( 'Erase all Zehoro data now', 'zehoro-toolkit' ); ?></button>
-				</form>
+					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('<?php echo esc_js( __( 'This permanently deletes ALL Zehoro Toolkit settings, options, and stored data on this site. It cannot be undone. Continue?', 'zehoro-toolkit' ) ); ?>');" style="margin:0;">
+						<?php wp_nonce_field( 'zehoro_danger' ); ?>
+						<input type="hidden" name="action" value="zehoro_danger">
+						<input type="hidden" name="op" value="erase">
+						<p class="zui-mb8" style="margin-top:0;"><?php esc_html_e( 'Erase everything now — options, post/user meta, and cached data. The plugin keeps running with fresh defaults.', 'zehoro-toolkit' ); ?></p>
+						<button type="submit" class="zui-btn zui-btn--danger zui-btn--sm"><?php esc_html_e( 'Erase all Zehoro data now', 'zehoro-toolkit' ); ?></button>
+					</form>
+				</div>
 			</div>
 		</div>
 		<?php
@@ -708,27 +717,44 @@ class Dashboard {
 	}
 
 	public function render_styles_settings_page(): void {
+		$fields = [
+			'zehoro_color_primary'          => [ __( 'Primary Brand Color', 'zehoro-toolkit' ),    '#E8A020' ],
+			'zehoro_color_primary_contrast' => [ __( 'Primary Contrast Color', 'zehoro-toolkit' ), '#0F1A2E' ],
+			'zehoro_color_secondary'        => [ __( 'Secondary Brand Color', 'zehoro-toolkit' ),  '#1ECFC4' ],
+			'zehoro_color_bg_dark'          => [ __( 'Dark Background', 'zehoro-toolkit' ),         '#0F1A2E' ],
+			'zehoro_color_bg_light'         => [ __( 'Light Background', 'zehoro-toolkit' ),        '#F5F0E8' ],
+		];
 		?>
 		<div class="wrap">
-			<p style="margin-top:14px;"><a href="<?php echo esc_url( admin_url( 'admin.php?page=zehoro-dashboard' ) ); ?>" class="button button-secondary">&larr; <?php esc_html_e( 'Back to Modules', 'zehoro-toolkit' ); ?></a></p>
-			<h1><?php esc_html_e( 'Visual Styles', 'zehoro-toolkit' ); ?></h1>
-			<p><?php esc_html_e( 'Customize the colors used across all toolkit modules.', 'zehoro-toolkit' ); ?></p>
-			<form method="post" action="options.php">
-				<?php settings_fields( 'zehoro_styles_group' ); ?>
-				<table class="form-table">
-					<tr><th><label for="zehoro_color_primary"><?php esc_html_e( 'Primary Brand Color', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="zehoro_color_primary" name="zehoro_color_primary" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_primary', '#E8A020' ) ); ?>" class="lkst-color-picker"></td></tr>
-					<tr><th><label for="zehoro_color_primary_contrast"><?php esc_html_e( 'Primary Contrast Color', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="zehoro_color_primary_contrast" name="zehoro_color_primary_contrast" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_primary_contrast', '#0F1A2E' ) ); ?>" class="lkst-color-picker"></td></tr>
-					<tr><th><label for="zehoro_color_secondary"><?php esc_html_e( 'Secondary Brand Color', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="zehoro_color_secondary" name="zehoro_color_secondary" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_secondary', '#1ECFC4' ) ); ?>" class="lkst-color-picker"></td></tr>
-					<tr><th><label for="zehoro_color_bg_dark"><?php esc_html_e( 'Dark Background', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="zehoro_color_bg_dark" name="zehoro_color_bg_dark" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_bg_dark', '#0F1A2E' ) ); ?>" class="lkst-color-picker"></td></tr>
-					<tr><th><label for="zehoro_color_bg_light"><?php esc_html_e( 'Light Background', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="zehoro_color_bg_light" name="zehoro_color_bg_light" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_color_bg_light', '#F5F0E8' ) ); ?>" class="lkst-color-picker"></td></tr>
-				</table>
-				<?php submit_button(); ?>
-			</form>
+			<div class="zui">
+				<header class="zui-pagehead">
+					<div>
+						<div class="zui-pagehead__eyebrow"><?php esc_html_e( 'Zehoro Toolkit', 'zehoro-toolkit' ); ?></div>
+						<h1 class="zui-pagehead__title"><?php esc_html_e( 'Visual Styles', 'zehoro-toolkit' ); ?></h1>
+						<div class="zui-pagehead__sub"><?php esc_html_e( 'Customize the colors used across all toolkit modules.', 'zehoro-toolkit' ); ?></div>
+					</div>
+					<div class="zui-pagehead__actions">
+						<a class="zui-btn zui-btn--secondary zui-btn--sm" href="<?php echo esc_url( admin_url( 'admin.php?page=zehoro-dashboard' ) ); ?>">&larr; <?php esc_html_e( 'Back to Modules', 'zehoro-toolkit' ); ?></a>
+					</div>
+				</header>
+				<div class="zui-body" style="padding:18px 0 0;">
+					<div class="zui-card zui-card--raised" style="max-width:560px;">
+						<div class="zui-card__head"><span><?php esc_html_e( 'Brand colours', 'zehoro-toolkit' ); ?></span></div>
+						<div class="zui-card__body">
+							<form method="post" action="options.php">
+								<?php settings_fields( 'zehoro_styles_group' ); ?>
+								<?php foreach ( $fields as $key => [ $label, $default ] ) : ?>
+									<div class="zui-field">
+										<label class="zui-field__label" for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></label>
+										<input type="text" id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( $key, $default ) ); ?>" class="lkst-color-picker">
+									</div>
+								<?php endforeach; ?>
+								<button type="submit" class="zui-btn zui-btn--primary"><?php esc_html_e( 'Save Changes', 'zehoro-toolkit' ); ?></button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		<?php
 	}
@@ -736,29 +762,44 @@ class Dashboard {
 	public function render_rss_feed_settings_page(): void {
 		$post_types = get_post_types( [ 'public' => true ], 'objects' );
 		$exclude    = [ 'attachment', 'page', 'bricks_template', 'etch_template', 'elementor_library', 'ifso_triggers' ];
+		$selected   = \Zehoro\Utils\Option::get( 'zehoro_rss_post_types', [ 'post' ] );
 		?>
 		<div class="wrap">
-			<p style="margin-top:14px;"><a href="<?php echo esc_url( admin_url( 'admin.php?page=zehoro-dashboard' ) ); ?>" class="button button-secondary">&larr; <?php esc_html_e( 'Back to Modules', 'zehoro-toolkit' ); ?></a></p>
-			<h1><?php esc_html_e( 'RSS Feed Support', 'zehoro-toolkit' ); ?></h1>
-			<form method="post" action="options.php">
-				<?php settings_fields( 'zehoro_rss_group' ); ?>
-				<table class="form-table">
-					<tr><th><?php esc_html_e( 'Include Post Types', 'zehoro-toolkit' ); ?></th>
-						<td><?php
-							$selected = \Zehoro\Utils\Option::get( 'zehoro_rss_post_types', [ 'post' ] );
-							foreach ( $post_types as $slug => $pt ) :
-								if ( in_array( $slug, $exclude, true ) ) continue;
-								?>
-								<label style="display:block;margin-bottom:5px;">
-									<input type="checkbox" name="zehoro_rss_post_types[]" value="<?php echo esc_attr( $slug ); ?>" <?php checked( in_array( $slug, $selected, true ) ); ?>>
-									<?php echo esc_html( $pt->label ); ?> (<code><?php echo esc_html( $slug ); ?></code>)
-								</label>
-							<?php endforeach; ?>
-						</td>
-					</tr>
-				</table>
-				<?php submit_button(); ?>
-			</form>
+			<div class="zui">
+				<header class="zui-pagehead">
+					<div>
+						<div class="zui-pagehead__eyebrow"><?php esc_html_e( 'Zehoro Toolkit', 'zehoro-toolkit' ); ?></div>
+						<h1 class="zui-pagehead__title"><?php esc_html_e( 'RSS Feed Support', 'zehoro-toolkit' ); ?></h1>
+						<div class="zui-pagehead__sub"><?php esc_html_e( 'Choose which content types appear in your site feeds.', 'zehoro-toolkit' ); ?></div>
+					</div>
+					<div class="zui-pagehead__actions">
+						<a class="zui-btn zui-btn--secondary zui-btn--sm" href="<?php echo esc_url( admin_url( 'admin.php?page=zehoro-dashboard' ) ); ?>">&larr; <?php esc_html_e( 'Back to Modules', 'zehoro-toolkit' ); ?></a>
+					</div>
+				</header>
+				<div class="zui-body" style="padding:18px 0 0;">
+					<div class="zui-card zui-card--raised" style="max-width:560px;">
+						<div class="zui-card__head"><span><?php esc_html_e( 'Feed content types', 'zehoro-toolkit' ); ?></span></div>
+						<div class="zui-card__body">
+							<form method="post" action="options.php">
+								<?php settings_fields( 'zehoro_rss_group' ); ?>
+								<div class="zui-field">
+									<span class="zui-field__label"><?php esc_html_e( 'Include Post Types', 'zehoro-toolkit' ); ?></span>
+									<?php
+									foreach ( $post_types as $slug => $pt ) :
+										if ( in_array( $slug, $exclude, true ) ) continue;
+										?>
+										<label class="zui-inline" style="margin-bottom:2px;">
+											<input type="checkbox" name="zehoro_rss_post_types[]" value="<?php echo esc_attr( $slug ); ?>" <?php checked( in_array( $slug, $selected, true ) ); ?>>
+											<span><?php echo esc_html( $pt->label ); ?> <span class="zui-slug"><?php echo esc_html( $slug ); ?></span></span>
+										</label>
+									<?php endforeach; ?>
+								</div>
+								<button type="submit" class="zui-btn zui-btn--primary"><?php esc_html_e( 'Save Changes', 'zehoro-toolkit' ); ?></button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		<?php
 	}
@@ -766,23 +807,45 @@ class Dashboard {
 	public function render_author_box_settings_page(): void {
 		?>
 		<div class="wrap">
-			<p style="margin-top:14px;"><a href="<?php echo esc_url( admin_url( 'admin.php?page=zehoro-dashboard' ) ); ?>" class="button button-secondary">&larr; <?php esc_html_e( 'Back to Modules', 'zehoro-toolkit' ); ?></a></p>
-			<h1><?php esc_html_e( 'Author Box Settings', 'zehoro-toolkit' ); ?></h1>
-			<form method="post" action="options.php">
-				<?php settings_fields( 'zehoro_author_box_group' ); ?>
-				<h2><?php esc_html_e( 'CTA Buttons', 'zehoro-toolkit' ); ?></h2>
-				<table class="form-table">
-					<tr><th><label for="zehoro_cta_p_label"><?php esc_html_e( 'Primary button label', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="zehoro_cta_p_label" name="zehoro_cta_primary_label" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_cta_primary_label', 'Read the articles' ) ); ?>" class="regular-text"></td></tr>
-					<tr><th><label for="zehoro_cta_p_url"><?php esc_html_e( 'Primary button URL', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="zehoro_cta_p_url" name="zehoro_cta_primary_url" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_cta_primary_url', '/blog/' ) ); ?>" class="regular-text"></td></tr>
-					<tr><th><label for="zehoro_cta_s_label"><?php esc_html_e( 'Secondary button label', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="zehoro_cta_s_label" name="zehoro_cta_secondary_label" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_cta_secondary_label', 'Get the newsletter' ) ); ?>" class="regular-text"></td></tr>
-					<tr><th><label for="zehoro_cta_s_url"><?php esc_html_e( 'Secondary button URL', 'zehoro-toolkit' ); ?></label></th>
-						<td><input type="text" id="zehoro_cta_s_url" name="zehoro_cta_secondary_url" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_cta_secondary_url', '#newsletter' ) ); ?>" class="regular-text"></td></tr>
-				</table>
-				<?php submit_button(); ?>
-			</form>
+			<div class="zui">
+				<header class="zui-pagehead">
+					<div>
+						<div class="zui-pagehead__eyebrow"><?php esc_html_e( 'Zehoro Toolkit', 'zehoro-toolkit' ); ?></div>
+						<h1 class="zui-pagehead__title"><?php esc_html_e( 'Author Box Settings', 'zehoro-toolkit' ); ?></h1>
+						<div class="zui-pagehead__sub"><?php esc_html_e( 'The call-to-action buttons shown in the author box.', 'zehoro-toolkit' ); ?></div>
+					</div>
+					<div class="zui-pagehead__actions">
+						<a class="zui-btn zui-btn--secondary zui-btn--sm" href="<?php echo esc_url( admin_url( 'admin.php?page=zehoro-dashboard' ) ); ?>">&larr; <?php esc_html_e( 'Back to Modules', 'zehoro-toolkit' ); ?></a>
+					</div>
+				</header>
+				<div class="zui-body" style="padding:18px 0 0;">
+					<div class="zui-card zui-card--raised" style="max-width:560px;">
+						<div class="zui-card__head"><span><?php esc_html_e( 'CTA Buttons', 'zehoro-toolkit' ); ?></span></div>
+						<div class="zui-card__body">
+							<form method="post" action="options.php">
+								<?php settings_fields( 'zehoro_author_box_group' ); ?>
+								<div class="zui-field">
+									<label class="zui-field__label" for="zehoro_cta_p_label"><?php esc_html_e( 'Primary button label', 'zehoro-toolkit' ); ?></label>
+									<input type="text" id="zehoro_cta_p_label" name="zehoro_cta_primary_label" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_cta_primary_label', 'Read the articles' ) ); ?>" class="zui-input">
+								</div>
+								<div class="zui-field">
+									<label class="zui-field__label" for="zehoro_cta_p_url"><?php esc_html_e( 'Primary button URL', 'zehoro-toolkit' ); ?></label>
+									<input type="text" id="zehoro_cta_p_url" name="zehoro_cta_primary_url" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_cta_primary_url', '/blog/' ) ); ?>" class="zui-input zui-input--mono">
+								</div>
+								<div class="zui-field">
+									<label class="zui-field__label" for="zehoro_cta_s_label"><?php esc_html_e( 'Secondary button label', 'zehoro-toolkit' ); ?></label>
+									<input type="text" id="zehoro_cta_s_label" name="zehoro_cta_secondary_label" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_cta_secondary_label', 'Get the newsletter' ) ); ?>" class="zui-input">
+								</div>
+								<div class="zui-field">
+									<label class="zui-field__label" for="zehoro_cta_s_url"><?php esc_html_e( 'Secondary button URL', 'zehoro-toolkit' ); ?></label>
+									<input type="text" id="zehoro_cta_s_url" name="zehoro_cta_secondary_url" value="<?php echo esc_attr( \Zehoro\Utils\Option::get( 'zehoro_cta_secondary_url', '#newsletter' ) ); ?>" class="zui-input zui-input--mono">
+								</div>
+								<button type="submit" class="zui-btn zui-btn--primary"><?php esc_html_e( 'Save Changes', 'zehoro-toolkit' ); ?></button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		<?php
 	}

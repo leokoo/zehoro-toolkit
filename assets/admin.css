@@ -1,5 +1,13 @@
 /**
- * Bricks Site Toolkit — Admin Dashboard styles
+ * Zehoro Toolkit — Admin Dashboard styles
+ *
+ * Retheme note (Claude Design v1.1): the module-card + toggle chrome below is
+ * tuned to the warm-paper / hard-border `.zui` look so the Modules grid sits
+ * consistently with the rest of the restyled admin. CLASS NAMES + STRUCTURE
+ * ARE UNCHANGED — assets/admin/modules.js binds to `.lkst-module-card`,
+ * `.lkst-switch input`, `.zehoro-*` etc. and is untouched. Only visual
+ * properties (colour/border/radius) move; layout/display/animation rules that
+ * the JS or modules.css depend on are left to modules.css.
  */
 
 .lkst-dashboard {
@@ -15,38 +23,39 @@
 }
 
 .lkst-module-card {
-    background: #fff;
-    border: 1px solid #ccd0d4;
-    border-radius: 8px;
-    padding: 20px;
+    background: #ffffff;
+    border: 1.6px solid #2b2b2b;
+    border-radius: 2px;
+    padding: 18px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: 4px 5px 0 rgba(43, 43, 43, .10);
     transition: box-shadow 0.2s ease;
 }
 
 .lkst-module-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 5px 6px 0 rgba(43, 43, 43, .14);
 }
 
 .lkst-module-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .lkst-module-title {
     margin: 0;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
+    color: #2b2b2b;
 }
 
 .lkst-module-desc {
-    color: #646970;
+    color: #6b6859;
     font-size: 13px;
     line-height: 1.5;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     flex: 1;
 }
 
@@ -54,16 +63,19 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 15px;
-    border-top: 1px solid #f0f0f1;
+    padding-top: 13px;
+    border-top: 1px solid #e3ddcd;
 }
 
-/* Toggle Switch Styling */
+/* Toggle Switch Styling — retuned to the .zui-toggle look (ink track + knob,
+   blue when checked). Structure (.lkst-switch > input + .lkst-slider) is the
+   exact shape modules.js expects; only the visual paint changed. */
 .lkst-switch {
     position: relative;
     display: inline-block;
-    width: 44px;
-    height: 24px;
+    width: 42px;
+    height: 22px;
+    flex: 0 0 auto;
 }
 
 .lkst-switch input {
@@ -79,49 +91,56 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccd0d4;
-    transition: .4s;
-    border-radius: 24px;
+    background-color: #ffffff;
+    border: 1.4px solid #2b2b2b;
+    transition: background-color .15s;
+    border-radius: 2px;
 }
 
 .lkst-slider:before {
     position: absolute;
     content: "";
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
+    height: 14px;
+    width: 14px;
+    left: 2px;
+    top: 2px;
+    background-color: #2b2b2b;
+    transition: transform .15s;
+    border-radius: 1px;
 }
 
 input:checked + .lkst-slider {
-    background-color: #2271b1;
+    background-color: #2f5d8a;
+    border-color: #2f5d8a;
 }
 
 input:checked + .lkst-slider:before {
     transform: translateX(20px);
+    background-color: #ffffff;
+}
+
+.lkst-switch input:focus-visible + .lkst-slider {
+    box-shadow: 0 0 0 2px #bcd0e8;
 }
 
 .lkst-configure-link {
     text-decoration: none;
-    font-weight: 500;
-    color: #2271b1;
+    font-weight: 600;
+    color: #2f6db0;
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
 .lkst-configure-link:hover {
-    color: #135e96;
+    color: #2f5d8a;
 }
 
 .lkst-module-card.inactive {
-    opacity: 0.7;
+    opacity: 0.72;
 }
 
 .lkst-module-card.inactive .lkst-configure-link {
     pointer-events: none;
-    color: #a7aaad;
+    color: #8a8678;
 }

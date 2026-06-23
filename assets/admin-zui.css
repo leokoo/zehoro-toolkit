@@ -106,6 +106,7 @@
 .zui-card__head--green { background: var(--zui-green-deep); color: #fff; }
 .zui-card__head--gold { background: var(--zui-gold); color: #fff; }
 .zui-card__head--muted { background: var(--zui-muted-2); color: #f0ede4; }
+.zui-card__head--red { background: var(--zui-red-strong); color: #fff; }
 .zui-card__head--lg { font-size: 11px; letter-spacing: .12em; padding: 7px 14px; }
 .zui-card__body { padding: 15px; }
 .zui-card__body--lg { padding: 18px; }
