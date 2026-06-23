@@ -1,8 +1,8 @@
 # Zehoro Toolkit — Module Reference
 
 **Plugin:** Zehoro Toolkit (Free)
-**Version:** 1.6.0
-**Namespace:** `LK\SiteToolkit\Modules`
+**Version:** 1.24.3
+**Namespace:** `Zehoro\Modules`
 **Source:** `src/Modules/`
 
 ---
@@ -13,7 +13,7 @@ These modules register `block.json`-based Gutenberg blocks. Compiled blocks live
 
 | Module file | Slug | Block name | Type | Description |
 |---|---|---|---|---|
-| `Callout.php` | `callout` | Callout Block | compiled | Visual callout / notice / alert for long-form content. Variants: info, warning, success, danger. |
+| `Callout.php` | `callout` | Callout Block | compiled | Visual callout / notice / alert for long-form content. Variants: info, warning, success, tip. |
 | `ProsCons.php` | `pros_cons` | Pros & Cons | compiled | Wirecutter-style pros/cons box. Registers three blocks: `pros-cons` (wrapper), `pros`, `cons`. |
 | `TLDR.php` | `tldr` | TL;DR / Key Takeaways | compiled | Styled summary box for the top of articles. Native Gutenberg block. |
 | `Steps.php` | `steps` | Steps / Process | SSR | Numbered how-to steps. Auto-emits `HowTo` JSON-LD schema. Editor: vanilla JS repeater with move up/down controls. |
@@ -25,7 +25,7 @@ These modules register `block.json`-based Gutenberg blocks. Compiled blocks live
 
 ## Shortcode Modules
 
-These modules register `[lkst_*]` shortcodes and/or auto-inject into `the_content`.
+These modules register shortcodes (canonical `[zehoro_*]`; the legacy `[lkst_*]` form shown below is still registered as a backward-compatible alias) and/or auto-inject into `the_content`.
 
 | Module file | Slug | Shortcode(s) | Description |
 |---|---|---|---|
@@ -36,9 +36,6 @@ These modules register `[lkst_*]` shortcodes and/or auto-inject into `the_conten
 | `Disclaimer.php` | `disclosure` | *(auto-inject)* | Legal/medical/custom disclaimer. Auto-appends styled box to post content. Configurable per post type. **Note:** internal slug is `disclosure` for backward compatibility. |
 | `FAQ.php` | `faq` | `[lkst_faq question="..."]` | Styled FAQ accordions with automatic `FAQPage` JSON-LD schema. Defers schema to Yoast/RankMath/SureRank when active. |
 | `LastUpdated.php` | `last_updated` | `[lkst_last_updated]` | Freshness badge showing last modified date. Optional auto-inject. Optionally emits structured data into `<head>`. |
-| `NewsTicker.php` | `news_ticker` | `[lkst_ticker_posts]` | Horizontally scrolling marquee of recent post titles. |
-| `PostNav.php` | `post_nav` | `[lkst_post_nav]` | Previous/Next post navigation links. |
-| `ReadingTime.php` | `reading_time` | `[lkst_read_time]` | Calculates and displays estimated reading time. Strips shortcode tags before word count. |
 | `TableOfContents.php` | `table_of_contents` | `[lkst_toc]` | Wirecutter-style collapsible TOC. Parses H2/H3 from raw `post_content`, injects anchor IDs, auto-injects or manual via shortcode. Settings page: `lkst-toc-settings`. |
 
 ---
@@ -55,7 +52,6 @@ These modules register `[lkst_*]` shortcodes and/or auto-inject into `the_conten
 
 | Module file | Slug | Description |
 |---|---|---|
-| `ReadingProgress.php` | `reading_progress` | 3px sticky progress bar at top of screen, fills as user scrolls. |
 | `VisualStyles.php` | `styles` | Brand color customisation for Author Box, CTAs, and Category Pills via CSS custom properties. |
 
 ---
@@ -79,6 +75,6 @@ These modules ship no markup of their own — they bind behaviour to standardise
 
 ---
 
-## Planned — Not Yet Built
+## Cut modules (no longer in Free)
 
-All four originally-planned free blocks have been built (see Native Gutenberg Blocks above). Future additions TBD.
+Four modules from earlier "Leokoo Site Toolkit" builds were **removed on 2026-06-06** — each is now covered by native Gutenberg core (a theme/user choice, not Zehoro's job): **Reading Time** (`core/post-time-to-read`), **Post Navigation** (`core/post-navigation-link`), **Reading Progress**, and **News Ticker**. Their old `[lkst_*]` shortcodes now render nothing; re-create the effect with the core blocks.

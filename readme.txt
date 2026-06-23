@@ -4,7 +4,7 @@ Tags: table of contents, faq, schema, author box, structured data
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.22.1
+Stable tag: 1.24.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,27 @@ The content features are native Gutenberg blocks. Page builders can use the shor
 
 == Changelog ==
 
+= 1.24.3 =
+* Security: the email-capture webhook now uses WordPress's safe HTTP client, blocking SSRF to private/loopback addresses. Surfaced by an external audit. No feature change.
+
+= 1.24.2 =
+* Fixed the email-capture Content Box (and the email content slot), which an incomplete rename had broken — the form now submits, the download link is delivered, and per-box webhook overrides apply again.
+
+= 1.24.1 =
+* Suite-card members (Blocks / Schema / Reading & Trust) now show a settings link, so every module's settings page is reachable without typing the URL.
+
+= 1.24.0 =
+* Your data is now safe on uninstall: settings are preserved by default. A new "Danger Zone" adds an opt-in "delete on uninstall" toggle and an "Erase all data now" button.
+
+= 1.23.1 =
+* Uninstall now clears both the current `zehoro_*` and legacy `lkst_*` data; hardened the module-save handler.
+
+= 1.23.0 =
+* Module "suites": the Modules grid collapses commodity groups into single cards with sub-toggles (Kadence-Blocks style), so you meet about 15 cards instead of 50.
+
+= 1.22.2 =
+* Module grouping fix: ten loop/SEO modules that were landing in "Other" are now grouped correctly.
+
 = 1.22.1 =
 * Housekeeping for public distribution: added the GPLv2-or-later license header and the full license text, and guarded the GitHub auto-updater so it cleanly no-ops in repository builds (WordPress.org serves updates). No change to the plugin's features.
 
@@ -81,6 +102,12 @@ The content features are native Gutenberg blocks. Page builders can use the shor
 * Internationalization: text-domain loading aligned for translation; bundled translation template.
 
 == Upgrade Notice ==
+
+= 1.24.3 =
+Security hardening for the email-capture webhook. Safe to update.
+
+= 1.24.0 =
+Your settings are now preserved on uninstall by default (with an opt-in delete). Recommended update.
 
 = 1.22.1 =
 Licensing and distribution housekeeping. No feature changes.
