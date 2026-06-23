@@ -115,6 +115,8 @@ class Dashboard {
 	public function enqueue_assets( string $hook ): void {
 		if ( strpos( $hook, 'zehoro-' ) === false && strpos( $hook, 'lkst-' ) === false ) return;
 		wp_enqueue_style( 'zehoro-admin-css', ZEHORO_URL . 'assets/admin.css', [], ZEHORO_VERSION );
+		// Claude Design system (.zui) — additive, scoped; shared with Pro.
+		wp_enqueue_style( 'zehoro-admin-zui', ZEHORO_URL . 'assets/admin-zui.css', [ 'zehoro-admin-css' ], ZEHORO_VERSION );
 
 		// Modules-page-only assets (filter UX + per-card REST toggle). The grid
 		// renders on the landing (zehoro-dashboard) when unclaimed, and on its
