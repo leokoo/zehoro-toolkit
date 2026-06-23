@@ -4,7 +4,7 @@ Tags: table of contents, faq, schema, author box, structured data
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.24.3
+Stable tag: 1.24.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,6 +72,9 @@ The content features are native Gutenberg blocks. Page builders can use the shor
 4. SEO-plugin coexistence: Zehoro detects your SEO plugin and stands its schema down, with a one-click override.
 
 == Changelog ==
+
+= 1.24.4 =
+* Fixed: FAQ and "Last Updated" structured data now honor the central schema-coexistence setting. Setting schema output to "never" (or letting an SEO plugin handle schema under "auto") now silences FAQPage and dateModified JSON-LD too — not just Article schema — preventing duplicate markup.
 
 = 1.24.3 =
 * Security: the email-capture webhook now uses WordPress's safe HTTP client, blocking SSRF to private/loopback addresses. Surfaced by an external audit. No feature change.

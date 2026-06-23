@@ -116,16 +116,15 @@ class FAQ implements ModuleInterface {
     public function output_schema(): void {
         if ( empty( $this->faqs ) ) return;
 
-        $mode = \Zehoro\Utils\Option::get( 'zehoro_faq_schema_mode', 'auto' );
-
-        if ( $mode === 'off' ) return;
-        
-        if ( $mode === 'auto' ) {
-            // Shared detector (was a narrower, inconsistent per-module check).
-            if ( \Zehoro\Compat\SeoPlugin::active() ) {
-                echo '<!-- Zehoro: FAQPage schema paused — an active SEO plugin already emits structured data. -->';
-                return;
-            }
+        // A per-type opt-out, then the CENTRAL schema-coexistence policy
+        // (auto-detect / always / never + the zehoro/emit_schema filter): the
+        // single source of truth, shared with Article Schema and Last Updated.
+        // 'auto'/'always' both mean "on, governed centrally"; only 'off'
+        // hard-disables FAQ schema, and a central "never" silences it regardless.
+        if ( 'off' === \Zehoro\Utils\Option::get( 'zehoro_faq_schema_mode', 'auto' ) ) return;
+        if ( ! \Zehoro\Compat\SeoPlugin::should_emit_schema() ) {
+            echo '<!-- Zehoro: FAQPage schema paused by the schema-coexistence setting (an SEO plugin is active, or output is set to "never"). -->';
+            return;
         }
 
         $schema = [

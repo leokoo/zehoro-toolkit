@@ -135,7 +135,9 @@ class LastUpdated implements ModuleInterface {
         return $content;
     }
     public function output_schema(): void {
-        if ( ! is_single() || ! \Zehoro\Utils\Option::get( 'zehoro_lu_schema', '1' ) ) return;
+        // Honor the central schema-coexistence policy (auto / always / never +
+        // the zehoro/emit_schema filter), the same gate Article Schema + FAQ use.
+        if ( ! is_single() || ! \Zehoro\Utils\Option::get( 'zehoro_lu_schema', '1' ) || ! \Zehoro\Compat\SeoPlugin::should_emit_schema() ) return;
         $post_id = get_the_ID();
         $pub_time = get_post_time( 'U', true, $post_id );
         $mod_time = get_post_modified_time( 'U', true, $post_id );

@@ -2,6 +2,16 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.24.4] - 2026-06-24
+
+### Fixed — FAQ and Last Updated schema now honor the central coexistence setting
+The schema-coexistence override (Article Schema settings: `auto` / `always` / `never`, plus the `zehoro/emit_schema` filter) is meant to be the single switch for whether Zehoro emits structured data. It governed Article Schema, but **FAQ** ran a parallel policy and **Last Updated** had none — so setting it to **never** silenced Article Schema yet left duplicate `FAQPage` and `dateModified` JSON-LD on the page (the exact duplicate markup the coexistence system exists to prevent).
+
+- **FAQ** and **Last Updated** now route their JSON-LD through the same `SeoPlugin::should_emit_schema()` gate as Article Schema. A central **never** silences all three; **auto** defers all three when a known SEO plugin (Yoast / Rank Math / SureRank / …) is active; **always** (and the `zehoro/emit_schema` filter) forces them on. Per-module toggles can only *further* restrict (e.g. FAQ's per-type "off"), never override the central policy.
+- **Behavior note:** if you previously relied on the per-module FAQ "always" to force FAQPage schema *alongside* an active SEO plugin while the central setting was "auto", set the central setting to "always" instead — the central policy is now the source of truth.
+
++7 tests (172 green).
+
 ## [1.24.3] - 2026-06-23
 
 ### Security — email-capture webhook now uses `wp_safe_remote_post` (SSRF hardening)
