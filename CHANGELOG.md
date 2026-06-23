@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.24.3] - 2026-06-23
+
+### Security — email-capture webhook now uses `wp_safe_remote_post` (SSRF hardening)
+- The Content Box / ContentStream email-capture form delivers each submission to an **admin-configured** webhook via `wp_remote_post`, which does not apply WordPress's loopback/private-range guard. A visitor tampering with the form's hidden webhook field could in principle aim that server-side POST at an internal address (`127.0.0.1`, the cloud-metadata endpoint `169.254.169.254`) — a *blind* SSRF (POST-only, fixed body, no response returned to the caller). Switched to `wp_safe_remote_post()` so the request is blocked from private/loopback targets. Defence-in-depth: the URL stays admin-set and the form remains nonce-protected. Surfaced by an external code audit, verified against the code before fixing.
+
 ## [1.24.2] - 2026-06-18
 
 ### Fixed — the email-capture box (Content Box `type="email"`, also the ContentStream "email" slot) was silently broken by an incomplete rename

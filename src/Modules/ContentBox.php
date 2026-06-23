@@ -450,7 +450,10 @@ class ContentBox implements ModuleInterface {
             wp_send_json_error( __( 'This form is not configured yet. Please contact the site owner.', 'zehoro-toolkit' ) );
         }
 
-        $response = wp_remote_post( $webhook, [
+        // wp_safe_remote_post applies WordPress's loopback/private-range guard, so a
+        // tampered hidden webhook field can't aim the server at 127.0.0.1 or the cloud
+        // metadata endpoint (blind SSRF). The URL is admin-configured; this is defence-in-depth.
+        $response = wp_safe_remote_post( $webhook, [
             'body'    => [
                 'email'    => $email,
                 'name'     => $name,
