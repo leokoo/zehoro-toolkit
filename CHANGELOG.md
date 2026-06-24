@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.25.1] - 2026-06-24
+
+### Fixed — shared `.zui` button text colour (specificity)
+Syncs the shared `admin-zui.css` fix from Pro 1.138.3: `<a>` buttons now keep their own text colour instead of the link blue (the rule is scoped to real links, `a:not(.zui-btn)`). Both plugins enqueue the shared stylesheet on Zehoro admin screens, so both must carry the fix.
+
 ## [1.25.0] - 2026-06-24
 
 ### Changed — Admin UX: the Claude Design system

@@ -33,8 +33,11 @@
   -webkit-font-smoothing: antialiased;
 }
 .zui ::selection { background: var(--zui-blue); color: #fff; }
-.zui a { color: var(--zui-blue-2); text-decoration: none; }
-.zui a:hover { text-decoration: underline; }
+.zui a { text-decoration: none; }
+/* link colour/underline apply to real links only — NOT to <a> buttons, whose
+   own .zui-btn--* colour must win (e.g. white text on the red danger button). */
+.zui a:not(.zui-btn) { color: var(--zui-blue-2); }
+.zui a:not(.zui-btn):hover { text-decoration: underline; }
 .zui strong { font-weight: 600; }
 .zui h1, .zui h2, .zui h3, .zui h4, .zui p { margin: 0; }
 .zui hr { border: none; border-top: 1px solid var(--zui-line-2); margin: 14px 0; }
