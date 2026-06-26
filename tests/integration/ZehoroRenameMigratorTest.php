@@ -76,6 +76,22 @@ class ZehoroRenameMigratorTest extends WP_UnitTestCase {
 		$this->assertSame( '', get_option( 'zehoro_cta_primary_url' ) );
 	}
 
+	public function test_only_hot_keys_autoload() {
+		// The migrated-site query-inflation fix: hot keys (read every / every-content page) join
+		// WP's single cached autoload query; module-conditional keys stay out of the bundle.
+		add_option( 'lkst_active_modules', [ 'mod_a' ] );      // HOT — read on EVERY request
+		add_option( 'lkst_color_primary',  '#abcdef' );        // HOT — CSS variable, every content page
+		add_option( 'lkst_toc_settings',   [ 'depth' => 3 ] ); // cold — only when the TOC renders
+
+		ZehoroRenameMigrator::run();
+
+		wp_cache_delete( 'alloptions', 'options' );
+		$alloptions = wp_load_alloptions();
+		$this->assertArrayHasKey( 'zehoro_active_modules', $alloptions, 'the every-page registry must autoload (the fix)' );
+		$this->assertArrayHasKey( 'zehoro_color_primary', $alloptions, 'CSS-variable colours must autoload' );
+		$this->assertArrayNotHasKey( 'zehoro_toc_settings', $alloptions, 'a module-conditional setting must NOT autoload — no bundle bloat' );
+	}
+
 	// ── run() — orchestration + idempotency ──────────────────────────────────
 
 	public function test_run_processes_every_entry_in_the_option_map() {

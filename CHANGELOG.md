@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.25.3] - 2026-06-26
+
+### Fixed — legacy-rename migrator left the hot `zehoro_active_modules` option un-autoloaded
+On sites upgraded from the old `lkst_*`-named plugin, `ZehoroRenameMigrator` copied **every** renamed option with `autoload=false` — including `zehoro_active_modules`, which is read on **every** request to bootstrap the modules. So on those migrated sites it fired an individual `SELECT` per pageview instead of riding WordPress's single cached autoload query. The migrator now autoloads the genuinely-hot keys — `active_modules` + the 5 CSS-variable colours (read on every Zehoro-content page) — while keeping the ~26 module-conditional settings (author box / TOC / disclaimer / FAQ / content box / last-updated) `autoload=false` so they don't bloat the autoload bundle on pages that never render them. (Fresh installs were already fine — `add_option` autoloads by default; this only affected legacy-migrated sites.) Found by an external audit (Gemini), applied **selectively** rather than the proposed blanket `autoload=true`, which would have over-corrected. +1 test (175 green).
+
 ## [1.25.2] - 2026-06-26
 
 ### Fixed — Article Schema ignored the post-type → @type map (every non-post emitted "Article")

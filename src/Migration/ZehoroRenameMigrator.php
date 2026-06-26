@@ -101,6 +101,26 @@ class ZehoroRenameMigrator {
 	];
 
 	/**
+	 * The keys read on (nearly) every front-end request — so they belong in WP's single
+	 * cached autoload query, NOT an individual SELECT per pageview: `active_modules` is read
+	 * on EVERY request (module bootstrap), and the 5 CSS-variable colours on every page that
+	 * renders Zehoro content. The rest of the map is module-conditional (author box / TOC /
+	 * disclaimer / FAQ / content box / last-updated) — read only when that module renders, so
+	 * autoloading them would bloat EVERY page's bundle (home, archives, posts that don't use
+	 * the module) for a value needed only sometimes. (A blanket autoload=true over-corrects.)
+	 *
+	 * @var string[]
+	 */
+	private const HOT_AUTOLOAD_KEYS = [
+		'zehoro_active_modules',
+		'zehoro_color_primary',
+		'zehoro_color_primary_contrast',
+		'zehoro_color_secondary',
+		'zehoro_color_bg_dark',
+		'zehoro_color_bg_light',
+	];
+
+	/**
 	 * Legacy post-meta key → canonical key map.
 	 *
 	 * Phase 1a ships this empty — Phase 1b's audit will surface the actual
@@ -163,11 +183,12 @@ class ZehoroRenameMigrator {
 			return false; // no legacy value to migrate
 		}
 
-		// autoload=false keeps the new option out of every page load until
-		// something explicitly reads it. WP loads autoloaded options into a
-		// single SELECT on every request — irrelevant for tiny values but a
-		// real cost as we add ~25 of them.
-		update_option( $new, $legacy, false );
+		// Autoload ONLY the hot keys (read every / every-content page) so they ride WP's single
+		// cached autoload query instead of firing an individual SELECT per pageview — the bug
+		// `active_modules` had on legacy-migrated sites. The module-conditional keys stay
+		// autoload=false so they don't bloat the bundle on pages that never read them.
+		$autoload = in_array( $new, self::HOT_AUTOLOAD_KEYS, true );
+		update_option( $new, $legacy, $autoload );
 		return true;
 	}
 
