@@ -101,9 +101,10 @@ class ArticleSchema implements ModuleInterface {
             $author_schema['sameAs'] = array_map( 'esc_url', $same_as );
         }
 
-        // Core schema
-        $schema_type = ( get_post_type( $post->ID ) === 'post' ) ? 'BlogPosting' : 'Article';
-
+        // Core schema. @type already resolved above via get_schema_type() — the filterable
+        // post-type → schema-type map (zehoro_article_schema_type_map). A stray hardcoded
+        // reassignment here used to clobber it back to BlogPosting/Article every time,
+        // silently breaking custom-CPT mappings (e.g. a 'service' CPT mapped to 'Service').
         $schema = [
             '@context'         => 'https://schema.org',
             '@type'            => $schema_type,

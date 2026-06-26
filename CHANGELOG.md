@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.25.2] - 2026-06-26
+
+### Fixed — Article Schema ignored the post-type → @type map (every non-post emitted "Article")
+`ArticleSchema::build_schema()` resolved the JSON-LD `@type` from the filterable post-type map (`zehoro_article_schema_type_map`) — then a stray hardcoded line immediately reassigned it to `BlogPosting` (for posts) or `Article` (for everything else), so the **entire shipped map was dead**: a page emitted `Article` instead of `WebPage`; a `recipe` / `service` / `review` CPT emitted `Article` instead of its mapped type; the filter had no effect on `@type`. Removed the clobbering line. (Article Schema only emits when no dedicated SEO plugin — Yoast / RankMath / SEOPress / AIOSEO / SureRank — is active; that coexistence stand-down is unchanged.) Found by an external audit (Gemini), verified against the code. +2 tests (174 green).
+
 ## [1.25.1] - 2026-06-24
 
 ### Fixed — shared `.zui` button text colour (specificity)
