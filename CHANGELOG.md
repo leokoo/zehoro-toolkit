@@ -2,6 +2,14 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.25.5] - 2026-06-29
+
+### Fixed / tidied — shared `.zui` admin stylesheet (synced with Pro 1.174.1)
+The `.zui` design system is shared verbatim between Free and Pro; this syncs the admin UX pass:
+- **Accessibility:** two tokens darkened to pass WCAG-AA contrast — `--zui-muted-2` (`#8a8678`→`#757160`; the `.zui-help` text is now 4.61:1) and `--zui-gold` (`#b3801f`→`#92691a`; gold header/label text now ≥4.65:1).
+- **Responsive:** the app shell stacks at ≤1080px (before the WP admin menu squeezes the content column); added a `.zui-scroll-x` wrapper utility for wide tables.
+- **Chore:** pruned the dead `.zui` nav-rail CSS (the in-page rail was abandoned for the WP submenu) — −1.3 KB. No functional change.
+
 ## [1.25.4] - 2026-06-29
 
 ### Fixed — `has_zehoro_content()` now detects `zehoro-pro/*` blocks

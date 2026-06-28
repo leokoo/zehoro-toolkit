@@ -12,12 +12,12 @@
 
 /* ── Tokens ─────────────────────────────────────────────────────────────── */
 .zui {
-  --zui-ink: #2b2b2b;  --zui-ink-2: #3a382f;  --zui-muted: #6b6859;  --zui-muted-2: #8a8678;
+  --zui-ink: #2b2b2b;  --zui-ink-2: #3a382f;  --zui-muted: #6b6859;  --zui-muted-2: #757160;
   --zui-line: #d6d0c2; --zui-line-2: #e3ddcd;
   --zui-paper: #faf8f3; --zui-paper-2: #f4f1ea; --zui-paper-3: #efeae0; --zui-sand: #ded9cd; --zui-card: #ffffff;
   --zui-blue: #2f5d8a; --zui-blue-2: #2f6db0; --zui-blue-tint: #eaf0f7; --zui-blue-line: #bcd0e8;
   --zui-green: #3f7d4f; --zui-green-deep: #1e6b39; --zui-green-tint: #eef3ee; --zui-green-soft: #9ec5a8;
-  --zui-gold: #b3801f; --zui-gold-tint: #fdf6e7; --zui-gold-soft: #e9c46a;
+  --zui-gold: #92691a; --zui-gold-tint: #fdf6e7; --zui-gold-soft: #e9c46a;
   --zui-red: #b4503f; --zui-red-strong: #b3261e; --zui-red-tint: #fcf0ee;
   --zui-sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
   --zui-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
@@ -55,20 +55,7 @@
 }
 .zui-app.zui-app--flat { box-shadow: none; }
 
-/* nav rail */
-.zui-rail { flex: 0 0 196px; border-right: 1.6px solid var(--zui-ink); background: var(--zui-paper-3); display: flex; flex-direction: column; }
-.zui-rail__brand { padding: 15px 15px 13px; border-bottom: 1.4px solid var(--zui-line); }
-.zui-rail__brand b { font-family: var(--zui-mono); font-size: 15px; font-weight: 600; letter-spacing: .04em; color: var(--zui-ink); display: block; }
-.zui-rail__brand span { font-size: 10.5px; color: var(--zui-muted-2); display: block; margin-top: 2px; }
-.zui-rail__nav { padding: 9px 0; flex: 1; }
-.zui-rail__item { display: flex; align-items: center; gap: 11px; padding: 10px 15px; color: var(--zui-ink-2); font-weight: 500; font-size: 13px; text-decoration: none; }
-.zui-rail__item:hover { background: rgba(43,43,43,.05); text-decoration: none; color: var(--zui-ink); }
-.zui-rail__item .zui-rail__ico { width: 16px; text-align: center; color: var(--zui-muted-2); font-size: 13px; }
-.zui-rail__item.is-active { background: var(--zui-ink); color: #f0ede4; font-weight: 600; }
-.zui-rail__item.is-active .zui-rail__ico { color: #f0ede4; }
-.zui-rail__foot { padding: 12px 15px; border-top: 1.4px solid var(--zui-line); }
-.zui-rail__foot b { font-family: var(--zui-mono); font-size: 11.5px; font-weight: 500; display: block; color: var(--zui-ink); }
-.zui-rail__foot span { font-size: 10.5px; color: var(--zui-muted-2); display: block; margin-top: 2px; }
+/* nav rail removed (2026-06) — Shell emits no in-page rail; navigation is the WP submenu (Nav.php) */
 
 /* main column */
 .zui-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -171,6 +158,10 @@
 .zui-table tr:last-child td { border-bottom: none; }
 .zui-table tbody tr:hover { background: var(--zui-paper-2); }
 .zui-table .zui-num { text-align: right; font-family: var(--zui-mono); white-space: nowrap; }
+
+/* horizontal-scroll wrapper so a wide table scrolls instead of clipping on a narrow admin viewport */
+.zui-scroll-x { overflow-x: auto; }
+.zui-scroll-x > .zui-table { min-width: 580px; }
 
 /* row list ("also valid" pattern) */
 .zui-rows { display: flex; flex-direction: column; border: 1.4px solid var(--zui-ink); }
@@ -295,16 +286,12 @@
 .zui-mb8 { margin-bottom: 8px; } .zui-mb12 { margin-bottom: 12px; } .zui-mb16 { margin-bottom: 16px; }
 
 /* ── Accessibility: focus rings + reduced motion ────────────────────────── */
-.zui a:focus-visible, .zui .zui-btn:focus-visible, .zui-rail__item:focus-visible, .zui-tab:focus-visible { outline: 2px solid var(--zui-blue); outline-offset: 1px; }
+.zui a:focus-visible, .zui .zui-btn:focus-visible, .zui-tab:focus-visible { outline: 2px solid var(--zui-blue); outline-offset: 1px; }
 @media (prefers-reduced-motion: reduce) { .zui *, .zui *:before { transition: none !important; } }
 
 /* ── Responsive (narrow admin / mobile) ─────────────────────────────────── */
-@media (max-width: 960px) {
+@media (max-width: 1080px) { /* stack before the WP admin menu (collapses at 783px) squeezes the content column */
   .zui-app { flex-direction: column; margin-right: 12px; }
-  .zui-rail { flex-basis: auto; border-right: none; border-bottom: 1.6px solid var(--zui-ink); }
-  .zui-rail__nav { display: flex; flex-wrap: wrap; padding: 6px; }
-  .zui-rail__item { padding: 8px 12px; }
-  .zui-rail__foot, .zui-rail__brand span { display: none; }
   .zui-grid--2, .zui-grid--even { grid-template-columns: 1fr; }
   .zui-context { flex-wrap: wrap; }
   .zui-stats { flex-wrap: wrap; }
