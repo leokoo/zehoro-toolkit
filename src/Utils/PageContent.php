@@ -29,9 +29,10 @@ final class PageContent {
 		$content = (string) $post->post_content;
 		if ( $content === '' ) return false;
 
-		// Block markup — `wp:lkst/*`, `wp:lkst-pro/*`, future `wp:zehoro/*`.
+		// Block markup — `wp:lkst/*`, `wp:lkst-pro/*`, `wp:zehoro/*`, `wp:zehoro-pro/*`.
+		// Both prefixes are matched slashless so the `-pro` variants count too.
 		if ( strpos( $content, 'wp:lkst' )   !== false ) return true;
-		if ( strpos( $content, 'wp:zehoro/' ) !== false ) return true;
+		if ( strpos( $content, 'wp:zehoro' ) !== false ) return true;
 
 		// Shortcodes — legacy `[lkst_*]` + canonical `[zehoro_*]`.
 		if ( strpos( $content, '[lkst_' )   !== false ) return true;

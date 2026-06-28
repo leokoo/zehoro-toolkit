@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.25.4] - 2026-06-29
+
+### Fixed — `has_zehoro_content()` now detects `zehoro-pro/*` blocks
+The enqueue gate `PageContent::has_zehoro_content()` matched `wp:zehoro/` **with a trailing slash**, so `wp:zehoro-pro/*` block markup (the Pro product/review blocks) wasn't recognised — meaning a page whose only toolkit content was a Pro block loaded **without** the Pro block stylesheet (unstyled box). The check is now slashless (`wp:zehoro`), mirroring the existing `wp:lkst` match that already covers `lkst` + `lkst-pro`.
+
 ## [1.25.3] - 2026-06-26
 
 ### Fixed — legacy-rename migrator left the hot `zehoro_active_modules` option un-autoloaded
