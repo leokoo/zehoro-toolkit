@@ -2,6 +2,11 @@
 
 All notable changes to the **Zehoro Toolkit** will be documented in this file.
 
+## [1.25.6] - 2026-06-29
+
+### Removed — orphaned `.zui` dead CSS (synced with Pro 1.174.3)
+Pruned the never-built `.zui-momentum` / `.zui-pill` / `.zui-bars` / `.zui-dots` components from the shared admin stylesheet — CSS authored from a design comp but never rendered in any markup (0 references in either plugin). −1.66 KB, no functional change.
+
 ## [1.25.5] - 2026-06-29
 
 ### Fixed / tidied — shared `.zui` admin stylesheet (synced with Pro 1.174.1)

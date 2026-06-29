@@ -120,12 +120,6 @@
 .zui-tag--lost { border-color: var(--zui-red); color: var(--zui-red); }
 .zui-tag--paused { border-color: var(--zui-muted-2); color: var(--zui-muted-2); }
 
-/* pill (used on dark momentum band) */
-.zui-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; border: 1.2px solid currentColor; padding: 4px 10px; }
-.zui-pill--green { color: var(--zui-green-soft); }
-.zui-pill--gold { color: var(--zui-gold-soft); }
-.zui-pill--red { color: #d98a78; }
-
 /* ── Buttons ────────────────────────────────────────────────────────────── */
 .zui-btn { display: inline-flex; align-items: center; gap: 6px; font-family: var(--zui-sans); font-size: 13px; font-weight: 700; line-height: 1; padding: 10px 18px; border: 1.6px solid var(--zui-ink); background: var(--zui-card); color: var(--zui-ink); cursor: pointer; text-decoration: none; border-radius: var(--zui-radius); }
 .zui-btn:hover { text-decoration: none; }
@@ -181,16 +175,6 @@
 .zui-meter { display: flex; height: 9px; border: 1.3px solid var(--zui-ink); overflow: hidden; }
 .zui-meter > span { display: block; height: 100%; }
 
-.zui-bars { display: inline-flex; align-items: flex-end; gap: 3px; height: 32px; }
-.zui-bars i { display: block; width: 8px; background: var(--zui-green-soft); }
-.zui-bars--gold i { background: var(--zui-gold); }
-.zui-bars--neutral i { background: #cfc9bb; }
-.zui-bars--sm { height: 15px; }
-.zui-bars--sm i { width: 3px; }
-
-.zui-dots { font-family: var(--zui-mono); font-size: 12px; letter-spacing: 1px; }
-.zui-dots b { color: var(--zui-blue); font-weight: 400; }
-.zui-dots i { color: var(--zui-line); font-style: normal; }
 .zui-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--zui-muted-2); vertical-align: middle; }
 .zui-dot--ok { background: var(--zui-green); }
 .zui-dot--warn { background: var(--zui-gold); }
@@ -240,15 +224,6 @@
 .zui-tile--thin .zui-tile__meta { color: var(--zui-gold); }
 .zui-tile--gap { border-style: dashed; border-color: var(--zui-red); background: var(--zui-red-tint); }
 .zui-tile--gap .zui-tile__meta { color: var(--zui-red); }
-
-/* ── Momentum band (dark) ───────────────────────────────────────────────── */
-.zui-momentum { display: flex; align-items: center; gap: 22px; border: 1.6px solid var(--zui-ink); background: var(--zui-ink); color: #f0ede4; padding: 12px 18px; flex-wrap: wrap; }
-.zui-momentum__title { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.zui-momentum__sub { font-size: 11px; color: #b7b2a3; margin-top: 2px; }
-.zui-momentum .zui-kpi__num--green { color: var(--zui-green-soft); }
-.zui-momentum .zui-kpi__num--muted { color: var(--zui-muted-2); }
-.zui-momentum .zui-kpi__label { color: #b7b2a3; }
-.zui-momentum__pills { margin-left: auto; display: flex; gap: 8px; }
 
 /* ── Notes / help / inline callouts ─────────────────────────────────────── */
 .zui-note { font-size: 12px; color: var(--zui-blue-2); line-height: 1.5; border-left: 2px solid var(--zui-blue-2); padding-left: 11px; }
