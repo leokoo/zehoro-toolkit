@@ -349,6 +349,16 @@
 
 /* =============================================================================
    Table of Contents (Wirecutter Style)
+
+   Font sizes follow the host theme: no px, no !important, so any theme rule
+   wins without a fight. A site can also size the TOC from :root or any
+   wrapper class through four custom properties:
+     --zehoro-toc-bar-size      the collapsed bar (current-section text)
+     --zehoro-toc-label-size    the "BROWSE" label inside the bar
+     --zehoro-toc-item-size     H2 entries in the open list
+     --zehoro-toc-subitem-size  H3 entries in the open list
+   Unset, the bar and H3 entries use the theme's --text-s token when it has
+   one (ACSS) and otherwise inherit; the label and H2 entries inherit.
    ============================================================================= */
 
 .zehoro-toc-wrapper {
@@ -378,7 +388,7 @@
 }
 
 .zehoro-toc-title {
-    font-size: 12px;
+    font-size: var(--zehoro-toc-bar-size, var(--text-s, 1em));
     font-weight: 400;
     padding-right: 16px;
     display: flex;
@@ -401,7 +411,6 @@
     display: inline-block;
     white-space: nowrap;
     color: #3D3730;
-    font-size:15px;
 }
 
 .zehoro-toc-active-text.is-marquee {
@@ -415,7 +424,7 @@
 }
 
 .zehoro-toc-title strong {
-    font-size: 12px !important;
+    font-size: var(--zehoro-toc-label-size, 1em);
     font-weight: 800;
     text-transform: uppercase;
 }
@@ -470,6 +479,7 @@
     margin: 0 auto;
     padding: 20px;
     max-width: 1200px;
+    font-size: var(--zehoro-toc-item-size, 1em);
 }
 
 .zehoro-toc-item {
@@ -482,7 +492,7 @@
 
 .zehoro-toc-depth-3 {
     padding-left: 20px;
-    font-size: 0.9em;
+    font-size: var(--zehoro-toc-subitem-size, var(--text-s, 1em));
 }
 
 .zehoro-toc-list a {

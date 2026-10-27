@@ -4,7 +4,7 @@ Tags: table of contents, faq, schema, author box, structured data
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.37.0
+Stable tag: 1.37.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,9 @@ The content features are native Gutenberg blocks. Page builders can use the shor
 
 == Changelog ==
 
+= 1.37.1 =
+* The Table of Contents now follows your theme's type scale: no fixed pixel sizes and no `!important`. Sizes inherit from the theme (or use its `--text-s` token where one exists), and four custom properties — `--zehoro-toc-bar-size`, `--zehoro-toc-label-size`, `--zehoro-toc-item-size`, `--zehoro-toc-subitem-size` — let you set them from your own CSS without overrides.
+
 = 1.36.2 =
 * Hardening and wp.org review-readiness: the Table of Contents scroll-spy now builds its label with safe DOM APIs (no `innerHTML`); the noscript module-save fallback redirects correctly; hidden settings pages register without a PHP 8.1 deprecation notice; front-end Table of Contents strings are translatable; the rename-migrator log is `WP_DEBUG`-gated. No change to how your content renders.
 
@@ -135,6 +138,9 @@ The content features are native Gutenberg blocks. Page builders can use the shor
 * Internationalization: text-domain loading aligned for translation; bundled translation template.
 
 == Upgrade Notice ==
+
+= 1.37.1 =
+The Table of Contents now takes its font sizes from your theme. On themes without a `--text-s` token the TOC bar may look larger; set `--zehoro-toc-bar-size` to restore a smaller bar.
 
 = 1.36.2 =
 Security and review-readiness hardening (Table of Contents rendering, noscript save, i18n). Recommended update.

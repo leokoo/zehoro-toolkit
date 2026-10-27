@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.37.1] - 2026-10-27
+
+### Fixed — the Table of Contents no longer fights the theme's type scale
+
+The TOC pinned its own sizes: `12px` on the bar, `15px` on the current-section text, `0.9em` on
+H3 entries, and `font-size: 12px !important` on the BROWSE label. Every site on a token-based scale
+(ACSS) had to override them, and the label could only be beaten with another `!important`.
+koochinnam.com carried exactly that override on its `kcn-article-main` class.
+
+- **No px, no `!important`.** Every TOC size now runs through a custom property a site can set from
+  `:root` or any wrapper class, with no selector or specificity fight:
+  `--zehoro-toc-bar-size` (the collapsed bar), `--zehoro-toc-label-size` (BROWSE),
+  `--zehoro-toc-item-size` (H2 entries) and `--zehoro-toc-subitem-size` (H3 entries).
+- **Defaults follow the theme.** Unset, the bar and H3 entries use the theme's `--text-s` token when
+  it has one (ACSS), and otherwise inherit; the label and H2 entries inherit. On an ACSS site this
+  renders exactly what KCN's override produced (bar, label and H3 at `--text-s`; H2 at body size),
+  so that override can be removed once this version is installed.
+- **Visible change on themes without `--text-s`:** the bar and H3 entries now take the surrounding
+  text size instead of 12px / 15px / 0.9em. Set `--zehoro-toc-bar-size` (and
+  `--zehoro-toc-subitem-size`) to a theme token to keep a smaller bar.
+- A test (`TocStylesheetTest`) now fails if a TOC rule sets a fixed font size or uses `!important`.
+
 ## [1.37.0] - 2026-09-06
 
 ### Fixed — three things that would have failed a wordpress.org review
