@@ -192,6 +192,10 @@ class TableOfContents implements \Zehoro\Core\ModuleInterface {
         // an empty draft) — coerce before the strict return type / string ops.
         $content = (string) $content;
         if ( ! is_singular() ) return $content;
+        // wp_trim_excerpt() builds automatic excerpts by running the_content
+        // filters, and is_singular() is true on a static front page — so a
+        // home-page posts list would show the TOC text as every excerpt.
+        if ( doing_filter( 'get_the_excerpt' ) ) return $content;
         if ( isset( $_GET['bricks'] ) || isset( $_GET['etchwp'] ) || isset( $_GET['elementor-preview'] ) ) return $content;
 
         global $lkst_toc_processing, $lkst_toc_items;
