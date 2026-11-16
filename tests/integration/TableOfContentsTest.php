@@ -299,6 +299,64 @@ class TableOfContentsTest extends WP_UnitTestCase {
     }
 
     // -------------------------------------------------------------------------
+    // Automatic excerpts — wp_trim_excerpt() runs the_content filters
+    // -------------------------------------------------------------------------
+
+    /** Hook exactly one TOC instance on the_content, as on a live site. */
+    private function hook_toc_on_the_content(): void {
+        global $wp_filter;
+        foreach ( $wp_filter['the_content']->callbacks[15] ?? [] as $callback ) {
+            if ( is_array( $callback['function'] ) && $callback['function'][0] instanceof TableOfContents ) {
+                return; // The plugin's own module instance is already there.
+            }
+        }
+        add_filter( 'the_content', [ $this->toc, 'process_content' ], 15 );
+    }
+
+    public function test_excerpt_in_front_page_posts_loop_has_no_toc() {
+        // Seen on simlecco.com.my (22 Oct 2026): a posts block on a static
+        // front page showed "BROWSE | Sections in this article" plus the
+        // headings run together as every card's excerpt. is_singular() is
+        // TRUE on a static front page, and wp_trim_excerpt() builds the
+        // automatic excerpt by running the_content filters.
+        $post_id = $this->post_with_headings( 2 );
+        // The factory fills post_excerpt; empty it so WordPress builds the
+        // automatic excerpt (wp_trim_excerpt), the path the bug lives on.
+        wp_update_post( [ 'ID' => $post_id, 'post_excerpt' => '' ] );
+        $front_id = $this->factory->post->create( [
+            'post_type'   => 'page',
+            'post_status' => 'publish',
+            'post_title'  => 'Home',
+        ] );
+        update_option( 'show_on_front', 'page' );
+        update_option( 'page_on_front', $front_id );
+        $this->go_to( home_url( '/' ) );
+        $this->assertTrue( is_front_page() && is_singular(), 'Precondition: a static front page is singular' );
+
+        $this->hook_toc_on_the_content();
+
+        // A posts list on the home page (Kadence Posts, core Query Loop):
+        // a secondary loop that sets up each post, then asks for its excerpt.
+        $excerpt = '';
+        $loop    = new WP_Query( [ 'p' => $post_id, 'post_type' => 'post' ] );
+        while ( $loop->have_posts() ) {
+            $loop->the_post();
+            $excerpt = get_the_excerpt();
+        }
+        wp_reset_postdata();
+
+        $this->assertStringContainsString( 'Body of section 1', $excerpt, 'The excerpt is built from the post body' );
+        $this->assertStringNotContainsString( 'Sections in this article', $excerpt );
+        $this->assertStringNotContainsString( 'BROWSE', $excerpt );
+
+        // The guard is excerpt-only: the single post still renders its TOC.
+        $this->go_to( get_permalink( $post_id ) );
+        $html = apply_filters( 'the_content', get_post( $post_id )->post_content );
+        $this->assertStringContainsString( 'zehoro-toc-wrapper', $html );
+        $this->assertStringContainsString( 'Sections in this article', $html );
+    }
+
+    // -------------------------------------------------------------------------
     // preparse_toc_headings + render_shortcode (sidebar/builder placement)
     // -------------------------------------------------------------------------
 
